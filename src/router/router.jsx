@@ -3,6 +3,8 @@ import HomeLayout from "../layouts/HomeLayout";
 import Home from "../pages/Home";
 import AboutUs from "../pages/AboutUs";
 import ContractUs from "../pages/ContactUs";
+import Login from "../pages/Login";
+import Register from "../pages/Register";
 
 const router =createBrowserRouter([
     { 
@@ -22,7 +24,16 @@ const router =createBrowserRouter([
     {
         path:"/contract",
         element:<ContractUs></ContractUs>
-    }
+    },
+    {
+        path:"/login",
+        element:<Login></Login>
+    },
+    {
+        path:"/register",
+        element:<Register></Register>,
+    },
+
 
 ]);
 

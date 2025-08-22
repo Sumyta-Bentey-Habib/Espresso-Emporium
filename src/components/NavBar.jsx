@@ -1,6 +1,10 @@
 import React from "react";
-import { NavLink } from "react-router";
+import { NavLink } from "react-router-dom"; 
+import { useAuth } from "../context/AuthProvider";
+
 const NavBar = () => {
+  const { user, logOut } = useAuth();
+
   const navItems = (
     <>
       <li>
@@ -9,9 +13,11 @@ const NavBar = () => {
       <li>
         <NavLink to="/">Coffee Store</NavLink>
       </li>
-      <li>
-        <NavLink to="/">DashBoard</NavLink>
-      </li>
+      {user && ( 
+        <li>
+          <NavLink to="/dashboard">Dashboard</NavLink>
+        </li>
+      )}
       <li>
         <NavLink to="/about-us">About</NavLink>
       </li>
@@ -53,6 +59,32 @@ const NavBar = () => {
             className="menu menu-sm dropdown-content bg-black/70 text-white rounded-box z-10 mt-3 w-52 p-2 shadow"
           >
             {navItems}
+            {user ? (
+              <li>
+                <button
+                  onClick={logOut}
+                  className="btn btn-outline btn-sm w-full text-white border-white hover:bg-white hover:text-black"
+                >
+                  Logout
+                </button>
+              </li>
+            ) : (
+              <>
+                <li>
+                  <NavLink
+                    to="/login"
+                    className="btn btn-outline btn-sm w-full text-white border-white hover:bg-white hover:text-black"
+                  >
+                    Login
+                  </NavLink>
+                </li>
+                <li>
+                  <NavLink to="/register" className="btn btn-primary btn-sm w-full">
+                    Register
+                  </NavLink>
+                </li>
+              </>
+            )}
           </ul>
         </div>
 
@@ -69,10 +101,26 @@ const NavBar = () => {
       </div>
 
       <div className="navbar-end gap-2">
-        <a className="btn btn-outline btn-sm text-white border-white hover:bg-white hover:text-black">
-          Login
-        </a>
-        <a className="btn btn-primary btn-sm">Register</a>
+        {user ? (
+          <button
+            onClick={logOut}
+            className="btn btn-outline btn-sm text-white border-white hover:bg-white hover:text-black"
+          >
+            Logout
+          </button>
+        ) : (
+          <>
+            <NavLink
+              to="/login"
+              className="btn btn-outline btn-sm text-white border-white hover:bg-white hover:text-black"
+            >
+              Login
+            </NavLink>
+            <NavLink to="/register" className="btn btn-primary btn-sm">
+              Register
+            </NavLink>
+          </>
+        )}
       </div>
     </div>
   );
