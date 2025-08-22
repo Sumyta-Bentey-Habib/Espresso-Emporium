@@ -32,7 +32,7 @@ const ContactUs = () => {
           </NavLink>
         </div>
 
-        {/* Form and Contact Info */}
+     
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
           {/* Left - Contact Form */}
           <div className="bg-white shadow-lg rounded-2xl p-8">
@@ -97,7 +97,7 @@ const ContactUs = () => {
               <FiPhone className="text-[#331A15] text-xl" />
               <div>
                 <h2 className="text-2xl font-semibold mb-1 text-[#331A15]">Phone</h2>
-                <p>+1 234 567 890</p>
+                <p>+88 01533 333 333</p>
               </div>
             </div>
 
