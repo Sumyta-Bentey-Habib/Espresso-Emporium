@@ -24,7 +24,6 @@ const Login = () => {
     setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   };
 
-  // Email/Password login
   const handleSubmit = async (e) => {
     e.preventDefault();
     const { email, password } = formData;
@@ -58,7 +57,6 @@ const Login = () => {
     }
   };
 
-  //  Google login
   const handleGoogleLogin = async () => {
     try {
       await googleLogin();
@@ -80,37 +78,28 @@ const Login = () => {
 
   return (
     <>
-      <SharedNav></SharedNav>
+      <SharedNav />
       <div
-        className="flex items-center justify-center min-h-screen px-4 bg-white"
-         style={{
+        className="flex items-center justify-center min-h-screen px-4 bg-gray-50"
+        style={{
           backgroundImage: "url('/more/1.png')",
           backgroundSize: "cover",
           backgroundPosition: "center",
         }}
       >
-        <div className="flex flex-col w-full max-w-4xl overflow-hidden   md:flex-row">
-          {/*  Lottie Animation Section */}
-          <div className="flex items-center justify-center w-full p-6  md:w-1/2 ">
-            <Lottie
-              animationData={loginAnimation}
-              loop={true}
-              className="w-full h-80"
-            />
+        <div className="flex flex-col w-full max-w-4xl overflow-hidden md:flex-row bg-white shadow-xl rounded-2xl">
+          {/* Lottie Animation */}
+          <div className="flex items-center justify-center w-full p-6 md:w-1/2">
+            <Lottie animationData={loginAnimation} loop className="w-full h-80" />
           </div>
 
-          {/*  Login Form Section */}
-          <div className="w-full p-8 space-y-6 md:w-1/2 bg-white shadow-xl">
-            <h1 className="text-3xl font-bold text-center text-gray-800 ">
-              Login
-            </h1>
+          {/* Login Form */}
+          <div className="w-full p-8 space-y-6 md:w-1/2">
+            <h1 className="text-3xl font-bold text-center text-gray-900">Login</h1>
 
             <form onSubmit={handleSubmit} className="space-y-6">
               <div>
-                <label
-                  htmlFor="email"
-                  className="block text-sm text-gray-600 raleway"
-                >
+                <label htmlFor="email" className="block text-sm text-gray-700">
                   Email
                 </label>
                 <input
@@ -120,16 +109,13 @@ const Login = () => {
                   placeholder="Email"
                   value={formData.email}
                   onChange={handleChange}
-                  className="w-full px-4 py-3 text-gray-800 bg-white border border-gray-300 rounded-md focus:ring focus:ring-violet-300"
+                  className="w-full px-4 py-3 text-gray-900 placeholder-gray-500 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-violet-300"
                   disabled={loading}
                 />
               </div>
 
               <div>
-                <label
-                  htmlFor="password"
-                  className="block text-sm text-gray-600 raleway"
-                >
+                <label htmlFor="password" className="block text-sm text-gray-700">
                   Password
                 </label>
                 <input
@@ -139,11 +125,11 @@ const Login = () => {
                   placeholder="Password"
                   value={formData.password}
                   onChange={handleChange}
-                  className="w-full px-4 py-3 text-gray-800 bg-white border border-gray-300 rounded-md focus:ring focus:ring-violet-300"
+                  className="w-full px-4 py-3 text-gray-900 placeholder-gray-500 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-violet-300"
                   disabled={loading}
                 />
                 <div className="flex justify-end mt-1 text-xs text-gray-500">
-                  <a href="#" className="hover:underline raleway">
+                  <a href="#" className="hover:underline">
                     Forgot Password?
                   </a>
                 </div>
@@ -151,17 +137,17 @@ const Login = () => {
 
               <button
                 type="submit"
-                className="w-full py-3 text-center text-white rounded-md bg-violet-500 hover:bg-violet-600 disabled:opacity-70 raleway"
+                className="w-full py-3 text-white rounded-md bg-violet-500 hover:bg-violet-600 disabled:opacity-70"
                 disabled={loading}
               >
                 {loading ? "Logging In..." : "Log In"}
               </button>
             </form>
 
-            {/*  Google Login Button */}
+            {/* Google Login */}
             <button
               onClick={handleGoogleLogin}
-              className="w-full bg-[#331A15] hover:bg-amber-700 text-white py-3 rounded-md transition flex items-center justify-center gap-2 raleway"
+              className="w-full bg-gray-900 hover:bg-amber-700 text-white py-3 rounded-md flex items-center justify-center gap-2 transition"
             >
               <img
                 src="https://www.svgrepo.com/show/355037/google.svg"
@@ -171,17 +157,14 @@ const Login = () => {
               Continue with Google
             </button>
 
-            <p className="text-sm text-center text-gray-500 raleway">
+            <p className="text-sm text-center text-gray-700">
               Don’t have an account?
-              <NavLink
-                to="/register"
-                className="ml-1 text-violet-600 hover:underline raleway"
-              >
+              <NavLink to="/register" className="ml-1 text-violet-600 hover:underline">
                 Sign up
               </NavLink>
               <br />
               <br />
-              <NavLink to="/" className="ml-1 text-violet-600 hover:underline raleway">
+              <NavLink to="/" className="ml-1 text-violet-600 hover:underline">
                 Go Home
               </NavLink>
             </p>
