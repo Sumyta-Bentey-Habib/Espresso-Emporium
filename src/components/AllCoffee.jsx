@@ -127,11 +127,11 @@ const AllCoffee = ({ limit }) => {
               key={p._id}
               className="flex flex-col border rounded-2xl bg-white shadow hover:shadow-lg overflow-hidden transition"
             >
-              <div className="flex">
+              <div className="flex flex-col md:flex-row">
                 <img
-                  src={p.image}
+                  src={p.image || "./more/coffee-splash.jpg"}
                   alt={p.name}
-                  className="w-1/3 object-cover h-full rounded-l-2xl"
+                  className="w-full md:w-48 h-48 md:h-48 object-cover rounded-t-2xl md:rounded-l-2xl md:rounded-tr-none"
                 />
 
                 <div className="flex-1 p-4 flex flex-col justify-between">
@@ -141,13 +141,11 @@ const AllCoffee = ({ limit }) => {
                     <div className="text-sm text-gray-700">
                       Availability: {p.availability || "N/A"}
                     </div>
-                    <div className="text-sm text-gray-700">
-                      {p.description || ""}
-                    </div>
+                    <div className="text-sm text-gray-700">{p.description || ""}</div>
                   </div>
 
                   {user && (
-                    <div className="flex gap-2 mt-4">
+                    <div className="flex gap-2 mt-4 flex-col md:flex-row">
                       <button
                         onClick={() => handleAddToCart(p)}
                         className="flex-1 px-4 py-2 rounded-lg bg-amber-700 text-white font-semibold hover:bg-amber-800 transition"
@@ -185,16 +183,12 @@ const AllCoffee = ({ limit }) => {
                             ⭐ {rev.rating}/5
                           </span>
                         </div>
-                        <p className="text-gray-700 text-sm mt-1">
-                          {rev.feedback}
-                        </p>
+                        <p className="text-gray-700 text-sm mt-1">{rev.feedback}</p>
                       </li>
                     ))}
                   </ul>
                 ) : (
-                  <p className="text-sm text-gray-500">
-                    No reviews yet. Be the first!
-                  </p>
+                  <p className="text-sm text-gray-500">No reviews yet. Be the first!</p>
                 )}
               </div>
             </div>

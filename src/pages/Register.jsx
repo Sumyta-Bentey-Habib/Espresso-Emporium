@@ -6,6 +6,7 @@ import { auth } from "../firebase/firebase.init";
 import { useAuth } from "../context/AuthProvider";
 import { useNavigate, NavLink } from "react-router-dom";
 import { FcGoogle } from "react-icons/fc";
+import { uploadImageToImgBB } from "../utils/utils"; 
 
 import registrationAnimation from "../assets/lottie/register.json";
 import SharedNav from "../shared/SharedNav";
@@ -20,15 +21,28 @@ const Register = () => {
     password: "",
     photoURL: "",
   });
-  const [loading, setLoading] = useState(false);
   const [role, setRole] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [profileFile, setProfileFile] = useState(null); // file state
+  const [preview, setPreview] = useState(null); // preview URL
 
   useEffect(() => {
     document.title = "Register";
-  }, []);
+    if (profileFile) {
+      const objectUrl = URL.createObjectURL(profileFile);
+      setPreview(objectUrl);
+      return () => URL.revokeObjectURL(objectUrl);
+    } else {
+      setPreview(null);
+    }
+  }, [profileFile]);
 
   const handleChange = (e) => {
     setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+  };
+
+  const handleFileChange = (e) => {
+    setProfileFile(e.target.files[0]);
   };
 
   const validatePassword = (password) => {
@@ -52,7 +66,7 @@ const Register = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const { name, email, password, photoURL } = formData;
+    const { name, email, password } = formData;
 
     if (!role) return Swal.fire("Error", "Please select a role first.", "error");
     if (!name || !email || !password)
@@ -66,18 +80,26 @@ const Register = () => {
 
     setLoading(true);
     try {
+      // Upload image if file selected
+      let uploadedURL = formData.photoURL;
+      if (profileFile) {
+        uploadedURL = await uploadImageToImgBB(profileFile);
+      }
+
       const result = await createUserWithEmailAndPassword(auth, email, password);
 
       await updateProfile(result.user, {
         displayName: name,
-        photoURL: photoURL || "",
+        photoURL: uploadedURL || "",
       });
 
-      await saveUserToDB({ name, email, photoURL, role });
+      await saveUserToDB({ name, email, photoURL: uploadedURL, role });
 
       Swal.fire("Success", `Registration completed as ${role}!`, "success");
+
       setFormData({ name: "", email: "", password: "", photoURL: "" });
       setRole("");
+      setProfileFile(null);
       navigate("/");
     } catch (error) {
       Swal.fire("Registration Failed", error.message, "error");
@@ -130,17 +152,12 @@ const Register = () => {
         }}
       >
         <div className="flex justify-center w-full mb-10 md:w-1/2 md:mb-0">
-          <Lottie
-            animationData={registrationAnimation}
-            loop={true}
-            className="w-full max-w-sm md:max-w-md"
-          />
+          <Lottie animationData={registrationAnimation} loop className="w-full max-w-sm md:max-w-md" />
         </div>
 
         <div className="w-full max-w-md p-8 space-y-6 bg-white shadow-xl md:w-1/2 rounded-2xl">
           <h1 className="text-3xl font-bold text-center text-gray-900">Register</h1>
 
-          {/* Role Selection */}
           <div className="flex justify-center gap-4 mb-4">
             {["Buyer", "Seller"].map((r) => (
               <button
@@ -159,35 +176,51 @@ const Register = () => {
           {role && (
             <>
               <form onSubmit={handleSubmit} className="space-y-5">
-                {[
-                  { label: "Name", name: "name", type: "text", required: true },
-                  { label: "Email", name: "email", type: "email", required: true },
-                  {
-                    label: "Profile Picture URL (optional)",
-                    name: "photoURL",
-                    type: "text",
-                    required: false,
-                  },
-                  { label: "Password", name: "password", type: "password", required: true },
-                ].map((field) => (
-                  <div key={field.name}>
-                    <label className="block text-sm text-gray-900">{field.label}</label>
-                    <input
-                      type={field.type}
-                      name={field.name}
-                      placeholder={field.label}
-                      value={formData[field.name]}
-                      onChange={handleChange}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-violet-400"
-                      required={field.required}
-                    />
-                    {field.name === "password" && (
-                      <p className="mt-1 text-xs text-gray-700">
-                        Must be at least 6 characters, with uppercase and lowercase letters.
-                      </p>
-                    )}
-                  </div>
-                ))}
+                <input
+                  type="text"
+                  name="name"
+                  placeholder="Name"
+                  value={formData.name}
+                  onChange={handleChange}
+                  required
+                  className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-violet-400"
+                />
+                <input
+                  type="email"
+                  name="email"
+                  placeholder="Email"
+                  value={formData.email}
+                  onChange={handleChange}
+                  required
+                  className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-violet-400"
+                />
+                <input
+                  type="password"
+                  name="password"
+                  placeholder="Password"
+                  value={formData.password}
+                  onChange={handleChange}
+                  required
+                  className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-violet-400"
+                />
+                <p className="text-xs text-gray-700">
+                  Must be at least 6 characters, with uppercase and lowercase letters.
+                </p>
+
+                {/* File input & preview */}
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleFileChange}
+                  className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-violet-400"
+                />
+                {preview && (
+                  <img
+                    src={preview}
+                    alt="Preview"
+                    className="w-24 h-24 object-cover rounded-full mx-auto mt-2"
+                  />
+                )}
 
                 <button
                   type="submit"
@@ -201,10 +234,9 @@ const Register = () => {
               {role === "Buyer" && (
                 <button
                   onClick={handleGoogleRegister}
-                  className="w-full bg-gray-900 hover:bg-amber-700 text-white py-3 rounded-md transition flex items-center justify-center gap-2"
+                  className="w-full bg-gray-900 hover:bg-amber-700 text-white py-3 rounded-md flex items-center justify-center gap-2 mt-2"
                 >
-                  <FcGoogle className="w-5 h-5" />
-                  Continue with Google
+                  <FcGoogle className="w-5 h-5" /> Continue with Google
                 </button>
               )}
             </>
