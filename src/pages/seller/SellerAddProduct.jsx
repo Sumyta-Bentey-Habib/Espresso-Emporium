@@ -1,8 +1,11 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useAuth } from "../../context/AuthProvider";
 import Swal from "sweetalert2";
 
 const SellerAddProduct = () => {
+   useEffect(() => {
+        document.title = "Seller";
+      }, []);
   const { user } = useAuth();
   const [form, setForm] = useState({
     name: "",

@@ -6,7 +6,7 @@ import { useAuth } from "../context/AuthProvider";
 import { useNavigate, NavLink } from "react-router-dom";
 import Swal from "sweetalert2";
 import { FcGoogle } from "react-icons/fc";
-import { FaEye, FaEyeSlash } from "react-icons/fa"; // 👈 Add eye icons
+import { FaEye, FaEyeSlash } from "react-icons/fa"; 
 
 import loginAnimation from "../assets/lottie/login.json";
 import SharedNav from "../shared/SharedNav";
@@ -17,7 +17,7 @@ const Login = () => {
 
   const [formData, setFormData] = useState({ email: "", password: "" });
   const [loading, setLoading] = useState(false);
-  const [showPassword, setShowPassword] = useState(false); // 👈 Password visibility toggle
+  const [showPassword, setShowPassword] = useState(false); 
 
   useEffect(() => {
     document.title = "Login";

@@ -3,6 +3,9 @@ import { useAuth } from "../../context/AuthProvider";
 import Swal from "sweetalert2";
 
 const ManageProducts = () => {
+  useEffect(() => {
+      document.title = "Admin";
+    }, []);
   const { user } = useAuth();
   const [products, setProducts] = useState([]);
   const [search, setSearch] = useState("");

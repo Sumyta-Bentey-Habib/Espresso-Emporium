@@ -1,10 +1,14 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { NavLink } from "react-router";
 import SharedNav from "../shared/SharedNav";
 
 const AboutUs = () => {
+   useEffect(() => {
+          document.title = "About-Us";
+        }, []);
   return (
     <>
+   
       <SharedNav />
       <div
         className="px-6 lg:px-20 py-16 bg-white"

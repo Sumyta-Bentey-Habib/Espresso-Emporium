@@ -3,6 +3,9 @@ import { useAuth } from "../../context/AuthProvider";
 import { FaCartPlus } from "react-icons/fa";
 
 const BuyerViewProducts = () => {
+   useEffect(() => {
+        document.title = "Buyer";
+      }, []);
   const { user } = useAuth();
   const [products, setProducts] = useState([]);
   const [search, setSearch] = useState("");

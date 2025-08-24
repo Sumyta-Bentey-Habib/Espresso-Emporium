@@ -1,10 +1,13 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { NavLink, Outlet } from "react-router-dom";
 import { Package, PlusSquare } from "lucide-react";
 import { FaHome, FaBars, FaChevronLeft, FaChevronRight } from "react-icons/fa";
 import SharedNav from "../../shared/SharedNav";
 
 const SellerDashboard = () => {
+  useEffect(() => {
+          document.title = "Seller";
+        }, []);
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
 

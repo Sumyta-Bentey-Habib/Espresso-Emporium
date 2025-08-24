@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import Banner from "../components/Banner";
 import QualitySection from "../components/QualitySection";
 import FollowUs from "../components/FollowUs";
@@ -8,6 +8,9 @@ import QandA from "../components/QandA";
 import Reviews from "../components/Reviews";
 
 const Home = () => {
+   useEffect(() => {
+      document.title = "Espresso-Emporium";
+    }, []);
   return (
     <div>
       <Banner />

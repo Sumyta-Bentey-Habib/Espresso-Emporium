@@ -1,9 +1,12 @@
-import React from "react";
+import React, { useEffect } from "react";
 import SharedNav from "../shared/SharedNav";
 import { NavLink } from "react-router";
 import { FiMapPin, FiMail, FiPhone, FiInstagram, FiFacebook, FiTwitter } from "react-icons/fi";
 
 const ContactUs = () => {
+   useEffect(() => {
+            document.title = "Contract-Us";
+          }, []);
   return (
     <>
       <SharedNav />

@@ -1,6 +1,9 @@
 import React, { useEffect, useState } from "react";
 
 const ManageUsers = () => {
+  useEffect(() => {
+      document.title = "Admin";
+    }, []);
   const [users, setUsers] = useState([]);
   const [search, setSearch] = useState("");
 

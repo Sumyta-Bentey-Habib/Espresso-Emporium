@@ -4,13 +4,18 @@ import Swal from "sweetalert2";
 import Loader from "../../components/Loader";
 
 const SellerProducts = () => {
+  useEffect(() => {
+    document.title = "Seller";
+  }, []);
   const { user } = useAuth();
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
 
   const fetchMine = async () => {
     setLoading(true);
-    const res = await fetch("https://espresso-emporium-server-phi.vercel.app/products");
+    const res = await fetch(
+      "https://espresso-emporium-server-phi.vercel.app/products"
+    );
     const data = await res.json();
 
     // Fetch reviews for each product
@@ -18,7 +23,9 @@ const SellerProducts = () => {
       data
         .filter((p) => p.sellerEmail === user?.email)
         .map(async (p) => {
-          const revRes = await fetch(`https://espresso-emporium-server-phi.vercel.app/reviews/${p._id}`);
+          const revRes = await fetch(
+            `https://espresso-emporium-server-phi.vercel.app/reviews/${p._id}`
+          );
           const reviews = await revRes.json();
           return { ...p, reviews };
         })
@@ -44,7 +51,10 @@ const SellerProducts = () => {
     });
     if (!confirm.isConfirmed) return;
 
-    await fetch(`https://espresso-emporium-server-phi.vercel.app/products/${id}`, { method: "DELETE" });
+    await fetch(
+      `https://espresso-emporium-server-phi.vercel.app/products/${id}`,
+      { method: "DELETE" }
+    );
     Swal.fire({
       icon: "success",
       title: "Deleted!",
@@ -97,7 +107,7 @@ const SellerProducts = () => {
       {loading ? (
         <p className="text-center text-gray-500">
           <Loader></Loader>
-          </p>
+        </p>
       ) : products.length ? (
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
           {products.map((p) => (
@@ -105,10 +115,16 @@ const SellerProducts = () => {
               key={p._id}
               className="bg-white rounded-2xl shadow-md overflow-hidden flex flex-col transition hover:shadow-lg"
             >
-              <img src={p.image} alt={p.name} className="w-full h-48 object-cover" />
+              <img
+                src={p.image}
+                alt={p.name}
+                className="w-full h-48 object-cover"
+              />
 
               <div className="p-4 flex flex-col gap-2">
-                <h2 className="text-lg font-semibold text-gray-900">{p.name}</h2>
+                <h2 className="text-lg font-semibold text-gray-900">
+                  {p.name}
+                </h2>
                 <p className="text-sm text-gray-700">💲 {p.price}</p>
                 <p className="text-sm text-gray-600">
                   Availability: {p.availability || "N/A"}
@@ -125,7 +141,9 @@ const SellerProducts = () => {
 
                 {/* Reviews */}
                 <div className="mt-4">
-                  <h3 className="font-semibold text-sm text-gray-800 mb-2">Reviews:</h3>
+                  <h3 className="font-semibold text-sm text-gray-800 mb-2">
+                    Reviews:
+                  </h3>
                   <div className="max-h-64 overflow-y-auto space-y-2">
                     {p.reviews && p.reviews.length ? (
                       p.reviews.map((r) => (
@@ -137,7 +155,9 @@ const SellerProducts = () => {
                             <div className="font-medium text-gray-900 text-sm">
                               {r.buyerName || r.buyerEmail}
                             </div>
-                            <div className="text-gray-700 text-sm">{r.feedback}</div>
+                            <div className="text-gray-700 text-sm">
+                              {r.feedback}
+                            </div>
                             <div className="text-[10px] text-gray-500">
                               {new Date(r.createdAt).toLocaleString()}
                             </div>

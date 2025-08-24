@@ -1,9 +1,19 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { NavLink, Outlet } from "react-router-dom";
-import { FaUsers, FaBoxOpen, FaHome, FaBars, FaChevronLeft, FaChevronRight } from "react-icons/fa";
+import {
+  FaUsers,
+  FaBoxOpen,
+  FaHome,
+  FaBars,
+  FaChevronLeft,
+  FaChevronRight,
+} from "react-icons/fa";
 import SharedNav from "../../shared/SharedNav";
 
 const AdminDashboard = () => {
+  useEffect(() => {
+    document.title = "Admin";
+  }, []);
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
 
@@ -11,7 +21,11 @@ const AdminDashboard = () => {
 
   const menuItems = [
     { to: "/dashboard/users", icon: <FaUsers size={18} />, label: "Users" },
-    { to: "/dashboard/products", icon: <FaBoxOpen size={18} />, label: "Products" },
+    {
+      to: "/dashboard/products",
+      icon: <FaBoxOpen size={18} />,
+      label: "Products",
+    },
     { to: "/", icon: <FaHome size={18} />, label: "Return Home" },
   ];
 
@@ -40,19 +54,27 @@ const AdminDashboard = () => {
         >
           <div className="flex items-center justify-between p-6 border-b border-amber-700">
             <div
-              className={`flex flex-col items-center md:items-start ${isSidebarOpen ? "" : "hidden md:flex"}`}
+              className={`flex flex-col items-center md:items-start ${
+                isSidebarOpen ? "" : "hidden md:flex"
+              }`}
             >
               <h1 className="text-2xl font-bold raleway">Admin Panel</h1>
               <p className="text-sm text-amber-200">Welcome, Admin</p>
             </div>
 
             {/* Collapse Button Desktop */}
-            <button className="hidden md:block text-amber-200 text-xl" onClick={toggleSidebar}>
+            <button
+              className="hidden md:block text-amber-200 text-xl"
+              onClick={toggleSidebar}
+            >
               {isSidebarOpen ? <FaChevronLeft /> : <FaChevronRight />}
             </button>
 
             {/* Close button Mobile */}
-            <button className="md:hidden text-amber-200 text-xl" onClick={() => setIsMobileSidebarOpen(false)}>
+            <button
+              className="md:hidden text-amber-200 text-xl"
+              onClick={() => setIsMobileSidebarOpen(false)}
+            >
               <FaBars />
             </button>
           </div>
@@ -64,7 +86,11 @@ const AdminDashboard = () => {
                 to={item.to}
                 className={({ isActive }) =>
                   `relative flex items-center gap-3 px-4 py-2 rounded-lg transition group
-                  ${isActive ? "bg-amber-700 text-white" : "text-amber-100 hover:bg-amber-600"}`
+                  ${
+                    isActive
+                      ? "bg-amber-700 text-white"
+                      : "text-amber-100 hover:bg-amber-600"
+                  }`
                 }
               >
                 {item.icon}
@@ -82,10 +108,17 @@ const AdminDashboard = () => {
         </aside>
 
         {/* Main Content */}
-        <main className={`flex-1 flex flex-col transition-all duration-300 ${isSidebarOpen ? "md:ml-64" : "md:ml-20"}`}>
+        <main
+          className={`flex-1 flex flex-col transition-all duration-300 ${
+            isSidebarOpen ? "md:ml-64" : "md:ml-20"
+          }`}
+        >
           {/* Mobile Menu Button */}
           <div className="p-4 md:hidden">
-            <button className="text-2xl text-[#331A15]" onClick={() => setIsMobileSidebarOpen(true)}>
+            <button
+              className="text-2xl text-[#331A15]"
+              onClick={() => setIsMobileSidebarOpen(true)}
+            >
               <FaBars />
             </button>
           </div>

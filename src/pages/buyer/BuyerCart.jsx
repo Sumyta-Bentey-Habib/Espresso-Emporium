@@ -3,6 +3,9 @@ import { useAuth } from "../../context/AuthProvider";
 import Swal from "sweetalert2";
 
 const BuyerCart = () => {
+  useEffect(() => {
+      document.title = "Buyer";
+    }, []);
   const { user } = useAuth();
   const [items, setItems] = useState([]);
   const [reviews, setReviews] = useState({});
