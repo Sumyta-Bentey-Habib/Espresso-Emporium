@@ -4,7 +4,7 @@ import HomeLayout from "../layouts/HomeLayout";
 import Home from "../pages/Home";
 import AboutUs from "../pages/AboutUs";
 import ContactUs from "../pages/ContactUs";
-import AllCoffee from "../pages/AllCoffee";
+import AllCoffee from "../components/AllCoffee";
 import Login from "../pages/Login";
 import Register from "../pages/Register";
 import ErrorPage from "../components/ErrorPage";
@@ -15,12 +15,12 @@ import ManageUsers from "../pages/admin/ManageUsers";
 import ManageProducts from "../pages/admin/ManageProducts";
 
 // Buyer Pages
-import BuyerViewProducts from "../pages/buyer/BuyerViewProducts";
 import BuyerCart from "../pages/buyer/BuyerCart";
 
 // Seller Pages
 import SellerProducts from "../pages/seller/SellerProducts";
 import SellerAddProduct from "../pages/seller/SellerAddProduct";
+import CoffeeStore from "../pages/CoffeeStore";
 
 
 const router = createBrowserRouter([
@@ -30,7 +30,7 @@ const router = createBrowserRouter([
   { path: "/register", element: <Register /> },
   {path:"/about-us",element:<AboutUs></AboutUs>},
   {path:"/contract",element:<ContactUs></ContactUs>},
-  {path:"/all-coffee",element:<AllCoffee></AllCoffee>},
+  {path:"/coffee-store",element:<CoffeeStore></CoffeeStore>},
   {
     path: "/dashboard",
     element: <DashboardLayout />,
@@ -40,7 +40,7 @@ const router = createBrowserRouter([
       { path: "products", element: <ManageProducts /> },
 
       // Buyer
-      { path: "view-products", element: <BuyerViewProducts /> },
+      
       { path: "cart", element: <BuyerCart /> },
 
       // Seller

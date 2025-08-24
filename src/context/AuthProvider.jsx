@@ -16,10 +16,10 @@ export const AuthProvider = ({ children }) => {
   // Fetch user data from backend (MongoDB)
   const fetchUserFromDB = async (uid, email) => {
     try {
-      const res = await fetch(`http://localhost:3000/users/${uid}`); 
+      const res = await fetch(`https://espresso-emporium-server-phi.vercel.app/users/${uid}`); 
       if (!res.ok) {
         // fallback: try email
-        const res2 = await fetch(`http://localhost:3000/users/${email}`);
+        const res2 = await fetch(`https://espresso-emporium-server-phi.vercel.app/users/${email}`);
         if (!res2.ok) return null;
         return await res2.json();
       }

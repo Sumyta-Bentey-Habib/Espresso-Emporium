@@ -6,8 +6,8 @@ const ManageUsers = () => {
 
   const fetchUsers = async () => {
     const url = search
-      ? `http://localhost:3000/users?search=${encodeURIComponent(search)}`
-      : "http://localhost:3000/users";
+      ? `https://espresso-emporium-server-phi.vercel.app/users?search=${encodeURIComponent(search)}`
+      : "https://espresso-emporium-server-phi.vercel.app/users";
     const res = await fetch(url);
     const data = await res.json();
     setUsers(data);
@@ -19,7 +19,7 @@ const ManageUsers = () => {
 
   const handleDelete = async (id) => {
     if (!confirm("Delete this user?")) return;
-    await fetch(`http://localhost:3000/users/${id}`, { method: "DELETE" });
+    await fetch(`https://espresso-emporium-server-phi.vercel.app/users/${id}`, { method: "DELETE" });
     fetchUsers();
   };
 
@@ -29,7 +29,7 @@ const ManageUsers = () => {
       currentRole || ""
     );
     if (!nextRole) return;
-    await fetch(`http://localhost:3000/users/${id}`, {
+    await fetch(`https://espresso-emporium-server-phi.vercel.app/users/${id}`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ role: nextRole }),

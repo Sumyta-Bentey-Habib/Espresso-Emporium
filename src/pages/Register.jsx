@@ -40,7 +40,7 @@ const Register = () => {
 
   const saveUserToDB = async (user) => {
     try {
-      await fetch("http://localhost:3000/users", {
+      await fetch("https://espresso-emporium-server-phi.vercel.app/users", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(user),

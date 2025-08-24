@@ -26,7 +26,7 @@ const SellerAddProduct = () => {
     };
 
     try {
-      const res = await fetch("http://localhost:3000/products", {
+      const res = await fetch("https://espresso-emporium-server-phi.vercel.app/products", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
@@ -70,14 +70,14 @@ const SellerAddProduct = () => {
           placeholder="Product Name"
           value={form.name}
           onChange={handleChange}
-          className="w-full p-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-600 text-gray-900 placeholder-gray-400"
+          className="w-full p-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-600 text-gray-900 "
         />
         <input
           name="image"
           placeholder="Image URL"
           value={form.image}
           onChange={handleChange}
-          className="w-full p-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-600 text-gray-900 placeholder-gray-400"
+          className="w-full p-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-600 text-gray-900 "
         />
         <input
           name="price"
@@ -85,14 +85,14 @@ const SellerAddProduct = () => {
           placeholder="Price"
           value={form.price}
           onChange={handleChange}
-          className="w-full p-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-600 text-gray-900 placeholder-gray-400"
+          className="w-full p-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-600 text-gray-900"
         />
         <input
           name="availability"
           placeholder="Availability (e.g. In Stock)"
           value={form.availability}
           onChange={handleChange}
-          className="w-full p-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-600 text-gray-900 placeholder-gray-400"
+          className="w-full p-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-600 text-gray-900 "
         />
         <textarea
           name="description"
@@ -100,7 +100,7 @@ const SellerAddProduct = () => {
           value={form.description}
           onChange={handleChange}
           rows="3"
-          className="w-full p-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-600 text-gray-900 placeholder-gray-400"
+          className="w-full p-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-600 text-gray-900 "
         />
         <button
           type="submit"

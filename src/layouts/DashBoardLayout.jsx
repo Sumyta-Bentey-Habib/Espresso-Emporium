@@ -3,10 +3,11 @@ import { useAuth } from "../context/AuthProvider";
 import AdminDashboard from "../pages/admin/AdminDashboard";
 import BuyerDashboard from "../pages/buyer/BuyerDashboard";
 import SellerDashboard from "../pages/seller/SellerDashboard";
+import Loader from "../components/Loader";
 
 const DashboardLayout = () => {
   const { user: authUser, loading: authLoading } = useAuth(); 
-  const [user, setUser] = useState(null); // full user with role
+  const [user, setUser] = useState(null); 
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -18,7 +19,7 @@ const DashboardLayout = () => {
     const fetchUserRole = async () => {
       try {
         // fetch user from backend by email or uid
-        const res = await fetch(`http://localhost:3000/users/${authUser.email}`);
+        const res = await fetch(`https://espresso-emporium-server-phi.vercel.app/users/${authUser.email}`);
         const data = await res.json();
         setUser(data);
       } catch (error) {
@@ -31,7 +32,10 @@ const DashboardLayout = () => {
     fetchUserRole();
   }, [authUser]);
 
-  if (authLoading || loading) return <p>Loading...</p>;
+  if (authLoading || loading) return 
+  <p>
+    <Loader></Loader>
+  </p>;
   if (!authUser) return <p>Please login</p>;
   if (!user) return <p>User data not found</p>;
 

@@ -11,7 +11,7 @@ const NavBar = () => {
         <NavLink to="/">Home</NavLink>
       </li>
       <li>
-        <NavLink to="/all-coffee">Coffee Store</NavLink>
+        <NavLink to="/coffee-store">Coffee Store</NavLink>
       </li>
       {user && ( 
         <li>
@@ -56,35 +56,10 @@ const NavBar = () => {
           </div>
           <ul
             tabIndex={0}
-            className="menu menu-sm dropdown-content bg-black/70 text-white rounded-box z-10 mt-3 w-52 p-2 shadow"
+            className="menu menu-sm dropdown-content bg-black/70 text-white rounded-box z-10 mt-3 w-52 p-2 shadow "
           >
-            {navItems}
-            {user ? (
-              <li>
-                <button
-                  onClick={logOut}
-                  className="btn btn-outline btn-sm w-full text-white border-white hover:bg-white hover:text-black"
-                >
-                  Logout
-                </button>
-              </li>
-            ) : (
-              <>
-                <li>
-                  <NavLink
-                    to="/login"
-                    className="btn btn-outline btn-sm w-full text-white border-white hover:bg-white hover:text-black"
-                  >
-                    Login
-                  </NavLink>
-                </li>
-                <li>
-                  <NavLink to="/register" className="btn btn-primary btn-sm w-full">
-                    Register
-                  </NavLink>
-                </li>
-              </>
-            )}
+               {navItems}
+  
           </ul>
         </div>
 
