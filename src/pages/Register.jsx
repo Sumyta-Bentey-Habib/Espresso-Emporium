@@ -156,7 +156,7 @@ const Register = () => {
         </div>
 
         <div className="w-full max-w-md p-8 space-y-6 bg-white shadow-xl md:w-1/2 rounded-2xl">
-          <h1 className="text-3xl font-bold text-center text-gray-900">Register</h1>
+          <h1 className="text-3xl font-bold text-center text-black">Register</h1>
 
           <div className="flex justify-center gap-4 mb-4">
             {["Buyer", "Seller"].map((r) => (
@@ -183,7 +183,7 @@ const Register = () => {
                   value={formData.name}
                   onChange={handleChange}
                   required
-                  className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-violet-400"
+                  className="w-full px-4 py-2 border rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-violet-400"
                 />
                 <input
                   type="email"
@@ -192,7 +192,7 @@ const Register = () => {
                   value={formData.email}
                   onChange={handleChange}
                   required
-                  className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-violet-400"
+                  className="w-full px-4 py-2 border rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-violet-400"
                 />
                 <input
                   type="password"
@@ -201,9 +201,9 @@ const Register = () => {
                   value={formData.password}
                   onChange={handleChange}
                   required
-                  className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-violet-400"
+                  className="w-full px-4 py-2 border rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-violet-400"
                 />
-                <p className="text-xs text-gray-700">
+                <p className="text-xs text-black">
                   Must be at least 6 characters, with uppercase and lowercase letters.
                 </p>
 
@@ -212,7 +212,7 @@ const Register = () => {
                   type="file"
                   accept="image/*"
                   onChange={handleFileChange}
-                  className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-violet-400"
+                  className="w-full px-4 py-2 border rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-violet-400"
                 />
                 {preview && (
                   <img
@@ -242,13 +242,13 @@ const Register = () => {
             </>
           )}
 
-          <p className="text-sm text-center text-gray-900">
+          <p className="text-sm text-center text-black">
             Already have an account?
-            <NavLink to="/login" className="ml-1 text-violet-600 hover:underline">
+            <NavLink to="/login" className="ml-1 text-black hover:underline">
               Login
             </NavLink>
             <br />
-            <NavLink to="/" className="ml-1 text-violet-600 hover:underline">
+            <NavLink to="/" className="ml-1 text-black hover:underline">
               Return Home
             </NavLink>
           </p>
