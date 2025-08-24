@@ -6,8 +6,9 @@ import SharedNav from "../../shared/SharedNav";
 
 const SellerDashboard = () => {
   useEffect(() => {
-          document.title = "Seller";
-        }, []);
+    document.title = "Seller";
+  }, []);
+
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
 
@@ -23,14 +24,8 @@ const SellerDashboard = () => {
     <>
       <SharedNav />
 
-      <div className="flex min-h-screen bg-[#F5F5F5]"
-      style={{
-              backgroundImage: "url('/more/1.png')",
-              backgroundSize: "cover",
-              backgroundPosition: "center",
-            }}
-      
-      >
+      <div className="flex min-h-screen bg-[#F5F5F5]">
+
         {/* Mobile Overlay */}
         {isMobileSidebarOpen && (
           <div
@@ -43,10 +38,10 @@ const SellerDashboard = () => {
         <aside
           className={`
             fixed z-40 top-0 left-0 h-full bg-[#331A15] text-white flex flex-col shadow-lg
-            transform transition-all duration-300
+            transform transition-transform duration-300
             ${isSidebarOpen ? "w-64" : "w-20"}
             md:static md:translate-x-0
-            ${isMobileSidebarOpen ? "translate-x-0 w-64" : "md:translate-x-0"}
+            ${isMobileSidebarOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"}
           `}
         >
           <div className="flex items-center justify-between p-6 border-b border-amber-700">
@@ -62,7 +57,7 @@ const SellerDashboard = () => {
 
             {/* Close button Mobile */}
             <button className="md:hidden text-amber-200 text-xl" onClick={() => setIsMobileSidebarOpen(false)}>
-              <FaBars />
+              <FaChevronLeft />
             </button>
           </div>
 
@@ -79,7 +74,6 @@ const SellerDashboard = () => {
                 {item.icon}
                 {isSidebarOpen && item.label}
 
-                {/* Tooltip for collapsed sidebar */}
                 {!isSidebarOpen && (
                   <span className="absolute left-full top-1/2 -translate-y-1/2 ml-2 w-max px-2 py-1 rounded-md bg-amber-700 text-white text-sm opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
                     {item.label}
@@ -100,10 +94,14 @@ const SellerDashboard = () => {
           </div>
 
           <div
-            className="flex-1 p-8"
-            
+            className="flex-1 p-4 md:p-8 bg-white rounded-xl shadow-lg"
+            style={{
+              backgroundImage: "url('/more/1.png')",
+              backgroundSize: "cover",
+              backgroundPosition: "center",
+            }}
           >
-            <div className=" backdrop-blur-lg  p-6">
+            <div className="bg-white/80 backdrop-blur-lg shadow-md rounded-2xl p-6">
               <Outlet />
             </div>
           </div>

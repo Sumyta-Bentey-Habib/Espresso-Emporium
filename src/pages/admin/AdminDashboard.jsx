@@ -14,6 +14,7 @@ const AdminDashboard = () => {
   useEffect(() => {
     document.title = "Admin";
   }, []);
+
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
 
@@ -21,11 +22,7 @@ const AdminDashboard = () => {
 
   const menuItems = [
     { to: "/dashboard/users", icon: <FaUsers size={18} />, label: "Users" },
-    {
-      to: "/dashboard/products",
-      icon: <FaBoxOpen size={18} />,
-      label: "Products",
-    },
+    { to: "/dashboard/products", icon: <FaBoxOpen size={18} />, label: "Products" },
     { to: "/", icon: <FaHome size={18} />, label: "Return Home" },
   ];
 
@@ -34,6 +31,7 @@ const AdminDashboard = () => {
       <SharedNav />
 
       <div className="flex min-h-screen bg-[#F5F5F5]">
+
         {/* Mobile Overlay */}
         {isMobileSidebarOpen && (
           <div
@@ -46,18 +44,14 @@ const AdminDashboard = () => {
         <aside
           className={`
             fixed z-40 top-0 left-0 h-full bg-[#331A15] text-white flex flex-col shadow-lg
-            transform transition-all duration-300
+            transform transition-transform duration-300
             ${isSidebarOpen ? "w-64" : "w-20"}
             md:static md:translate-x-0
-            ${isMobileSidebarOpen ? "translate-x-0 w-64" : "md:translate-x-0"}
+            ${isMobileSidebarOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"}
           `}
         >
           <div className="flex items-center justify-between p-6 border-b border-amber-700">
-            <div
-              className={`flex flex-col items-center md:items-start ${
-                isSidebarOpen ? "" : "hidden md:flex"
-              }`}
-            >
+            <div className={`flex flex-col items-center md:items-start ${isSidebarOpen ? "" : "hidden md:flex"}`}>
               <h1 className="text-2xl font-bold raleway">Admin Panel</h1>
               <p className="text-sm text-amber-200">Welcome, Admin</p>
             </div>
@@ -75,7 +69,7 @@ const AdminDashboard = () => {
               className="md:hidden text-amber-200 text-xl"
               onClick={() => setIsMobileSidebarOpen(false)}
             >
-              <FaBars />
+              <FaChevronLeft />
             </button>
           </div>
 
@@ -86,11 +80,7 @@ const AdminDashboard = () => {
                 to={item.to}
                 className={({ isActive }) =>
                   `relative flex items-center gap-3 px-4 py-2 rounded-lg transition group
-                  ${
-                    isActive
-                      ? "bg-amber-700 text-white"
-                      : "text-amber-100 hover:bg-amber-600"
-                  }`
+                  ${isActive ? "bg-amber-700 text-white" : "text-amber-100 hover:bg-amber-600"}`
                 }
               >
                 {item.icon}
@@ -109,9 +99,8 @@ const AdminDashboard = () => {
 
         {/* Main Content */}
         <main
-          className={`flex-1 flex flex-col transition-all duration-300 ${
-            isSidebarOpen ? "md:ml-64" : "md:ml-20"
-          }`}
+          className={`flex-1 flex flex-col transition-all duration-300 
+            ${isSidebarOpen ? "md:ml-64" : "md:ml-20"}`}
         >
           {/* Mobile Menu Button */}
           <div className="p-4 md:hidden">
@@ -124,7 +113,7 @@ const AdminDashboard = () => {
           </div>
 
           <div
-            className="flex-1 p-8 bg-white rounded-xl shadow-lg"
+            className="flex-1 p-4 md:p-8"
             style={{
               backgroundImage: "url('/more/1.png')",
               backgroundSize: "cover",

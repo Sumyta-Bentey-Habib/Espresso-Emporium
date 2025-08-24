@@ -19,7 +19,7 @@ const Banner = () => {
             nostalgia back!! Your companion of every moment!!! Enjoy the
             beautiful moments and make them memorable.
           </p>
-          <NavLink>
+          <NavLink to="/about-us">
             <button className="btn bg-[#E3B577]">Learn More</button>
           </NavLink>
         </div>
