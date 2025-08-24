@@ -1,205 +1,234 @@
 import React, { useEffect, useState } from "react";
-import { useAuth } from "../../context/AuthProvider";
 import Swal from "sweetalert2";
 
 const ManageProducts = () => {
-  useEffect(() => {
-      document.title = "Admin";
-    }, []);
-  const { user } = useAuth();
   const [products, setProducts] = useState([]);
   const [search, setSearch] = useState("");
+  const [selectedProduct, setSelectedProduct] = useState(null);
+  const [updateData, setUpdateData] = useState({
+    name: "",
+    price: "",
+    image: "",
+    sellerName: "",
+    sellerLocation: "",
+  });
 
+  useEffect(() => {
+    document.title = "Manage Products";
+  }, []);
+
+  // Fetch products
   const fetchProducts = async () => {
-    const url = search
-      ? `https://espresso-emporium-server-phi.vercel.app/products?search=${encodeURIComponent(search)}`
-      : "https://espresso-emporium-server-phi.vercel.app/products";
-    const res = await fetch(url);
-    const data = await res.json();
+    try {
+      let url = `https://espresso-emporium-server-phi.vercel.app/products`;
+      if (search) {
+        url += `?search=${encodeURIComponent(search)}`;
+      }
 
-    const productsWithReviews = await Promise.all(
-      data.map(async (p) => {
-        const revRes = await fetch(`https://espresso-emporium-server-phi.vercel.app/reviews/${p._id}`);
-        const reviews = await revRes.json();
-        return { ...p, reviews };
-      })
-    );
+      const res = await fetch(url);
+      const data = await res.json();
 
-    setProducts(productsWithReviews);
+      // Normalize data if needed (handle MongoDB objectId and price formats)
+      const normalized = data.map((p) => ({
+        ...p,
+        _id: p._id?.$oid || p._id,
+        price: p.price?.$numberInt ? Number(p.price.$numberInt) : p.price,
+      }));
+
+      setProducts(normalized);
+    } catch (error) {
+      console.error("Error fetching products:", error);
+    }
   };
 
   useEffect(() => {
     fetchProducts();
   }, [search]);
 
-  const handleDeleteProduct = async (id) => {
+  // Delete product
+  const deleteProduct = async (id) => {
     const confirm = await Swal.fire({
       title: "Are you sure?",
-      text: "Do you want to delete this product?",
+      text: "This will delete the product permanently!",
       icon: "warning",
       showCancelButton: true,
-      confirmButtonColor: "#331A15",
-      cancelButtonColor: "#d33",
       confirmButtonText: "Yes, delete it!",
     });
-    if (!confirm.isConfirmed) return;
 
-    await fetch(`https://espresso-emporium-server-phi.vercel.app/products/${id}`, { method: "DELETE" });
-    Swal.fire({
-      icon: "success",
-      title: "Deleted!",
-      text: "Product has been deleted.",
-      confirmButtonColor: "#331A15",
-    });
-    fetchProducts();
+    if (confirm.isConfirmed) {
+      try {
+        await fetch(`https://espresso-emporium-server-phi.vercel.app/products/${id}`, {
+          method: "DELETE",
+        });
+        Swal.fire("Deleted!", "Product has been deleted.", "success");
+        fetchProducts();
+      } catch (error) {
+        Swal.fire("Error", "Failed to delete product", "error");
+      }
+    }
   };
 
-  const handleEdit = async (p) => {
-    const name = prompt("Name:", p.name);
-    if (!name && name !== "") return;
-    const priceStr = prompt("Price:", p.price);
-    if (priceStr === null) return;
-    const price = Number(priceStr);
-    const availability = prompt("Availability:", p.availability || "");
-    if (availability === null) return;
-    const description = prompt("Description:", p.description || "");
-    if (description === null) return;
-
-    await fetch(`https://espresso-emporium-server-phi.vercel.app/products/${p._id}`, {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ name, price, availability, description }),
+  // Open update modal
+  const openUpdateModal = (product) => {
+    setSelectedProduct(product);
+    setUpdateData({
+      name: product.name,
+      price: product.price,
+      image: product.image,
+      sellerName: product.sellerName,
+      sellerLocation: product.sellerLocation,
     });
-    Swal.fire({
-      icon: "success",
-      title: "Updated!",
-      text: "Product has been updated.",
-      confirmButtonColor: "#331A15",
-    });
-    fetchProducts();
   };
 
-  const handleDeleteReview = async (reviewId) => {
-    const confirm = await Swal.fire({
-      title: "Are you sure?",
-      text: "Do you want to delete this review?",
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonColor: "#331A15",
-      cancelButtonColor: "#d33",
-      confirmButtonText: "Yes, delete it!",
-    });
-    if (!confirm.isConfirmed) return;
+  // Handle update input change
+  const handleChange = (e) => {
+    setUpdateData({ ...updateData, [e.target.name]: e.target.value });
+  };
 
-    const res = await fetch(
-      `https://espresso-emporium-server-phi.vercel.app/reviews/${reviewId}?requesterId=${user._id}`,
-      { method: "DELETE" }
-    );
-    const result = await res.json();
+  // Submit update
+  const submitUpdate = async () => {
+    try {
+      const res = await fetch(
+        `https://espresso-emporium-server-phi.vercel.app/products/${selectedProduct._id}`,
+        {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(updateData),
+        }
+      );
 
-    if (res.ok) {
-      Swal.fire({
-        icon: "success",
-        title: "Deleted!",
-        text: result.message || "Review deleted",
-        confirmButtonColor: "#331A15",
-      });
-      fetchProducts();
-    } else {
-      Swal.fire({
-        icon: "error",
-        title: "Error!",
-        text: result.message || "Could not delete review",
-        confirmButtonColor: "#331A15",
-      });
+      if (res.ok) {
+        Swal.fire("Updated!", "Product has been updated.", "success");
+        setSelectedProduct(null);
+        fetchProducts();
+      } else {
+        Swal.fire("Error", "Failed to update product", "error");
+      }
+    } catch (error) {
+      Swal.fire("Error", "Failed to update product", "error");
     }
   };
 
   return (
-    <div className="space-y-6 p-4 bg-gray-50 min-h-screen">
-      {/* Search Bar */}
-      <div className="flex gap-2">
+    <div className="p-6">
+      <h1 className="text-2xl font-bold mb-6">Manage Products</h1>
+
+      {/* Search bar */}
+      <div className="flex mb-6">
         <input
-          className="border border-gray-300 rounded-lg px-4 py-2 w-full focus:outline-none focus:ring-2 focus:ring-amber-300 text-gray-900"
-          placeholder="Search by product/company name"
+          type="text"
+          placeholder="Search by product name..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
+          className="border border-gray-300 px-4 py-2 rounded-lg w-80 focus:outline-none focus:ring-2 focus:ring-amber-700"
         />
-        <button
-          onClick={fetchProducts}
-          className="px-6 py-2 rounded-lg bg-amber-700 text-white hover:bg-amber-900 transition font-semibold"
-        >
-          Search
-        </button>
       </div>
 
-      {/* Products Grid */}
-      <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {products.map((p) => (
-          <div
-            key={p._id}
-            className="bg-white shadow-md rounded-2xl overflow-hidden flex flex-col transition hover:shadow-lg"
-          >
-            <img src={p.image} alt={p.name} className="w-full h-48 object-cover" />
-            <div className="p-4 flex flex-col flex-1">
-              <h2 className="font-semibold text-lg text-gray-900">{p.name}</h2>
-              <p className="text-sm text-gray-700">Seller: {p.sellerEmail || "-"}</p>
-              <p className="text-sm text-gray-700">Availability: {p.availability || "-"}</p>
-              <p className="text-sm font-medium text-amber-700">Price: ${p.price}</p>
-              <p className="text-xs text-gray-600 line-clamp-2 mt-1">{p.description}</p>
+      {/* Product List */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        {products.map((product) => (
+          <div key={product._id} className="bg-white p-4 shadow rounded flex flex-col">
+            <img
+              src={product.image || "/default-coffee.jpg"}
+              alt={product.name}
+              className="w-full h-40 object-cover rounded"
+            />
+            <h2 className="text-lg font-semibold mt-2">{product.name}</h2>
+            <p className="text-gray-600">
+              Seller: {product.sellerName || "Unknown"} ({product.sellerLocation || "No location"})
+            </p>
+            <p className="text-gray-800 mt-1">Price: ${product.price}</p>
 
-              <div className="flex gap-2 mt-4">
-                <button
-                  onClick={() => handleEdit(p)}
-                  className="px-4 py-1.5 rounded-lg bg-amber-600 text-white hover:bg-amber-800 transition text-sm font-semibold"
-                >
-                  Edit
-                </button>
-                <button
-                  onClick={() => handleDeleteProduct(p._id)}
-                  className="px-4 py-1.5 rounded-lg bg-rose-600 text-white hover:bg-rose-800 transition text-sm font-semibold"
-                >
-                  Delete
-                </button>
-              </div>
-
-              {/* Reviews */}
-              <div className="mt-4">
-                <h3 className="font-semibold text-sm text-gray-900 mb-2">Reviews:</h3>
-                <div className="flex flex-col gap-2 max-h-64 overflow-y-auto">
-                  {p.reviews.length ? (
-                    p.reviews.map((r) => (
-                      <div
-                        key={r._id}
-                        className="bg-gray-100 rounded-lg p-3 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 shadow-sm"
-                      >
-                        <div className="flex-1">
-                          <div className="font-medium text-gray-900 text-sm">{r.buyerName || r.buyerEmail}</div>
-                          <div className="text-gray-700 text-sm">{r.feedback}</div>
-                          <div className="text-gray-500 text-[10px] mt-1">{new Date(r.createdAt).toLocaleString()}</div>
-                        </div>
-                        {(user.role === "Admin" || user.email === p.sellerEmail) && (
-                          <button
-                            onClick={() => handleDeleteReview(r._id)}
-                            className="px-3 py-1 rounded bg-rose-600 hover:bg-rose-700 text-white text-xs"
-                          >
-                            Delete
-                          </button>
-                        )}
-                      </div>
-                    ))
-                  ) : (
-                    <p className="text-gray-500 text-xs">No reviews yet.</p>
-                  )}
-                </div>
-              </div>
+            <div className="mt-4 flex gap-2">
+              <button
+                onClick={() => openUpdateModal(product)}
+                className="flex-1 px-4 py-2 rounded-lg bg-amber-700 text-white hover:bg-amber-800 transition"
+              >
+                Update
+              </button>
+              <button
+                onClick={() => deleteProduct(product._id)}
+                className="flex-1 px-4 py-2 rounded-lg bg-rose-600 text-white hover:bg-rose-700 transition"
+              >
+                Delete
+              </button>
             </div>
           </div>
         ))}
+        {products.length === 0 && (
+          <p className="col-span-full text-center text-gray-500">No products found.</p>
+        )}
       </div>
 
-      {!products.length && (
-        <p className="text-center text-gray-500 font-medium">No products found.</p>
+      {/* Update Modal */}
+      {selectedProduct && (
+        <div
+          className="fixed inset-0 bg-black/40 flex justify-center items-center z-50"
+          onClick={() => setSelectedProduct(null)}
+        >
+          <div
+            className="bg-white rounded-2xl p-6 w-full max-w-md relative text-gray-900"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <h2 className="text-xl font-bold mb-4">Update Product: {selectedProduct.name}</h2>
+
+            <input
+              type="text"
+              name="name"
+              placeholder="Product Name"
+              value={updateData.name}
+              onChange={handleChange}
+              className="border px-2 py-1 rounded w-full mb-3"
+            />
+            <input
+              type="number"
+              name="price"
+              placeholder="Price"
+              value={updateData.price}
+              onChange={handleChange}
+              className="border px-2 py-1 rounded w-full mb-3"
+            />
+            <input
+              type="text"
+              name="image"
+              placeholder="Image URL"
+              value={updateData.image}
+              onChange={handleChange}
+              className="border px-2 py-1 rounded w-full mb-3"
+            />
+            <input
+              type="text"
+              name="sellerName"
+              placeholder="Seller Name"
+              value={updateData.sellerName}
+              onChange={handleChange}
+              className="border px-2 py-1 rounded w-full mb-3"
+            />
+            <input
+              type="text"
+              name="sellerLocation"
+              placeholder="Seller Location"
+              value={updateData.sellerLocation}
+              onChange={handleChange}
+              className="border px-2 py-1 rounded w-full mb-3"
+            />
+
+            <div className="flex justify-end gap-2">
+              <button
+                onClick={() => setSelectedProduct(null)}
+                className="px-4 py-2 rounded-lg bg-gray-400 text-white hover:bg-gray-500 transition"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={submitUpdate}
+                className="px-4 py-2 rounded-lg bg-amber-700 text-white hover:bg-amber-800 transition"
+              >
+                Update
+              </button>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );

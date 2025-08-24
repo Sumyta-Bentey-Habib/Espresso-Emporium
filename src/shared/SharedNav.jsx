@@ -11,9 +11,9 @@ const SharedNav = () => {
       }}
       className="py-4"
     >
-      <div className="flex items-center justify-center gap-2">
-        <img src="/more/logo1.png" alt="Logo" className="h-10 w-auto" />
-          Espresso Emporium
+      <div className="flex items-center justify-center gap-2 text-white">
+        <img src="/more/logo1.png" alt="Logo" className="h-10 w-auto " />
+        Espresso Emporium
       </div>
     </div>
   );

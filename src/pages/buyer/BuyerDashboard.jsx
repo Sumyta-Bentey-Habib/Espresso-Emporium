@@ -15,8 +15,8 @@ const BuyerDashboard = () => {
   const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
 
   const menuItems = [
-    { to: "/all-coffee", icon: <Coffee size={18} />, label: "All Coffee" },
-    { to: "/dashboard/cart", icon: <FaShoppingCart size={18} />, label: "My Cart" },
+    { to: "/coffee-store", icon: <Coffee size={18} />, label: "All Coffee" },
+    { to: "/dashboard/cart", icon: <FaShoppingCart size={18} />, label: "Wish List" },
     { to: "/", icon: <FaHome size={18} />, label: "Return Home" },
   ];
 

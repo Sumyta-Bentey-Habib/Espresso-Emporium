@@ -6,8 +6,7 @@ import { auth } from "../firebase/firebase.init";
 import { useAuth } from "../context/AuthProvider";
 import { useNavigate, NavLink } from "react-router-dom";
 import { FcGoogle } from "react-icons/fc";
-import { uploadImageToImgBB } from "../utils/utils"; 
-
+import { uploadImageToImgBB } from "../utils/utils";
 import registrationAnimation from "../assets/lottie/register.json";
 import SharedNav from "../shared/SharedNav";
 
@@ -20,11 +19,12 @@ const Register = () => {
     email: "",
     password: "",
     photoURL: "",
+    location: "",
   });
   const [role, setRole] = useState("");
   const [loading, setLoading] = useState(false);
-  const [profileFile, setProfileFile] = useState(null); // file state
-  const [preview, setPreview] = useState(null); // preview URL
+  const [profileFile, setProfileFile] = useState(null);
+  const [preview, setPreview] = useState(null);
 
   useEffect(() => {
     document.title = "Register";
@@ -32,9 +32,7 @@ const Register = () => {
       const objectUrl = URL.createObjectURL(profileFile);
       setPreview(objectUrl);
       return () => URL.revokeObjectURL(objectUrl);
-    } else {
-      setPreview(null);
-    }
+    } else setPreview(null);
   }, [profileFile]);
 
   const handleChange = (e) => {
@@ -66,7 +64,7 @@ const Register = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const { name, email, password } = formData;
+    const { name, email, password, location } = formData;
 
     if (!role) return Swal.fire("Error", "Please select a role first.", "error");
     if (!name || !email || !password)
@@ -80,24 +78,24 @@ const Register = () => {
 
     setLoading(true);
     try {
-      // Upload image if file selected
       let uploadedURL = formData.photoURL;
       if (profileFile) {
         uploadedURL = await uploadImageToImgBB(profileFile);
       }
 
       const result = await createUserWithEmailAndPassword(auth, email, password);
+      await updateProfile(result.user, { displayName: name, photoURL: uploadedURL || "" });
 
-      await updateProfile(result.user, {
-        displayName: name,
-        photoURL: uploadedURL || "",
+      await saveUserToDB({
+        name,
+        email,
+        photoURL: uploadedURL,
+        role,
+        location: role === "Seller" ? location : "",
       });
 
-      await saveUserToDB({ name, email, photoURL: uploadedURL, role });
-
       Swal.fire("Success", `Registration completed as ${role}!`, "success");
-
-      setFormData({ name: "", email: "", password: "", photoURL: "" });
+      setFormData({ name: "", email: "", password: "", photoURL: "", location: "" });
       setRole("");
       setProfileFile(null);
       navigate("/");
@@ -110,17 +108,15 @@ const Register = () => {
 
   const handleGoogleRegister = async () => {
     if (!role) return Swal.fire("Error", "Please select a role first.", "error");
-
     try {
       const result = await googleLogin();
-
       const saveUser = {
         name: result.user.displayName,
         email: result.user.email,
         photoURL: result.user.photoURL,
         role,
+        location: role === "Seller" ? formData.location : "",
       };
-
       await saveUserToDB(saveUser);
 
       Swal.fire({
@@ -132,11 +128,7 @@ const Register = () => {
 
       navigate("/");
     } catch (error) {
-      Swal.fire({
-        icon: "error",
-        title: "Google Registration Failed",
-        text: error.message,
-      });
+      Swal.fire({ icon: "error", title: "Google Registration Failed", text: error.message });
     }
   };
 
@@ -176,51 +168,77 @@ const Register = () => {
           {role && (
             <>
               <form onSubmit={handleSubmit} className="space-y-5">
-                <input
-                  type="text"
-                  name="name"
-                  placeholder="Name"
-                  value={formData.name}
-                  onChange={handleChange}
-                  required
-                  className="w-full px-4 py-2 border rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-violet-400"
-                />
-                <input
-                  type="email"
-                  name="email"
-                  placeholder="Email"
-                  value={formData.email}
-                  onChange={handleChange}
-                  required
-                  className="w-full px-4 py-2 border rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-violet-400"
-                />
-                <input
-                  type="password"
-                  name="password"
-                  placeholder="Password"
-                  value={formData.password}
-                  onChange={handleChange}
-                  required
-                  className="w-full px-4 py-2 border rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-violet-400"
-                />
-                <p className="text-xs text-black">
-                  Must be at least 6 characters, with uppercase and lowercase letters.
-                </p>
-
-                {/* File input & preview */}
-                <input
-                  type="file"
-                  accept="image/*"
-                  onChange={handleFileChange}
-                  className="w-full px-4 py-2 border rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-violet-400"
-                />
-                {preview && (
-                  <img
-                    src={preview}
-                    alt="Preview"
-                    className="w-24 h-24 object-cover rounded-full mx-auto mt-2"
+                {/* Name */}
+                <div>
+                  <label className="block mb-1 text-sm font-medium text-black">Full Name / Business Name</label>
+                  <input
+                    type="text"
+                    name="name"
+                    placeholder="Enter your name or business name"
+                    value={formData.name}
+                    onChange={handleChange}
+                    required
+                    className="w-full px-4 py-2 border rounded-lg text-black placeholder-black focus:outline-none focus:ring-2 focus:ring-violet-400"
                   />
+                </div>
+
+                {/* Email */}
+                <div>
+                  <label className="block mb-1 text-sm font-medium text-black">Email Address</label>
+                  <input
+                    type="email"
+                    name="email"
+                    placeholder="Enter your email"
+                    value={formData.email}
+                    onChange={handleChange}
+                    required
+                    className="w-full px-4 py-2 border rounded-lg text-black placeholder-black focus:outline-none focus:ring-2 focus:ring-violet-400"
+                  />
+                </div>
+
+                {/* Password */}
+                <div>
+                  <label className="block mb-1 text-sm font-medium text-black">Password</label>
+                  <input
+                    type="password"
+                    name="password"
+                    placeholder="Enter your password"
+                    value={formData.password}
+                    onChange={handleChange}
+                    required
+                    className="w-full px-4 py-2 border rounded-lg text-black placeholder-black focus:outline-none focus:ring-2 focus:ring-violet-400"
+                  />
+                </div>
+
+                {/* Location - only for Sellers */}
+                {role === "Seller" && (
+                  <div>
+                    <label className="block mb-1 text-sm font-medium text-black">Location</label>
+                    <input
+                      type="text"
+                      name="location"
+                      placeholder="Enter your shop location"
+                      value={formData.location}
+                      onChange={handleChange}
+                      required
+                      className="w-full px-4 py-2 border rounded-lg text-black placeholder-black focus:outline-none focus:ring-2 focus:ring-violet-400"
+                    />
+                  </div>
                 )}
+
+                {/* Profile Picture */}
+                <div>
+                  <label className="block mb-1 text-sm font-medium text-black">Profile Picture</label>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={handleFileChange}
+                    className="w-full px-4 py-2 border rounded-lg text-black placeholder-black focus:outline-none focus:ring-2 focus:ring-violet-400"
+                  />
+                  {preview && (
+                    <img src={preview} alt="Preview" className="w-24 h-24 object-cover rounded-full mx-auto mt-2" />
+                  )}
+                </div>
 
                 <button
                   type="submit"
@@ -242,7 +260,7 @@ const Register = () => {
             </>
           )}
 
-          <p className="text-sm text-center text-black">
+          <p className="text-sm text-center text-black mt-4">
             Already have an account?
             <NavLink to="/login" className="ml-1 text-black hover:underline">
               Login

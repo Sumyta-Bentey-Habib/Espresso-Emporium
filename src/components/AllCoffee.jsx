@@ -2,49 +2,59 @@ import React, { useEffect, useState } from "react";
 import { useAuth } from "../context/AuthProvider";
 import Swal from "sweetalert2";
 
-const AllCoffee = ({ limit }) => {
+const AllCoffee = ({ limit, search }) => {
   const { user } = useAuth();
   const [products, setProducts] = useState([]);
   const [reviews, setReviews] = useState({});
   const [selectedCoffee, setSelectedCoffee] = useState(null);
   const [ratingInput, setRatingInput] = useState("");
   const [feedbackInput, setFeedbackInput] = useState("");
-  const [search, setSearch] = useState("");
 
   // Fetch products and their reviews
   const fetchProducts = async () => {
-    const url = search
-      ? `https://espresso-emporium-server-phi.vercel.app/products?search=${encodeURIComponent(
-          search
-        )}`
-      : "https://espresso-emporium-server-phi.vercel.app/products";
+    try {
+      const url = search
+        ? `https://espresso-emporium-server-phi.vercel.app/products?search=${encodeURIComponent(search)}`
+        : "https://espresso-emporium-server-phi.vercel.app/products";
 
-    const res = await fetch(url);
-    const data = await res.json();
-    setProducts(limit ? data.slice(0, limit) : data);
+      const res = await fetch(url);
+      const data = await res.json();
 
-    // Fetch reviews for each product
-    data.forEach(async (p) => {
-      const r = await fetch(
-        `https://espresso-emporium-server-phi.vercel.app/reviews/${p._id}`
+      setProducts(limit ? data.slice(0, limit) : data);
+
+      // Fetch and normalize reviews for all products
+      const reviewsData = await Promise.all(
+        data.map(async (p) => {
+          const r = await fetch(`https://espresso-emporium-server-phi.vercel.app/reviews/${p._id}`);
+          const rdataRaw = await r.json();
+
+          // Normalize MongoDB extended JSON
+          const rdata = rdataRaw.map((rev) => ({
+            ...rev,
+            _id: rev._id?.$oid || rev._id,
+            rating: rev.rating?.$numberInt ? Number(rev.rating.$numberInt) : rev.rating,
+            createdAt: rev.createdAt?.$date?.$numberLong
+              ? new Date(Number(rev.createdAt.$date.$numberLong))
+              : rev.createdAt,
+          }));
+
+          return [p._id, rdata];
+        })
       );
-      const rdata = await r.json();
-      setReviews((prev) => ({ ...prev, [p._id]: rdata }));
-    });
+
+      setReviews(Object.fromEntries(reviewsData));
+    } catch (error) {
+      console.error("Failed to fetch products or reviews:", error);
+    }
   };
 
   useEffect(() => {
     fetchProducts();
   }, [search, limit]);
 
-  // Add to wishlist
+  // Add to wishlist/cart
   const handleAddToCart = async (coffee) => {
-    if (!user)
-      return Swal.fire(
-        "Login required",
-        "Please login to add to wishlist",
-        "info"
-      );
+    if (!user) return Swal.fire("Login required", "Please login to add to wishlist", "info");
 
     const cartItem = {
       buyerId: user._id,
@@ -52,19 +62,17 @@ const AllCoffee = ({ limit }) => {
       name: coffee.name,
       price: coffee.price,
       image: coffee.image,
+      sellerName: coffee.sellerName,
+      sellerLocation: coffee.sellerLocation,
     };
 
-    const res = await fetch(
-      "https://espresso-emporium-server-phi.vercel.app/cart",
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(cartItem),
-      }
-    );
+    const res = await fetch("https://espresso-emporium-server-phi.vercel.app/cart", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(cartItem),
+    });
 
-    if (res.ok)
-      Swal.fire("Added!", "Coffee added to wishlist", "success");
+    if (res.ok) Swal.fire("Added!", "Coffee added to wishlist", "success");
     else Swal.fire("Error", "Failed to add coffee", "error");
   };
 
@@ -81,14 +89,11 @@ const AllCoffee = ({ limit }) => {
       feedback: feedbackInput,
     };
 
-    const res = await fetch(
-      "https://espresso-emporium-server-phi.vercel.app/reviews",
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(review),
-      }
-    );
+    const res = await fetch("https://espresso-emporium-server-phi.vercel.app/reviews", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(review),
+    });
 
     if (res.ok) {
       Swal.fire("Thank you!", "Review submitted successfully", "success");
@@ -96,11 +101,18 @@ const AllCoffee = ({ limit }) => {
       setFeedbackInput("");
       setSelectedCoffee(null);
 
-      // refresh reviews for that coffee
-      const r = await fetch(
-        `https://espresso-emporium-server-phi.vercel.app/reviews/${review.coffeeId}`
-      );
-      const rdata = await r.json();
+      // Refetch and normalize reviews for this coffee
+      const r = await fetch(`https://espresso-emporium-server-phi.vercel.app/reviews/${review.coffeeId}`);
+      const rdataRaw = await r.json();
+      const rdata = rdataRaw.map((rev) => ({
+        ...rev,
+        _id: rev._id?.$oid || rev._id,
+        rating: rev.rating?.$numberInt ? Number(rev.rating.$numberInt) : rev.rating,
+        createdAt: rev.createdAt?.$date?.$numberLong
+          ? new Date(Number(rev.createdAt.$date.$numberLong))
+          : rev.createdAt,
+      }));
+
       setReviews((prev) => ({ ...prev, [review.coffeeId]: rdata }));
     } else Swal.fire("Error", "Failed to submit review", "error");
   };
@@ -118,7 +130,6 @@ const AllCoffee = ({ limit }) => {
         All Coffee Products
       </h1>
 
-      {/* Products List */}
       <div className="space-y-6 mt-6">
         {products.map((p) => {
           const productReviews = reviews[p._id] || [];
@@ -137,10 +148,11 @@ const AllCoffee = ({ limit }) => {
                 <div className="flex-1 p-4 flex flex-col justify-between">
                   <div className="space-y-2">
                     <h2 className="font-bold text-xl text-gray-900">{p.name}</h2>
-                    <div className="text-sm text-gray-900">💲 {p.price}</div>
                     <div className="text-sm text-gray-700">
-                      Availability: {p.availability || "N/A"}
+                      Seller: {p.sellerName || "Unknown"} ({p.sellerLocation || "No location"})
                     </div>
+                    <div className="text-sm text-gray-900">💲 {p.price}</div>
+                    <div className="text-sm text-gray-700">Availability: {p.availability || "N/A"}</div>
                     <div className="text-sm text-gray-700">{p.description || ""}</div>
                   </div>
 
@@ -163,27 +175,23 @@ const AllCoffee = ({ limit }) => {
                 </div>
               </div>
 
-              {/* Reviews Section */}
+              {/* Reviews */}
               <div className="p-4 border-t bg-gray-50">
                 <h3 className="font-semibold text-gray-800 mb-2">
                   Reviews ({productReviews.length})
                 </h3>
                 {productReviews.length > 0 ? (
                   <ul className="space-y-2">
-                    {productReviews.map((rev, idx) => (
-                      <li
-                        key={idx}
-                        className="border rounded p-2 bg-white shadow-sm"
-                      >
+                    {productReviews.map((rev) => (
+                      <li key={rev._id} className="border rounded p-2 bg-white shadow-sm">
                         <div className="flex justify-between text-sm">
-                          <span className="font-bold text-gray-900">
-                            {rev.buyerName || "Anonymous"}
-                          </span>
-                          <span className="text-yellow-600">
-                            ⭐ {rev.rating}/5
-                          </span>
+                          <span className="font-bold text-gray-900">{rev.buyerName || "Anonymous"}</span>
+                          <span className="text-yellow-600">⭐ {rev.rating}/5</span>
                         </div>
                         <p className="text-gray-700 text-sm mt-1">{rev.feedback}</p>
+                        <p className="text-xs text-gray-400 mt-1">
+                          {rev.createdAt ? new Date(rev.createdAt).toLocaleDateString() : ""}
+                        </p>
                       </li>
                     ))}
                   </ul>
@@ -197,9 +205,7 @@ const AllCoffee = ({ limit }) => {
       </div>
 
       {!products.length && (
-        <p className="text-center text-gray-700 font-medium mt-4">
-          No products found.
-        </p>
+        <p className="text-center text-gray-700 font-medium mt-4">No products found.</p>
       )}
 
       {/* Review Modal */}
@@ -212,9 +218,10 @@ const AllCoffee = ({ limit }) => {
             className="bg-white rounded-2xl p-6 w-full max-w-md relative text-gray-900"
             onClick={(e) => e.stopPropagation()}
           >
-            <h2 className="text-xl font-bold mb-4">
-              Review: {selectedCoffee.name}
-            </h2>
+            <h2 className="text-xl font-bold mb-4">Review: {selectedCoffee.name}</h2>
+            <div className="text-sm text-gray-700 mb-2">
+              Seller: {selectedCoffee.sellerName || "Unknown"} ({selectedCoffee.sellerLocation || "No location"})
+            </div>
             <input
               type="number"
               min="1"

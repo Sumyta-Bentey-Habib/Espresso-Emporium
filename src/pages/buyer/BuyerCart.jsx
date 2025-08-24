@@ -3,36 +3,56 @@ import { useAuth } from "../../context/AuthProvider";
 import Swal from "sweetalert2";
 
 const BuyerCart = () => {
-  useEffect(() => {
-      document.title = "Buyer";
-    }, []);
   const { user } = useAuth();
   const [items, setItems] = useState([]);
   const [reviews, setReviews] = useState({});
 
+  // Fetch cart items and reviews
   const fetchCart = async () => {
     if (!user?._id) return;
-    const res = await fetch(`https://espresso-emporium-server-phi.vercel.app/cart/${encodeURIComponent(user._id)}`);
-    const data = await res.json();
-    setItems(data);
 
-    // Fetch reviews for each cart item
-    data.forEach(async (it) => {
-      const r = await fetch(`https://espresso-emporium-server-phi.vercel.app/reviews/${it.coffeeId}`);
-      const rdata = await r.json();
-      setReviews((prev) => ({ ...prev, [it.coffeeId]: rdata }));
-    });
+    try {
+      const res = await fetch(
+        `https://espresso-emporium-server-phi.vercel.app/cart/${encodeURIComponent(user._id)}`
+      );
+      const data = await res.json();
+      setItems(data);
+
+      // Fetch all reviews in parallel
+      const reviewsData = await Promise.all(
+        data.map(async (item) => {
+          const r = await fetch(
+            `https://espresso-emporium-server-phi.vercel.app/reviews/${item.coffeeId}`
+          );
+          const rdata = await r.json();
+          return [item.coffeeId, rdata];
+        })
+      );
+
+      setReviews(Object.fromEntries(reviewsData));
+    } catch (error) {
+      console.error("Failed to fetch cart:", error);
+    }
+  };
+
+  // Remove item from cart
+  const removeItem = async (id) => {
+    try {
+      await fetch(`https://espresso-emporium-server-phi.vercel.app/cart/${id}`, {
+        method: "DELETE",
+      });
+      Swal.fire("Removed", "Item removed from cart", "success");
+      fetchCart();
+    } catch (error) {
+      Swal.fire("Error", "Failed to remove item", "error");
+    }
   };
 
   useEffect(() => {
-    fetchCart();
-  }, [user?._id]);
-
-  const removeItem = async (id) => {
-    await fetch(`https://espresso-emporium-server-phi.vercel.app/cart/${id}`, { method: "DELETE" });
-    Swal.fire("Removed", "Item removed from cart", "success");
-    fetchCart();
-  };
+    if (user?._id) {
+      fetchCart();
+    }
+  }, [user]);
 
   return (
     <div className="space-y-6 p-4 bg-gray-50 min-h-screen">
@@ -45,42 +65,30 @@ const BuyerCart = () => {
           const productReviews = reviews[it.coffeeId] || [];
           return (
             <div
-              key={it._id}
+              key={it._id.$oid || it._id}
               className="bg-white shadow-md rounded-2xl overflow-hidden flex flex-col transition hover:shadow-lg"
             >
               <img
-                src={it.image}
+                src={it.image || "./more/coffee-splash.jpg"}
                 alt={it.name}
                 className="w-full h-40 object-cover"
               />
-
               <div className="p-4 flex flex-col flex-1">
                 <h3 className="font-semibold text-lg text-gray-900">{it.name}</h3>
                 <p className="text-sm text-gray-700 mt-1">
                   Price: <span className="font-medium text-amber-700">${it.price}</span>
                 </p>
+                <p className="text-sm text-gray-700 mt-1">
+                  Seller: <span className="font-medium text-gray-900">{it.sellerName || "Unknown"}</span>
+                </p>
+                <p className="text-sm text-gray-700 mt-1">
+                  Location: <span className="font-medium text-gray-900">{it.sellerLocation || "N/A"}</span>
+                </p>
 
-                {/* Reviews */}
-                <div className="mt-2 border-t pt-2">
-                  <h4 className="font-semibold text-gray-900 mb-1">
-                    Reviews ({productReviews.length})
-                  </h4>
-                  {productReviews.length > 0 ? (
-                    <div className="space-y-1 max-h-40 overflow-y-auto text-sm text-gray-700">
-                      {productReviews.map((r) => (
-                        <div key={r._id} className="border-b pb-1">
-                          <span className="font-bold">{r.buyerName}</span> ⭐ {r.rating} <br />
-                          {r.feedback}
-                        </div>
-                      ))}
-                    </div>
-                  ) : (
-                    <p className="text-sm text-gray-500">No reviews yet.</p>
-                  )}
-                </div>
+               
 
                 <button
-                  onClick={() => removeItem(it._id)}
+                  onClick={() => removeItem(it._id.$oid || it._id)}
                   className="mt-auto px-4 py-2 rounded-lg bg-rose-600 text-white hover:bg-rose-800 transition text-sm font-semibold"
                 >
                   Remove
