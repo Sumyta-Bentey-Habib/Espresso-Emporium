@@ -1,5 +1,5 @@
 import React from "react";
-import { NavLink } from "react-router-dom"; 
+import { NavLink } from "react-router-dom";
 import { useAuth } from "../context/AuthProvider";
 
 const NavBar = () => {
@@ -13,7 +13,7 @@ const NavBar = () => {
       <li>
         <NavLink to="/coffee-store">Coffee Store</NavLink>
       </li>
-      {user && ( 
+      {user && (
         <li>
           <NavLink to="/dashboard">Dashboard</NavLink>
         </li>
@@ -36,7 +36,9 @@ const NavBar = () => {
         backgroundPosition: "center",
       }}
     >
+      {/* Navbar Start */}
       <div className="navbar-start">
+        {/* Mobile Dropdown */}
         <div className="dropdown">
           <div tabIndex={0} role="button" className="btn btn-ghost lg:hidden">
             <svg
@@ -56,33 +58,87 @@ const NavBar = () => {
           </div>
           <ul
             tabIndex={0}
-            className="menu menu-sm dropdown-content bg-black/70 text-white rounded-box z-10 mt-3 w-52 p-2 shadow "
+            className="menu menu-sm dropdown-content bg-black/70 text-white rounded-box z-10 mt-3 w-52 p-2 shadow"
           >
-               {navItems}
-  
+            {navItems}
+
+            {/* Mobile User Info */}
+            {user ? (
+              <div className="mt-2 border-t border-gray-600 pt-2 flex flex-col gap-2">
+                <div className="flex items-center gap-2">
+                  {user.photoURL ? (
+                    <img
+                      src={user.photoURL}
+                      alt={user.displayName || "User"}
+                      className="w-8 h-8 rounded-full border border-white"
+                    />
+                  ) : (
+                    <div className="w-8 h-8 rounded-full bg-gray-500 flex items-center justify-center text-sm">
+                      {user.displayName?.charAt(0) || "U"}
+                    </div>
+                  )}
+                  <span>{user.displayName || user.email}</span>
+                </div>
+                <button
+                  onClick={logOut}
+                  className="btn btn-outline btn-sm text-white border-white hover:bg-white hover:text-black"
+                >
+                  Logout
+                </button>
+              </div>
+            ) : (
+              <div className="mt-2 border-t border-gray-600 pt-2 flex flex-col gap-2">
+                <NavLink
+                  to="/login"
+                  className="btn btn-outline btn-sm text-white border-white hover:bg-white hover:text-black"
+                >
+                  Login
+                </NavLink>
+                <NavLink to="/register" className="btn btn-primary btn-sm">
+                  Register
+                </NavLink>
+              </div>
+            )}
           </ul>
         </div>
 
+        {/* Logo */}
         <div className="flex items-center gap-2">
           <img src="./more/logo1.png" alt="Logo" className="h-10 w-auto" />
-          <a className="normal-case text-xl text-white">
-            Espresso-Emporium
-          </a>
+          <a className="normal-case text-xl text-white">Espresso-Emporium</a>
         </div>
       </div>
 
+      {/* Navbar Center - Desktop Links */}
       <div className="navbar-center hidden lg:flex">
         <ul className="menu menu-horizontal px-1">{navItems}</ul>
       </div>
 
-      <div className="navbar-end gap-2">
+      {/* Navbar End - Desktop User Info */}
+      <div className="navbar-end gap-3 hidden lg:flex">
         {user ? (
-          <button
-            onClick={logOut}
-            className="btn btn-outline btn-sm text-white border-white hover:bg-white hover:text-black"
-          >
-            Logout
-          </button>
+          <>
+            <div className="flex items-center gap-2">
+              {user.photoURL ? (
+                <img
+                  src={user.photoURL}
+                  alt={user.displayName || "User"}
+                  className="w-8 h-8 rounded-full border border-white"
+                />
+              ) : (
+                <div className="w-8 h-8 rounded-full bg-gray-500 flex items-center justify-center text-sm">
+                  {user.displayName?.charAt(0) || "U"}
+                </div>
+              )}
+              <span>{user.displayName || user.email}</span>
+            </div>
+            <button
+              onClick={logOut}
+              className="btn btn-outline btn-sm text-white border-white hover:bg-white hover:text-black"
+            >
+              Logout
+            </button>
+          </>
         ) : (
           <>
             <NavLink
