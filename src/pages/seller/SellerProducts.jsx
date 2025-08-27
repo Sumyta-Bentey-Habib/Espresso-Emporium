@@ -1,3 +1,4 @@
+// Add at the top if not already
 import React, { useEffect, useState } from "react";
 import { useAuth } from "../../context/AuthProvider";
 import Swal from "sweetalert2";
@@ -8,7 +9,7 @@ const SellerProducts = () => {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // Modal state
+  // Modal state for product edit
   const [editingProduct, setEditingProduct] = useState(null);
   const [formData, setFormData] = useState({
     name: "",
@@ -17,6 +18,9 @@ const SellerProducts = () => {
     description: "",
     image: "",
   });
+
+  // Modal state for review
+  const [selectedReview, setSelectedReview] = useState(null);
 
   useEffect(() => {
     document.title = "Seller";
@@ -181,24 +185,44 @@ const SellerProducts = () => {
                   <h3 className="font-semibold text-sm text-gray-800 mb-2">Reviews:</h3>
                   <div className="max-h-64 overflow-y-auto space-y-2">
                     {p.reviews && p.reviews.length ? (
-                      p.reviews.map((r) => (
-                        <div
-                          key={r._id}
-                          className="bg-gray-50 rounded-lg p-3 shadow-sm flex justify-between items-start gap-2"
-                        >
-                          <div className="flex flex-col gap-1">
-                            <div className="font-medium text-gray-900 text-sm">{r.buyerName || r.buyerEmail}</div>
-                            <div className="text-gray-700 text-sm">{r.feedback}</div>
-                            <div className="text-[10px] text-gray-500">{new Date(r.createdAt).toLocaleString()}</div>
-                          </div>
-                          <button
-                            onClick={() => handleDeleteReview(r._id)}
-                            className="px-2 py-0.5 text-xs rounded bg-rose-600 hover:bg-rose-700 text-white"
+                      p.reviews.map((r) => {
+                        const words = r.feedback.split(" ");
+                        const isLong = words.length > 20;
+                        const shortText = isLong ? words.slice(0, 20).join(" ") + "..." : r.feedback;
+
+                        return (
+                          <div
+                            key={r._id}
+                            className="bg-gray-50 rounded-lg p-3 shadow-sm flex justify-between items-start gap-2"
                           >
-                            Delete
-                          </button>
-                        </div>
-                      ))
+                            <div className="flex flex-col gap-1">
+                              <div className="font-medium text-gray-900 text-sm">
+                                {r.buyerName || r.buyerEmail}
+                              </div>
+                              <div className="text-gray-700 text-sm">{shortText}</div>
+                              <div className="text-[10px] text-gray-500">
+                                {new Date(r.createdAt).toLocaleString()}
+                              </div>
+                            </div>
+                            <div className="flex flex-col gap-1">
+                              {isLong && (
+                                <button
+                                  onClick={() => setSelectedReview(r)}
+                                  className="px-2 py-1 text-xs rounded bg-blue-500 hover:bg-blue-600 text-white"
+                                >
+                                  Show More
+                                </button>
+                              )}
+                              <button
+                                onClick={() => handleDeleteReview(r._id)}
+                                className="px-2 py-1 text-xs rounded bg-rose-600 hover:bg-rose-700 text-white"
+                              >
+                                Delete
+                              </button>
+                            </div>
+                          </div>
+                        );
+                      })
                     ) : (
                       <p className="text-gray-500 text-xs">No reviews yet.</p>
                     )}
@@ -212,72 +236,88 @@ const SellerProducts = () => {
         <p className="text-center text-gray-500">No products yet.</p>
       )}
 
-      {/* Modal */}
-      
-{editingProduct && (
-  <div className="fixed inset-0 flex items-center justify-center z-50">
-    <div className="bg-white/95 backdrop-blur-md rounded-xl p-6 w-96 shadow-lg border border-gray-200">
-      <h3 className="text-lg font-semibold mb-4 text-gray-800">Edit Product</h3>
-      <div className="space-y-3">
-        <input
-          type="text"
-          name="name"
-          placeholder="Name"
-          value={formData.name}
-          onChange={handleModalChange}
-          className="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-amber-600"
-        />
-        <input
-          type="number"
-          name="price"
-          placeholder="Price"
-          value={formData.price}
-          onChange={handleModalChange}
-          className="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-amber-600"
-        />
-        <input
-          type="text"
-          name="availability"
-          placeholder="Availability"
-          value={formData.availability}
-          onChange={handleModalChange}
-          className="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-amber-600"
-        />
-        <input
-          type="text"
-          name="description"
-          placeholder="Description"
-          value={formData.description}
-          onChange={handleModalChange}
-          className="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-amber-600"
-        />
-        <input
-          type="text"
-          name="image"
-          placeholder="Image URL"
-          value={formData.image}
-          onChange={handleModalChange}
-          className="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-amber-600"
-        />
-      </div>
-      <div className="flex justify-end gap-2 mt-4">
-        <button
-          onClick={() => setEditingProduct(null)}
-          className="px-4 py-2 rounded bg-gray-200 hover:bg-gray-300 transition"
-        >
-          Cancel
-        </button>
-        <button
-          onClick={handleUpdateProduct}
-          className="px-4 py-2 rounded bg-amber-600 text-white hover:bg-amber-700 transition"
-        >
-          Update
-        </button>
-      </div>
-    </div>
-  </div>
-)}
+      {/* Product Edit Modal */}
+      {editingProduct && (
+        <div className="fixed inset-0 flex items-center justify-center z-50">
+          <div className="bg-white/95 backdrop-blur-md rounded-xl p-6 w-96 shadow-lg border border-gray-200">
+            <h3 className="text-lg font-semibold mb-4 text-gray-800">Edit Product</h3>
+            <div className="space-y-3">
+              <input
+                type="text"
+                name="name"
+                placeholder="Name"
+                value={formData.name}
+                onChange={handleModalChange}
+                className="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-amber-600"
+              />
+              <input
+                type="number"
+                name="price"
+                placeholder="Price"
+                value={formData.price}
+                onChange={handleModalChange}
+                className="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-amber-600"
+              />
+              <input
+                type="text"
+                name="availability"
+                placeholder="Availability"
+                value={formData.availability}
+                onChange={handleModalChange}
+                className="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-amber-600"
+              />
+              <input
+                type="text"
+                name="description"
+                placeholder="Description"
+                value={formData.description}
+                onChange={handleModalChange}
+                className="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-amber-600"
+              />
+              <input
+                type="text"
+                name="image"
+                placeholder="Image URL"
+                value={formData.image}
+                onChange={handleModalChange}
+                className="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-amber-600"
+              />
+            </div>
+            <div className="flex justify-end gap-2 mt-4">
+              <button
+                onClick={() => setEditingProduct(null)}
+                className="px-4 py-2 rounded bg-gray-200 hover:bg-gray-300 transition"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleUpdateProduct}
+                className="px-4 py-2 rounded bg-amber-600 text-white hover:bg-amber-700 transition"
+              >
+                Update
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
+      {/* Review Modal */}
+      {selectedReview && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black/50 z-50">
+          <div className="bg-white rounded-xl p-6 w-96 shadow-lg border border-gray-200">
+            <h3 className="text-lg font-semibold mb-4 text-gray-800">Full Review</h3>
+            <p className="text-gray-700 text-sm mb-4">{selectedReview.feedback}</p>
+            <div className="flex justify-end">
+              <button
+                onClick={() => setSelectedReview(null)}
+                className="px-4 py-2 rounded bg-amber-600 text-white hover:bg-amber-700 transition"
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
