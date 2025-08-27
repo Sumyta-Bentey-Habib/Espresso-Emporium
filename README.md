@@ -28,6 +28,18 @@
 - **Email:** espresso@admin.com  
 - **Password:** 12345678#$%ADiMn
 
+## Demo Users
+--**The Daily Grind: **thedailygrind@gmail.com
+--**Password : **Brew TheoryTDG!2025#Coffee
+--**Brew Theory: ** brewtheory@gmail.com
+--**Password : **BrewTh3ory@21
+--**Velvet Bean: ** velvetbean@gmail.com
+--**Password : **V3lv3tB3an$
+--**Morning Dew Café: ** morningdew.cafe@gmail.com
+--**Password : ** MDew@2025!
+
+
+
 ---
 
 ## Technologies Used
