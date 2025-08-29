@@ -1,10 +1,10 @@
-# Espresso-Emporium
+# ☕Espresso-Emporium
 
 **Espresso-Emporium** is a modern web application where coffee lovers can explore coffee products from across the country. Sellers can showcase their products, and users can rate and review them. Admins manage the platform to ensure smooth operation and quality.
 
 ---
 
-## Features
+## 📖 Features
 
 ### Users:
 - Browse coffee products from various sellers.
@@ -23,26 +23,23 @@
 
 ---
 
-## Demo Admin Account
+## 🎯 Admin Account
 
 - **Email:** espresso@admin.com  
 - **Password:** 12345678#$%ADiMn
 
-## Demo Users
---**The Daily Grind: **thedailygrind@gmail.com
---**Password : **Brew TheoryTDG!2025#Coffee
---**Brew Theory: ** brewtheory@gmail.com
---**Password : **BrewTh3ory@21
---**Velvet Bean: ** velvetbean@gmail.com
---**Password : **V3lv3tB3an$
---**Morning Dew Café: ** morningdew.cafe@gmail.com
---**Password : ** MDew@2025!
+## 👩‍💻Demo Users
 
-
+|Name                      | Email                                  | Password         |
+|--------------------------|----------------------------------------|------------------|
+| **The Daily Grind**      | thedailygrind@gmail.com                |  TDG!2025#Coffee |
+| **Brew Theory**          | brewtheory@gmail.com                   | BrewTh3ory@21    |
+| **Velvet Bean**          | velvetbean@gmail.com                   | V3lv3tB3an$      |
+| **Morning Dew Café**     | morningdew.cafe@gmail.com              |MDew@2025!        |
 
 ---
 
-## Technologies Used
+## 📚 Technologies Used
 
 - **Frontend:** React.js  
 - **Backend:** Firebase  
@@ -53,13 +50,13 @@
 
 ---
 
-## Live Demo
+## 🌐 Live Demo
 
 Check out the live app here: [Espresso-Emporium](https://espresso-emporium-8d4f7.web.app/)
 
 ---
 
-## Installation
+## 🔖 Installation
 
 1. Clone the repository:
    ```bash
