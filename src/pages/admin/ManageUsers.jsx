@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useCallback } from "react";
 import { Search, Edit2, Trash2, UserCheck, ShieldAlert, Mail, Calendar, Shield } from "lucide-react";
 import Pagination from "../../components/dashboard/Pagination";
+import StartChatButton from "../../components/chat/StartChatButton";
 import Swal from "sweetalert2";
 import { API_URL } from "../../utils/utils";
 
@@ -196,6 +197,10 @@ const ManageUsers = () => {
                         >
                           <Trash2 size={16} />
                         </button>
+                        <StartChatButton 
+                          targetUser={{ ...u, uid: u.uid || u._id }} 
+                          className="!p-2.5 !rounded-xl !bg-amber-100 !text-amber-800 hover:!bg-amber-800 hover:!text-white shadow-none"
+                        />
                       </div>
                     </td>
                   </tr>

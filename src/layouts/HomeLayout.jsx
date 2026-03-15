@@ -3,9 +3,15 @@ import { Outlet } from "react-router";
 import NavBar from "../components/NavBar";
 import Footer from "../components/Footer";
 import Loading from "../components/Loading"; 
+import ChatFloatingButton from "../components/chat/ChatFloatingButton";
+import { useAuth } from "../context/AuthProvider";
+import { usePresence } from "../hooks/usePresence";
 
 const HomeLayout = () => {
+  const { user } = useAuth();
   const [loading, setLoading] = useState(true);
+
+  usePresence(user?.email);
 
   useEffect(() => {
     const timer = setTimeout(() => setLoading(false), 1500);
@@ -21,6 +27,7 @@ const HomeLayout = () => {
       <NavBar />
       <Outlet />
       <Footer />
+      <ChatFloatingButton />
     </div>
   );
 };

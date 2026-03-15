@@ -1,5 +1,6 @@
 import React from "react";
 import { MessageSquare, Heart, MapPin, BadgeDollarSign } from "lucide-react";
+import StartChatButton from "./chat/StartChatButton";
 
 const CoffeeCard = ({ coffee, onViewReviews, onAddToWishlist, onAddReview, user, isInWishlist }) => {
   return (
@@ -76,12 +77,22 @@ const CoffeeCard = ({ coffee, onViewReviews, onAddToWishlist, onAddReview, user,
         </div>
         
         {user && (
-          <button
-            onClick={() => onAddReview(coffee)}
-            className="w-full mt-3 text-xs font-bold text-amber-700 hover:text-amber-900 transition-colors uppercase tracking-widest py-1 underline-offset-4 hover:underline"
-          >
-            Write a Review
-          </button>
+          <div className="flex flex-col gap-2 mt-3">
+            <StartChatButton 
+              targetUser={{ 
+                uid: coffee.sellerUid || coffee.sellerEmail, 
+                name: coffee.sellerName || "Seller",
+                role: "seller"
+              }} 
+              className="w-full !py-2 !text-xs"
+            />
+            <button
+              onClick={() => onAddReview(coffee)}
+              className="w-full text-xs font-bold text-amber-700 hover:text-amber-900 transition-colors uppercase tracking-widest py-1 underline-offset-4 hover:underline"
+            >
+              Write a Review
+            </button>
+          </div>
         )}
       </div>
     </div>
