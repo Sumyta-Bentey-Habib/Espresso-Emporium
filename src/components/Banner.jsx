@@ -4,13 +4,15 @@ import { NavLink } from 'react-router';
 const Banner = () => {
   return (
     <div className="hero min-h-screen relative overflow-hidden">
+    
       <video autoPlay loop muted playsInline className="absolute w-full h-full object-cover">
         <source src="/more/video/banner.mp4" type="video/mp4" />
       </video>
 
-
+      {/* Overlay */}
       <div className="hero-overlay bg-black/50 absolute inset-0"></div>
 
+      {/* Content */}
       <div className="hero-content text-neutral-content text-center relative z-10">
         <div className="max-w-md">
           <h1 className="mb-5 text-5xl font-bold">Would you like a Cup of Delicious Coffee?</h1>
