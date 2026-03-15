@@ -10,7 +10,7 @@ const Banner = () => {
       </video>
 
       {/* Overlay */}
-      <div className="hero-overlay bg-black/50 absolute inset-0"></div>
+      <div className="hero-overlay bg-black/40 absolute inset-0 transition-colors duration-500"></div>
 
       {/* Content */}
       <div className="hero-content text-neutral-content text-center relative z-10">
@@ -22,8 +22,10 @@ const Banner = () => {
             companion of every moment!!! Enjoy the beautiful moments and make them memorable.
           </p>
 
-          <NavLink to="/about-us">
-            <button className="btn bg-[#E3B577]">Learn More</button>
+          <NavLink to="/coffee-store">
+            <button className="btn bg-amber-600 hover:bg-amber-700 text-white border-none px-10 py-4 rounded-2xl font-black uppercase tracking-widest shadow-2xl shadow-amber-600/20 active:scale-95 transition-all">
+              Taste the Selection
+            </button>
           </NavLink>
         </div>
       </div>

@@ -1,6 +1,20 @@
-// Add at the top if not already
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { useAuth } from "../../context/AuthProvider";
+import { 
+  Plus, 
+  Edit2, 
+  Trash2, 
+  MessageCircle, 
+  Star, 
+  Tag, 
+  Box, 
+  ChevronRight, 
+  X, 
+  Calendar,
+  MoreVertical,
+  Coffee
+} from "lucide-react";
+import Pagination from "../../components/dashboard/Pagination";
 import Swal from "sweetalert2";
 import Loader from "../../components/Loader";
 
@@ -8,6 +22,11 @@ const SellerProducts = () => {
   const { user } = useAuth();
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
+  
+  // Pagination State
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(5);
+  const [totalItems, setTotalItems] = useState(0);
 
   // Modal state for product edit
   const [editingProduct, setEditingProduct] = useState(null);
@@ -19,40 +38,56 @@ const SellerProducts = () => {
     image: "",
   });
 
-  // Modal state for review
-  const [selectedReview, setSelectedReview] = useState(null);
+  // Modal state for reviews list
+  const [viewingReviewsFor, setViewingReviewsFor] = useState(null);
 
   useEffect(() => {
-    document.title = "Seller";
+    document.title = "My Blends | Espresso Seller";
   }, []);
 
-  const fetchMine = async () => {
+  const fetchMine = useCallback(async () => {
     setLoading(true);
-    const res = await fetch("https://espresso-emporium-server-phi.vercel.app/products");
-    const data = await res.json();
+    try {
+      const res = await fetch("https://espresso-emporium-server-phi.vercel.app/products");
+      const data = await res.json();
 
-    const productsWithReviews = await Promise.all(
-      data
-        .filter((p) => p.sellerEmail === user?.email)
-        .map(async (p) => {
+      const filtered = data.filter((p) => p.sellerEmail === user?.email);
+      setTotalItems(filtered.length);
+
+      const productsWithReviews = await Promise.all(
+        filtered.map(async (p) => {
           const revRes = await fetch(`https://espresso-emporium-server-phi.vercel.app/reviews/${p._id}`);
           const reviews = await revRes.json();
-          return { ...p, reviews };
+          return { 
+            ...p, 
+            reviews: reviews.map(r => ({
+              ...r,
+              rating: r.rating?.$numberInt ? Number(r.rating.$numberInt) : r.rating,
+              createdAt: r.createdAt?.$date?.$numberLong ? new Date(Number(r.createdAt.$date.$numberLong)) : r.createdAt
+            })) 
+          };
         })
-    );
+      );
 
-    setProducts(productsWithReviews);
-    setLoading(false);
-  };
+      // Manual pagination
+      const start = (currentPage - 1) * itemsPerPage;
+      const end = start + itemsPerPage;
+      setProducts(productsWithReviews.slice(start, end));
+    } catch (error) {
+      console.error("Failed to fetch seller products:", error);
+    } finally {
+      setLoading(false);
+    }
+  }, [user?.email, currentPage, itemsPerPage]);
 
   useEffect(() => {
     if (user?.email) fetchMine();
-  }, [user?.email]);
+  }, [fetchMine, user?.email]);
 
   const handleDeleteProduct = async (id) => {
     const confirm = await Swal.fire({
-      title: "Are you sure?",
-      text: "Do you want to delete this product?",
+      title: "Confirm Deletion",
+      text: "This blend will be permanently removed from your collection.",
       icon: "warning",
       showCancelButton: true,
       confirmButtonColor: "#331A15",
@@ -61,53 +96,63 @@ const SellerProducts = () => {
     });
     if (!confirm.isConfirmed) return;
 
-    await fetch(`https://espresso-emporium-server-phi.vercel.app/products/${id}`, { method: "DELETE" });
-    Swal.fire({
-      icon: "success",
-      title: "Deleted!",
-      text: "Product has been deleted.",
-      confirmButtonColor: "#331A15",
-    });
-    fetchMine();
+    try {
+      await fetch(`https://espresso-emporium-server-phi.vercel.app/products/${id}`, { method: "DELETE" });
+      Swal.fire({
+        icon: "success",
+        title: "Deleted!",
+        text: "Your blend has been removed.",
+        confirmButtonColor: "#331A15",
+      });
+      fetchMine();
+    } catch (error) {
+      console.error("Failed to delete product:", error);
+      Swal.fire("Error", "Failed to delete product", "error");
+    }
   };
 
   const handleDeleteReview = async (reviewId) => {
     const confirm = await Swal.fire({
-      title: "Are you sure?",
-      text: "Do you want to delete this review?",
+      title: "Delete Review?",
+      text: "This feedback will be removed permanently.",
       icon: "warning",
       showCancelButton: true,
       confirmButtonColor: "#331A15",
       cancelButtonColor: "#d33",
-      confirmButtonText: "Yes, delete it!",
+      confirmButtonText: "Delete",
     });
     if (!confirm.isConfirmed) return;
 
-    const res = await fetch(
-      `https://espresso-emporium-server-phi.vercel.app/reviews/${reviewId}?requesterId=${user._id}`,
-      { method: "DELETE" }
-    );
-    const result = await res.json();
+    try {
+      const res = await fetch(
+        `https://espresso-emporium-server-phi.vercel.app/reviews/${reviewId}?requesterId=${user._id}`,
+        { method: "DELETE" }
+      );
 
-    if (res.ok) {
-      Swal.fire({
-        icon: "success",
-        title: "Deleted!",
-        text: result.message || "Review deleted",
-        confirmButtonColor: "#331A15",
-      });
-      fetchMine();
-    } else {
-      Swal.fire({
-        icon: "error",
-        title: "Error!",
-        text: result.message || "Could not delete review",
-        confirmButtonColor: "#331A15",
-      });
+      if (res.ok) {
+        Swal.fire({
+          icon: "success",
+          title: "Removed",
+          text: "The review has been deleted.",
+          confirmButtonColor: "#331A15",
+        });
+        fetchMine();
+        // Update the modal view if open
+        if (viewingReviewsFor) {
+          setViewingReviewsFor(prev => ({
+            ...prev,
+            reviews: prev.reviews.filter(r => r._id !== reviewId && r._id?.$oid !== reviewId)
+          }));
+        }
+      } else {
+        Swal.fire("Error", "Could not delete review", "error");
+      }
+    } catch (error) {
+      console.error("Failed to delete review:", error);
+      Swal.fire("Error", "Could not delete review", "error");
     }
   };
 
-  // Open modal and pre-fill form
   const openEditModal = (product) => {
     setEditingProduct(product);
     setFormData({
@@ -119,201 +164,270 @@ const SellerProducts = () => {
     });
   };
 
+  const handleUpdateProduct = async () => {
+    if (!editingProduct) return;
+
+    try {
+      await fetch(`https://espresso-emporium-server-phi.vercel.app/products/${editingProduct._id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+      });
+
+      Swal.fire({
+        icon: "success",
+        title: "Refined!",
+        text: "Your blend details have been updated.",
+        confirmButtonColor: "#331A15",
+      });
+
+      setEditingProduct(null);
+      fetchMine();
+    } catch (error) {
+      console.error("Failed to update product:", error);
+      Swal.fire("Error", "Failed to update product", "error");
+    }
+  };
+
   const handleModalChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleUpdateProduct = async () => {
-    if (!editingProduct) return;
-
-    await fetch(`https://espresso-emporium-server-phi.vercel.app/products/${editingProduct._id}`, {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(formData),
-    });
-
-    Swal.fire({
-      icon: "success",
-      title: "Updated!",
-      text: "Product has been updated.",
-      confirmButtonColor: "#331A15",
-    });
-
-    setEditingProduct(null);
-    fetchMine();
-  };
-
   return (
-    <div className="space-y-6 p-4 min-h-screen">
-      <h2 className="text-2xl font-bold text-[#331A15]">My Products</h2>
+    <div className="space-y-8 animate-in fade-in duration-700">
+      {/* Header */}
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+        <div>
+          <h1 className="text-4xl font-black text-amber-950 tracking-tight">My Collections</h1>
+          <p className="text-amber-900/60 font-bold mt-1 uppercase tracking-widest text-xs">Managing {totalItems} Unique Blends</p>
+        </div>
+        
+        <button
+          onClick={() => window.location.href = "/dashboard/add-product"}
+          className="inline-flex items-center gap-2 bg-amber-950 text-white px-8 py-4 rounded-3xl font-black hover:bg-black transition-all shadow-xl shadow-amber-950/20 active:scale-95 group"
+        >
+          <Plus size={20} className="group-hover:rotate-90 transition-transform" />
+          Add New Blend
+        </button>
+      </div>
 
-      {loading ? (
-        <p className="text-center text-gray-500">
-          <Loader />
-        </p>
-      ) : products.length ? (
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {products.map((p) => (
-            <div
-              key={p._id}
-              className="bg-white rounded-2xl shadow-md overflow-hidden flex flex-col transition hover:shadow-lg"
-            >
-              <img src={p.image} alt={p.name} className="w-full h-48 object-cover" />
-              <div className="p-4 flex flex-col gap-2">
-                <h2 className="text-lg font-semibold text-gray-900">{p.name}</h2>
-                <p className="text-sm text-gray-700">💲 {p.price}</p>
-                <p className="text-sm text-gray-600">Availability: {p.availability || "N/A"}</p>
+      {/* Main Table */}
+      <div className="bg-white rounded-[3rem] shadow-xl shadow-amber-900/5 overflow-hidden border border-amber-900/10">
+        <div className="overflow-x-auto custom-scrollbar">
+          <table className="min-w-full">
+            <thead>
+              <tr className="bg-amber-100/20 border-b border-amber-900/10 uppercase tracking-[0.2em] text-[10px] font-black text-amber-900/60">
+                <th className="px-8 py-6 text-left whitespace-nowrap">The Roast</th>
+                <th className="px-8 py-6 text-left">Market Value</th>
+                <th className="px-8 py-6 text-left whitespace-nowrap">Availability</th>
+                <th className="px-8 py-6 text-left">Engagement</th>
+                <th className="px-8 py-6 text-right">Actions</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-amber-900/10">
+              {loading ? (
+                Array.from({ length: 3 }).map((_, i) => (
+                  <tr key={i} className="animate-pulse">
+                    <td className="px-8 py-6"><div className="h-16 w-16 bg-amber-50 rounded-2xl"></div></td>
+                    <td className="px-8 py-6"><div className="h-4 w-24 bg-amber-50 rounded-lg"></div></td>
+                    <td className="px-8 py-6"><div className="h-6 w-32 bg-amber-50 rounded-full"></div></td>
+                    <td className="px-8 py-6"><div className="h-4 w-24 bg-amber-50 rounded-lg"></div></td>
+                    <td className="px-8 py-6"><div className="h-10 w-32 bg-amber-50 rounded-xl ml-auto"></div></td>
+                  </tr>
+                ))
+              ) : products.length > 0 ? (
+                products.map((p) => (
+                  <tr key={p._id} className="hover:bg-amber-50/50 transition-colors group">
+                    <td className="px-8 py-6">
+                      <div className="flex items-center gap-5">
+                        <img 
+                          src={p.image || "/more/coffee-splash.jpg"} 
+                          alt={p.name} 
+                          className="w-16 h-16 rounded-2xl object-cover shadow-lg group-hover:scale-110 transition-transform"
+                        />
+                        <div>
+                          <p className="font-extrabold text-amber-950 text-xl leading-tight">{p.name}</p>
+                          <p className="text-[10px] text-amber-900/60 font-black tracking-widest mt-1 uppercase">ID: {p._id.slice(-8).toUpperCase()}</p>
+                        </div>
+                      </div>
+                    </td>
+                    <td className="px-8 py-6">
+                      <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-amber-100/10 text-amber-600 font-black text-lg border border-amber-500/10">
+                        <Tag size={16} className="text-amber-700" />
+                        ${p.price}
+                      </div>
+                    </td>
+                    <td className="px-8 py-6">
+                      <span className={`px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-wider ${
+                        p.availability === 'Available' ? 'bg-green-100 text-green-700' : 'bg-rose-100 text-rose-700'
+                      }`}>
+                        {p.availability || "Special Order"}
+                      </span>
+                    </td>
+                    <td className="px-8 py-6">
+                      <button 
+                        onClick={() => setViewingReviewsFor(p)}
+                        className="flex items-center gap-2 group/btn"
+                      >
+                        <div className="flex -space-x-2">
+                          {[1,2,3].map(i => (
+                            <div key={i} className="w-8 h-8 rounded-full border-2 border-white bg-amber-50 flex items-center justify-center text-[10px] font-black">{i}</div>
+                          ))}
+                        </div>
+                        <span className="text-amber-900/60 font-bold text-sm group-hover/btn:text-amber-950 transition-colors">
+                          {p.reviews?.length || 0} reviews
+                        </span>
+                        <ChevronRight size={14} className="text-amber-900/20 group-hover/btn:translate-x-1 transition-transform" />
+                      </button>
+                    </td>
+                    <td className="px-8 py-6 text-right">
+                      <div className="flex items-center justify-end gap-3">
+                        <button
+                          onClick={() => openEditModal(p)}
+                          className="p-3 rounded-2xl bg-amber-950 text-white hover:bg-black transition-all active:scale-90 shadow-xl shadow-amber-950/20"
+                        >
+                          <Edit2 size={18} />
+                        </button>
+                        <button
+                          onClick={() => handleDeleteProduct(p._id)}
+                          className="p-3 rounded-2xl bg-rose-50 text-rose-500 hover:bg-rose-500 hover:text-white transition-all active:scale-90"
+                        >
+                          <Trash2 size={18} />
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan={5} className="px-8 py-32 text-center">
+                    <Coffee size={64} strokeWidth={1} className="mx-auto text-amber-900/10 mb-6" />
+                    <p className="text-2xl font-black text-amber-900/40 uppercase tracking-[0.2em]">Start your Roasting Journey</p>
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
 
-                <div className="flex gap-2 mt-2">
-                  <button
-                    onClick={() => openEditModal(p)}
-                    className="px-4 py-1.5 bg-amber-600 text-white rounded-lg text-sm font-semibold hover:bg-amber-700 transition"
-                  >
-                    Edit Product
-                  </button>
-                  <button
-                    onClick={() => handleDeleteProduct(p._id)}
-                    className="px-4 py-1.5 bg-rose-600 text-white rounded-lg text-sm font-semibold hover:bg-rose-700 transition"
-                  >
-                    Delete Product
-                  </button>
+        <div className="bg-amber-100/20 border-t border-amber-900/10 px-8 py-4">
+          <Pagination
+            currentPage={currentPage}
+            totalPages={Math.ceil(totalItems / itemsPerPage)}
+            onPageChange={setCurrentPage}
+            itemsPerPage={itemsPerPage}
+            onItemsPerPageChange={(val) => {
+              setItemsPerPage(val);
+              setCurrentPage(1);
+            }}
+            totalItems={totalItems}
+          />
+        </div>
+      </div>
+
+      {/* Edit Modal */}
+      {editingProduct && (
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-md flex justify-center items-center z-[110] p-4" onClick={() => setEditingProduct(null)}>
+          <div className="bg-white border border-amber-900/10 rounded-[3rem] p-10 md:p-14 w-full max-w-2xl relative text-amber-950 shadow-2xl animate-in zoom-in-95 duration-500" onClick={e => e.stopPropagation()}>
+            <div className="absolute top-0 right-0 w-48 h-48 bg-amber-50/5 rounded-bl-full -z-10"></div>
+            <button onClick={() => setEditingProduct(null)} className="absolute top-8 right-8 p-3 hover:bg-amber-50 rounded-2xl transition-all text-amber-900/20 hover:text-amber-900">
+              <X size={24} />
+            </button>
+            <h2 className="text-4xl font-black tracking-tight mb-8">Refine Roast</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              <div className="space-y-6">
+                <div>
+                  <label className="block text-[10px] font-black uppercase tracking-widest text-amber-900/60 mb-2 ml-1">Blend Name</label>
+                  <input type="text" name="name" value={formData.name} onChange={handleModalChange} className="w-full px-6 py-4 bg-amber-50/50 border border-amber-900/10 rounded-2xl focus:ring-4 focus:ring-amber-100/10 transition-all font-bold outline-none text-amber-950" />
                 </div>
-
-                {/* Reviews */}
-                <div className="mt-4">
-                  <h3 className="font-semibold text-sm text-gray-800 mb-2">Reviews:</h3>
-                  <div className="max-h-64 overflow-y-auto space-y-2">
-                    {p.reviews && p.reviews.length ? (
-                      p.reviews.map((r) => {
-                        const words = r.feedback.split(" ");
-                        const isLong = words.length > 20;
-                        const shortText = isLong ? words.slice(0, 20).join(" ") + "..." : r.feedback;
-
-                        return (
-                          <div
-                            key={r._id}
-                            className="bg-gray-50 rounded-lg p-3 shadow-sm flex justify-between items-start gap-2"
-                          >
-                            <div className="flex flex-col gap-1">
-                              <div className="font-medium text-gray-900 text-sm">
-                                {r.buyerName || r.buyerEmail}
-                              </div>
-                              <div className="text-gray-700 text-sm">{shortText}</div>
-                              <div className="text-[10px] text-gray-500">
-                                {new Date(r.createdAt).toLocaleString()}
-                              </div>
-                            </div>
-                            <div className="flex flex-col gap-1">
-                              {isLong && (
-                                <button
-                                  onClick={() => setSelectedReview(r)}
-                                  className="px-2 py-1 text-xs rounded bg-blue-500 hover:bg-blue-600 text-white"
-                                >
-                                  Show More
-                                </button>
-                              )}
-                              <button
-                                onClick={() => handleDeleteReview(r._id)}
-                                className="px-2 py-1 text-xs rounded bg-rose-600 hover:bg-rose-700 text-white"
-                              >
-                                Delete
-                              </button>
-                            </div>
-                          </div>
-                        );
-                      })
-                    ) : (
-                      <p className="text-gray-500 text-xs">No reviews yet.</p>
-                    )}
-                  </div>
+                <div>
+                  <label className="block text-[10px] font-black uppercase tracking-widest text-amber-900/60 mb-2 ml-1">Price (USD)</label>
+                  <input type="number" name="price" value={formData.price} onChange={handleModalChange} className="w-full px-6 py-4 bg-amber-50/50 border border-amber-900/10 rounded-2xl focus:ring-4 focus:ring-amber-100/10 transition-all font-bold outline-none text-amber-950" />
+                </div>
+                <div>
+                  <label className="block text-[10px] font-black uppercase tracking-widest text-amber-900/60 mb-2 ml-1">Availability</label>
+                  <select name="availability" value={formData.availability} onChange={handleModalChange} className="w-full px-6 py-4 bg-amber-50/50 border border-amber-900/10 rounded-2xl focus:ring-4 focus:ring-amber-100/10 transition-all font-bold outline-none text-amber-950">
+                    <option value="Available" className="bg-white">Available</option>
+                    <option value="Out of Stock" className="bg-white">Out of Stock</option>
+                  </select>
                 </div>
               </div>
-            </div>
-          ))}
-        </div>
-      ) : (
-        <p className="text-center text-gray-500">No products yet.</p>
-      )}
-
-      {/* Product Edit Modal */}
-      {editingProduct && (
-        <div className="fixed inset-0 flex items-center justify-center z-50">
-          <div className="bg-white/95 backdrop-blur-md rounded-xl p-6 w-96 shadow-lg border border-gray-200">
-            <h3 className="text-lg font-semibold mb-4 text-gray-800">Edit Product</h3>
-            <div className="space-y-3">
-              <input
-                type="text"
-                name="name"
-                placeholder="Name"
-                value={formData.name}
-                onChange={handleModalChange}
-                className="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-amber-600"
-              />
-              <input
-                type="number"
-                name="price"
-                placeholder="Price"
-                value={formData.price}
-                onChange={handleModalChange}
-                className="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-amber-600"
-              />
-              <input
-                type="text"
-                name="availability"
-                placeholder="Availability"
-                value={formData.availability}
-                onChange={handleModalChange}
-                className="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-amber-600"
-              />
-              <input
-                type="text"
-                name="description"
-                placeholder="Description"
-                value={formData.description}
-                onChange={handleModalChange}
-                className="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-amber-600"
-              />
-              <input
-                type="text"
-                name="image"
-                placeholder="Image URL"
-                value={formData.image}
-                onChange={handleModalChange}
-                className="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-amber-600"
-              />
-            </div>
-            <div className="flex justify-end gap-2 mt-4">
-              <button
-                onClick={() => setEditingProduct(null)}
-                className="px-4 py-2 rounded bg-gray-200 hover:bg-gray-300 transition"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={handleUpdateProduct}
-                className="px-4 py-2 rounded bg-amber-600 text-white hover:bg-amber-700 transition"
-              >
-                Update
-              </button>
+              <div className="space-y-6">
+                <div>
+                  <label className="block text-[10px] font-black uppercase tracking-widest text-amber-900/60 mb-2 ml-1">Image URL</label>
+                  <input type="text" name="image" value={formData.image} onChange={handleModalChange} className="w-full px-6 py-4 bg-amber-50/50 border border-amber-900/10 rounded-2xl focus:ring-4 focus:ring-amber-100/10 transition-all font-bold outline-none text-amber-950" />
+                </div>
+                <div>
+                  <label className="block text-[10px] font-black uppercase tracking-widest text-amber-900/60 mb-2 ml-1">Story / Description</label>
+                  <textarea name="description" value={formData.description} onChange={handleModalChange} className="w-full px-6 py-4 bg-amber-50/50 border border-amber-900/10 rounded-2xl focus:ring-4 focus:ring-amber-100/10 transition-all font-bold outline-none min-h-[140px] resize-none text-amber-950" />
+                </div>
+                <button onClick={handleUpdateProduct} className="w-full py-5 bg-amber-950 text-white rounded-2xl font-black uppercase tracking-widest shadow-2xl shadow-amber-950/40 hover:bg-black transition-all active:scale-95">Save Changes</button>
+              </div>
             </div>
           </div>
         </div>
       )}
 
-      {/* Review Modal */}
-      {selectedReview && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black/50 z-50">
-          <div className="bg-white rounded-xl p-6 w-96 shadow-lg border border-gray-200">
-            <h3 className="text-lg font-semibold mb-4 text-gray-800">Full Review</h3>
-            <p className="text-gray-700 text-sm mb-4">{selectedReview.feedback}</p>
-            <div className="flex justify-end">
-              <button
-                onClick={() => setSelectedReview(null)}
-                className="px-4 py-2 rounded bg-amber-600 text-white hover:bg-amber-700 transition"
+      {/* Reviews Viewer Modal */}
+      {viewingReviewsFor && (
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-md flex justify-center items-center z-[110] p-4" onClick={() => setViewingReviewsFor(null)}>
+          <div className="bg-white border border-amber-900/10 rounded-[3rem] w-full max-w-3xl max-h-[85vh] overflow-hidden flex flex-col shadow-2xl animate-in zoom-in-95 duration-500" onClick={e => e.stopPropagation()}>
+            <div className="p-10 border-b border-amber-900/10 flex justify-between items-center bg-amber-100/20">
+              <div>
+                <h2 className="text-3xl font-black text-amber-950 tracking-tight">Public Feedback</h2>
+                <p className="text-amber-900/60 font-bold uppercase tracking-widest text-[10px] mt-1">For Blend: {viewingReviewsFor.name}</p>
+              </div>
+              <button 
+                onClick={() => setViewingReviewsFor(null)}
+                className="p-3 hover:bg-amber-50 rounded-2xl transition-all text-amber-900/40 hover:text-amber-950"
               >
-                Close
+                <X size={24} />
               </button>
+            </div>
+            <div className="flex-1 overflow-y-auto p-10 space-y-6 custom-scrollbar bg-white">
+              {viewingReviewsFor.reviews?.length > 0 ? (
+                viewingReviewsFor.reviews.map((r) => (
+                  <div key={r._id} className="p-6 bg-amber-50/50 rounded-[2rem] border border-amber-900/10 flex flex-col sm:flex-row justify-between gap-6 group">
+                    <div className="space-y-3">
+                      <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 rounded-xl bg-amber-950 text-white flex items-center justify-center font-black text-xs uppercase tracking-tighter">
+                          {r.buyerName?.[0] || 'A'}
+                        </div>
+                        <div>
+                          <p className="font-black text-amber-950 leading-none">{r.buyerName || "Anonymous Taster"}</p>
+                          <div className="flex items-center gap-2 mt-1">
+                            <div className="flex text-amber-500">
+                              {[...Array(5)].map((_, i) => (
+                                <Star key={i} size={10} className={i < r.rating ? "fill-current" : "opacity-20"} />
+                              ))}
+                            </div>
+                            <span className="text-[10px] text-amber-900/60 font-black uppercase tracking-widest flex items-center gap-1">
+                              <Calendar size={10} />
+                              {new Date(r.createdAt).toLocaleDateString()}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                      <p className="text-amber-950/80 italic font-medium leading-relaxed">"{r.feedback}"</p>
+                    </div>
+                    <div className="flex sm:flex-col justify-end gap-2">
+                      <button
+                        onClick={() => handleDeleteReview(r._id?.$oid || r._id)}
+                        className="p-3 rounded-2xl bg-rose-50 text-rose-500 hover:bg-rose-500 hover:text-white transition-all active:scale-90"
+                        title="Remove offensive or outdated review"
+                      >
+                        <Trash2 size={16} />
+                      </button>
+                    </div>
+                  </div>
+                ))
+              ) : (
+                <div className="text-center py-20 opacity-20">
+                  <MessageCircle size={64} className="mx-auto mb-4" />
+                  <p className="text-xl font-black uppercase tracking-widest">No Feedback Recorded</p>
+                </div>
+              )}
             </div>
           </div>
         </div>

@@ -8,21 +8,21 @@ const NavBar = () => {
   const navItems = (
     <>
       <li>
-        <NavLink to="/">Home</NavLink>
+        <NavLink to="/" className="hover:text-amber-200 transition-colors">Home</NavLink>
       </li>
       <li>
-        <NavLink to="/coffee-store">Coffee Store</NavLink>
+        <NavLink to="/coffee-store" className="hover:text-amber-200 transition-colors">Coffee Store</NavLink>
       </li>
       {user && (
         <li>
-          <NavLink to="/dashboard">Dashboard</NavLink>
+          <NavLink to="/dashboard" className="hover:text-amber-200 transition-colors">Dashboard</NavLink>
         </li>
       )}
       <li>
-        <NavLink to="/about-us">About</NavLink>
+        <NavLink to="/about-us" className="hover:text-amber-200 transition-colors">About</NavLink>
       </li>
       <li>
-        <NavLink to="/contract">Contact Us</NavLink>
+        <NavLink to="/contract" className="hover:text-amber-200 transition-colors">Contact Us</NavLink>
       </li>
     </>
   );
@@ -58,7 +58,7 @@ const NavBar = () => {
           </div>
           <ul
             tabIndex={0}
-            className="menu menu-sm dropdown-content bg-black/70 text-white rounded-box z-10 mt-3 w-52 p-2 shadow"
+            className="menu menu-sm dropdown-content bg-[#331A15] text-white rounded-box z-10 mt-3 w-52 p-2 shadow"
           >
             {navItems}
 
@@ -104,18 +104,18 @@ const NavBar = () => {
 
         {/* Logo */}
         <div className="flex items-center gap-2">
-          <img src="./more/logo1.png" alt="Logo" className="h-10 w-auto" />
-          <a className="normal-case text-xl text-white">Espresso-Emporium</a>
+          <img src="/more/logo1.png" alt="Logo" className="h-10 w-auto" />
+          <a className="normal-case text-2xl font-black text-white raleway">Espresso<span className="text-amber-400">Emporium</span></a>
         </div>
       </div>
 
       {/* Navbar Center - Desktop Links */}
       <div className="navbar-center hidden lg:flex">
-        <ul className="menu menu-horizontal px-1">{navItems}</ul>
+        <ul className="menu menu-horizontal px-1 font-bold tracking-wide uppercase text-xs">{navItems}</ul>
       </div>
 
       {/* Navbar End - Desktop User Info */}
-      <div className="navbar-end gap-3 hidden lg:flex">
+      <div className="navbar-end gap-5 flex">
         {user ? (
           <>
             <div className="flex items-center gap-2">

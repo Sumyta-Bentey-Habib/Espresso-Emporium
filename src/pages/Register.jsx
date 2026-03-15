@@ -87,6 +87,7 @@ const Register = () => {
       await updateProfile(result.user, { displayName: name, photoURL: uploadedURL || "" });
 
       await saveUserToDB({
+        uid: result.user.uid,
         name,
         email,
         photoURL: uploadedURL,
@@ -111,6 +112,7 @@ const Register = () => {
     try {
       const result = await googleLogin();
       const saveUser = {
+        uid: result.user.uid,
         name: result.user.displayName,
         email: result.user.email,
         photoURL: result.user.photoURL,

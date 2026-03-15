@@ -16,7 +16,7 @@ const CoffeeStore = () => {
 
       {/* Background wrapper */}
       <div
-        className="min-h-screen w-full"
+        className="min-h-screen w-full relative"
         style={{
           backgroundImage: "url('/more/13.jpg')",
           backgroundSize: "cover",
@@ -24,28 +24,32 @@ const CoffeeStore = () => {
           backgroundAttachment: "fixed",
         }}
       >
+        {/* Dark theme overlay */}
+        <div className="absolute inset-0 bg-black/40 transition-colors duration-500 pointer-events-none"></div>
         {/* Content container */}
-        <div className="min-h-screen px-4 py-8">
+        <div className="min-h-screen px-4 py-12 relative z-10">
           {/* Back to Home */}
           <div className="flex justify-center">
             <NavLink
               to="/"
               title="Click here to go back home"
-              className="bg-white text-[#331A15] raleway font-medium px-4 py-2 rounded shadow hover:bg-amber-100 hover:text-amber-700 transition"
+              className="bg-white text-amber-950 raleway font-bold px-8 py-4 rounded-3xl shadow-xl hover:bg-amber-50/50 transition-all active:scale-95 border border-amber-900/10"
             >
               ← Back to Home
             </NavLink>
           </div>
 
           {/* Search Bar */}
-          <div className="flex justify-center mt-6">
-            <input
-              type="text"
-              placeholder="Search coffee..."
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              className="border border-gray-300 px-4 py-2 rounded-lg w-80 focus:outline-none focus:ring-2 focus:ring-amber-600 bg-white bg-opacity-90"
-            />
+          <div className="flex justify-center mt-10">
+            <div className="w-full max-w-xl">
+              <input
+                type="text"
+                placeholder="Search our artisanal blends..."
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                className="w-full px-8 py-5 border-2 border-amber-900/10 rounded-[2rem] focus:outline-none focus:ring-4 focus:ring-amber-500/10 bg-white text-amber-950 font-bold text-lg shadow-2xl transition-all placeholder:text-amber-900/60/30"
+              />
+            </div>
           </div>
 
           {/* Coffee Products */}

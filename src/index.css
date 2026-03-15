@@ -1,6 +1,12 @@
 @import "tailwindcss";
 @plugin "daisyui";
 
+body {
+  margin: 0;
+  min-width: 320px;
+  min-height: 100vh;
+}
+
 * {
     font-family: "Rancho", cursive;
     font-weight: 400;

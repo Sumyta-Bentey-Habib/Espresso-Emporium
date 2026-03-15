@@ -41,7 +41,7 @@ const router = createBrowserRouter([
 
       // Buyer
       
-      { path: "cart", element: <BuyerCart /> },
+      { path: "wishlist", element: <BuyerCart /> },
 
       // Seller
       { path: "seller-products", element: <SellerProducts /> },

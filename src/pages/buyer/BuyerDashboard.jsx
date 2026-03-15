@@ -16,7 +16,7 @@ const BuyerDashboard = () => {
 
   const menuItems = [
     { to: "/coffee-store", icon: <Coffee size={18} />, label: "All Coffee" },
-    { to: "/dashboard/cart", icon: <FaShoppingCart size={18} />, label: "Wish List" },
+    { to: "/dashboard/wishlist", icon: <FaShoppingCart size={18} />, label: "Wish List" },
     { to: "/", icon: <FaHome size={18} />, label: "Return Home" },
   ];
 

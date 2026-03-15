@@ -1,17 +1,36 @@
 import React, { useEffect, useState } from "react";
 import { useAuth } from "../context/AuthProvider";
 import Swal from "sweetalert2";
+import CoffeeCard from "./CoffeeCard";
+import CommentModal from "./CommentModal";
+import { Coffee as CoffeeIcon } from "lucide-react";
+import { useCallback } from "react";
 
 const AllCoffee = ({ limit, search }) => {
   const { user } = useAuth();
   const [products, setProducts] = useState([]);
   const [reviews, setReviews] = useState({});
-  const [selectedCoffee, setSelectedCoffee] = useState(null);
+  const [wishlistItems, setWishlistItems] = useState(new Set());
+  const [selectedCoffeeForReview, setSelectedCoffeeForReview] = useState(null);
+  const [selectedCoffeeForComments, setSelectedCoffeeForComments] = useState(null);
+  const [isCommentModalOpen, setIsCommentModalOpen] = useState(false);
   const [ratingInput, setRatingInput] = useState("");
   const [feedbackInput, setFeedbackInput] = useState("");
 
+  const Toast = Swal.mixin({
+    toast: true,
+    position: 'top-end',
+    showConfirmButton: false,
+    timer: 3000,
+    timerProgressBar: true,
+    didOpen: (toast) => {
+      toast.addEventListener('mouseenter', Swal.stopTimer)
+      toast.addEventListener('mouseleave', Swal.resumeTimer)
+    }
+  });
+
   // Fetch products and their reviews
-  const fetchProducts = async () => {
+  const fetchProducts = useCallback(async () => {
     try {
       const url = search
         ? `https://espresso-emporium-server-phi.vercel.app/products?search=${encodeURIComponent(search)}`
@@ -28,7 +47,6 @@ const AllCoffee = ({ limit, search }) => {
           const r = await fetch(`https://espresso-emporium-server-phi.vercel.app/reviews/${p._id}`);
           const rdataRaw = await r.json();
 
-          // Normalize MongoDB extended JSON
           const rdata = rdataRaw.map((rev) => ({
             ...rev,
             _id: rev._id?.$oid || rev._id,
@@ -46,15 +64,34 @@ const AllCoffee = ({ limit, search }) => {
     } catch (error) {
       console.error("Failed to fetch products or reviews:", error);
     }
-  };
+  }, [search, limit]);
+
+  const fetchWishlist = useCallback(async () => {
+    if (!user?._id) return;
+    try {
+      const res = await fetch(`https://espresso-emporium-server-phi.vercel.app/cart/${user._id}`);
+      const data = await res.json();
+      setWishlistItems(new Set(data.map(item => item.coffeeId)));
+    } catch (error) {
+      console.error("Failed to fetch wishlist:", error);
+    }
+  }, [user]);
 
   useEffect(() => {
     fetchProducts();
-  }, [search, limit]);
+    fetchWishlist();
+  }, [search, limit, fetchProducts, fetchWishlist]);
 
   // Add to wishlist/cart
   const handleAddToCart = async (coffee) => {
     if (!user) return Swal.fire("Login required", "Please login to add to wishlist", "info");
+
+    if (wishlistItems.has(coffee._id)) {
+      return Toast.fire({
+        icon: 'info',
+        title: 'Already in your wishlist'
+      });
+    }
 
     const cartItem = {
       buyerId: user._id,
@@ -72,8 +109,15 @@ const AllCoffee = ({ limit, search }) => {
       body: JSON.stringify(cartItem),
     });
 
-    if (res.ok) Swal.fire("Added!", "Coffee added to wishlist", "success");
-    else Swal.fire("Error", "Failed to add coffee", "error");
+    if (res.ok) {
+      setWishlistItems(prev => new Set([...prev, coffee._id]));
+      Toast.fire({
+        icon: 'success',
+        title: `${coffee.name} added to wishlist`
+      });
+    } else {
+      Swal.fire("Error", "Failed to add coffee", "error");
+    }
   };
 
   // Submit review
@@ -82,7 +126,7 @@ const AllCoffee = ({ limit, search }) => {
       return Swal.fire("Error", "Please enter rating and feedback", "warning");
 
     const review = {
-      coffeeId: selectedCoffee._id,
+      coffeeId: selectedCoffeeForReview._id,
       buyerId: user._id,
       buyerName: user.name,
       rating: Number(ratingInput),
@@ -99,9 +143,8 @@ const AllCoffee = ({ limit, search }) => {
       Swal.fire("Thank you!", "Review submitted successfully", "success");
       setRatingInput("");
       setFeedbackInput("");
-      setSelectedCoffee(null);
+      setSelectedCoffeeForReview(null);
 
-      // Refetch and normalize reviews for this coffee
       const r = await fetch(`https://espresso-emporium-server-phi.vercel.app/reviews/${review.coffeeId}`);
       const rdataRaw = await r.json();
       const rdata = rdataRaw.map((rev) => ({
@@ -117,143 +160,122 @@ const AllCoffee = ({ limit, search }) => {
     } else Swal.fire("Error", "Failed to submit review", "error");
   };
 
+  const handleViewReviews = (coffee) => {
+    setSelectedCoffeeForComments(coffee);
+    setIsCommentModalOpen(true);
+  };
+
   return (
-    <div
-      className="p-6 min-h-screen space-y-6"
-      style={{
-        backgroundImage: "url('/more/13.jpg')",
-        backgroundSize: "cover",
-        backgroundPosition: "center",
-      }}
-    >
-      <h1 className="text-3xl font-bold text-[#331A15] text-center drop-shadow-md">
-        All Coffee Products
-      </h1>
+    <div className="section-container py-20 px-4 md:px-8">
+      {!limit && (
+        <div className="text-center mb-16 space-y-4">
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-amber-50/10 text-amber-600 font-bold text-sm tracking-widest uppercase border border-amber-500/10">
+            <CoffeeIcon size={16} />
+            Pure Bliss in a Cup
+          </div>
+          <h1 className="text-5xl md:text-6xl font-black text-amber-950 tracking-tight">
+            The Coffee <span className="text-amber-700 italic">Selection</span>
+          </h1>
+          <p className="max-w-xl mx-auto text-amber-900/60 text-lg">
+            Explore our hand-picked collection of premium blends, curated from the world's most passionate roasters.
+          </p>
+        </div>
+      )}
 
-      <div className="space-y-6 mt-6">
-        {products.map((p) => {
-          const productReviews = reviews[p._id] || [];
-          return (
-            <div
-              key={p._id}
-              className="flex flex-col border rounded-2xl bg-white shadow hover:shadow-lg overflow-hidden transition"
-            >
-              <div className="flex flex-col md:flex-row">
-                <img
-                  src={p.image || "./more/coffee-splash.jpg"}
-                  alt={p.name}
-                  className="w-full md:w-48 h-48 md:h-48 object-cover rounded-t-2xl md:rounded-l-2xl md:rounded-tr-none"
-                />
-
-                <div className="flex-1 p-4 flex flex-col justify-between">
-                  <div className="space-y-2">
-                    <h2 className="font-bold text-xl text-gray-900">{p.name}</h2>
-                    <div className="text-sm text-gray-700">
-                      Seller: {p.sellerName || "Unknown"} ({p.sellerLocation || "No location"})
-                    </div>
-                    <div className="text-sm text-gray-900">💲 {p.price}</div>
-                    <div className="text-sm text-gray-700">Availability: {p.availability || "N/A"}</div>
-                    <div className="text-sm text-gray-700">{p.description || ""}</div>
-                  </div>
-
-                  {user && (
-                    <div className="flex gap-2 mt-4 flex-col md:flex-row">
-                      <button
-                        onClick={() => handleAddToCart(p)}
-                        className="flex-1 px-4 py-2 rounded-lg bg-amber-700 text-white font-semibold hover:bg-amber-800 transition"
-                      >
-                        Add to Wishlist
-                      </button>
-                      <button
-                        onClick={() => setSelectedCoffee(p)}
-                        className="flex-1 px-4 py-2 rounded-lg bg-gray-800 text-white font-semibold hover:bg-gray-900 transition"
-                      >
-                        Add Review
-                      </button>
-                    </div>
-                  )}
-                </div>
-              </div>
-
-              {/* Reviews */}
-              <div className="p-4 border-t bg-gray-50">
-                <h3 className="font-semibold text-gray-800 mb-2">
-                  Reviews ({productReviews.length})
-                </h3>
-                {productReviews.length > 0 ? (
-                  <ul className="space-y-2">
-                    {productReviews.map((rev) => (
-                      <li key={rev._id} className="border rounded p-2 bg-white shadow-sm">
-                        <div className="flex justify-between text-sm">
-                          <span className="font-bold text-gray-900">{rev.buyerName || "Anonymous"}</span>
-                          <span className="text-yellow-600">⭐ {rev.rating}/5</span>
-                        </div>
-                        <p className="text-gray-700 text-sm mt-1">{rev.feedback}</p>
-                        <p className="text-xs text-gray-400 mt-1">
-                          {rev.createdAt ? new Date(rev.createdAt).toLocaleDateString() : ""}
-                        </p>
-                      </li>
-                    ))}
-                  </ul>
-                ) : (
-                  <p className="text-sm text-gray-500">No reviews yet. Be the first!</p>
-                )}
-              </div>
-            </div>
-          );
-        })}
+      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8 md:gap-12">
+        {products.map((p) => (
+          <CoffeeCard
+            key={p._id}
+            coffee={p}
+            user={user}
+            isInWishlist={wishlistItems.has(p._id)}
+            onViewReviews={handleViewReviews}
+            onAddToWishlist={handleAddToCart}
+            onAddReview={setSelectedCoffeeForReview}
+          />
+        ))}
       </div>
 
       {!products.length && (
-        <p className="text-center text-gray-700 font-medium mt-4">No products found.</p>
+        <div className="flex flex-col items-center justify-center py-32 space-y-6 opacity-30">
+          <CoffeeIcon size={80} strokeWidth={1} className="text-amber-950" />
+          <p className="text-2xl font-bold text-amber-950">No coffees found in our cellar.</p>
+        </div>
       )}
 
-      {/* Review Modal */}
-      {selectedCoffee && (
+      {/* Review Formulation Modal (Write Review) */}
+      {selectedCoffeeForReview && (
         <div
-          className="fixed inset-0 bg-black/40 flex justify-center items-center z-50"
-          onClick={() => setSelectedCoffee(null)}
+          className="fixed inset-0 bg-black/60 backdrop-blur-md flex justify-center items-center z-[110] p-4"
+          onClick={() => setSelectedCoffeeForReview(null)}
         >
           <div
-            className="bg-white rounded-2xl p-6 w-full max-w-md relative text-gray-900"
+            className="bg-white border border-amber-900/10 rounded-[2.5rem] p-8 md:p-12 w-full max-w-lg relative text-amber-950 shadow-2xl animate-in zoom-in-95 duration-300 overflow-hidden"
             onClick={(e) => e.stopPropagation()}
           >
-            <h2 className="text-xl font-bold mb-4">Review: {selectedCoffee.name}</h2>
-            <div className="text-sm text-gray-700 mb-2">
-              Seller: {selectedCoffee.sellerName || "Unknown"} ({selectedCoffee.sellerLocation || "No location"})
-            </div>
-            <input
-              type="number"
-              min="1"
-              max="5"
-              placeholder="Rating 1-5"
-              value={ratingInput}
-              onChange={(e) => setRatingInput(e.target.value)}
-              className="border px-2 py-1 rounded w-20 mb-3 text-gray-900"
-            />
-            <textarea
-              placeholder="Your feedback"
-              value={feedbackInput}
-              onChange={(e) => setFeedbackInput(e.target.value)}
-              className="border rounded p-2 w-full mb-3 text-gray-900"
-            />
-            <div className="flex justify-end gap-2">
-              <button
-                onClick={() => setSelectedCoffee(null)}
-                className="px-4 py-2 rounded-lg bg-gray-400 text-white hover:bg-gray-500 transition"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={submitReview}
-                className="px-4 py-2 rounded-lg bg-amber-700 text-white hover:bg-amber-800 transition"
-              >
-                Submit
-              </button>
+            <div className="absolute top-0 right-0 w-32 h-32 bg-amber-50/5 rounded-bl-full -z-10"></div>
+            
+            <h2 className="text-3xl font-black mb-2 text-amber-950">Write a Review</h2>
+            <p className="text-amber-900/60 mb-8 uppercase tracking-widest text-[10px] font-bold">Sharing experience for <span className="text-amber-600 italic font-black">{selectedCoffeeForReview.name}</span></p>
+            
+            <div className="space-y-6">
+              <div>
+                <label className="block text-[10px] font-black uppercase tracking-widest text-amber-900/60 mb-2 ml-1">Rating</label>
+                <div className="flex items-center gap-4">
+                  <input
+                    type="number"
+                    min="1"
+                    max="5"
+                    placeholder="5"
+                    value={ratingInput}
+                    onChange={(e) => setRatingInput(e.target.value)}
+                    className="bg-amber-50/50 border border-amber-900/10 rounded-2xl p-4 w-24 text-2xl font-black focus:ring-4 focus:ring-amber-500/10 transition-all outline-none text-amber-950"
+                  />
+                  <div className="flex text-amber-400 gap-1">
+                    {[1,2,3,4,5].map(s => <CoffeeIcon key={s} size={20} className={s <= Number(ratingInput) ? "fill-amber-400" : ""} />)}
+                  </div>
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-[10px] font-black uppercase tracking-widest text-amber-900/60 mb-2 ml-1">Feedback</label>
+                <textarea
+                  placeholder="Describe the aroma, taste, and experience..."
+                  value={feedbackInput}
+                  onChange={(e) => setFeedbackInput(e.target.value)}
+                  className="bg-amber-50/50 border border-amber-900/10 rounded-2xl p-6 w-full min-h-[150px] focus:ring-4 focus:ring-amber-500/10 transition-all outline-none resize-none text-amber-950"
+                />
+              </div>
+
+              <div className="flex gap-4 pt-4">
+                <button
+                  onClick={() => setSelectedCoffeeForReview(null)}
+                  className="flex-1 px-8 py-4 rounded-2xl bg-amber-50/50 text-amber-950 font-bold hover:bg-amber-950 hover:text-white transition-all active:scale-95"
+                >
+                  Discard
+                </button>
+                <button
+                  onClick={submitReview}
+                  className="flex-1 px-8 py-4 rounded-2xl bg-amber-950 text-white font-bold hover:bg-black transition-all shadow-xl shadow-amber-900/20 active:scale-95"
+                >
+                  Share Review
+                </button>
+              </div>
             </div>
           </div>
         </div>
       )}
+
+      {/* Comment/Review Viewer Modal */}
+      <CommentModal
+        isOpen={isCommentModalOpen}
+        onClose={() => {
+          setIsCommentModalOpen(false);
+          setSelectedCoffeeForComments(null);
+        }}
+        reviews={selectedCoffeeForComments ? reviews[selectedCoffeeForComments._id] : []}
+        coffeeName={selectedCoffeeForComments?.name}
+      />
     </div>
   );
 };
