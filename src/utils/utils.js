@@ -1,4 +1,4 @@
-export const API_URL = import.meta.env.VITE_API_URL || "https://espresso-emporium-server-phi.vercel.app";
+export const API_URL = import.meta.env.VITE_API_URL || "https://coffestore.onrender.com";
 
 export const CATEGORIES = ["Coffee", "Beans", "Equipment", "Accessories"];
 
