@@ -32,7 +32,7 @@ const AdminDashboard = () => {
 
       <div className="flex min-h-screen bg-[#F5F5F5]">
 
-        {/* Mobile Overlay */}
+        {}
         {isMobileSidebarOpen && (
           <div
             className="fixed inset-0 z-30 bg-black/50 md:hidden"
@@ -40,7 +40,7 @@ const AdminDashboard = () => {
           />
         )}
 
-        {/* Sidebar */}
+        {}
         <aside
           className={`
             fixed z-40 top-0 left-0 h-full bg-[#331A15] text-white flex flex-col shadow-lg
@@ -56,7 +56,7 @@ const AdminDashboard = () => {
               <p className="text-sm text-amber-200">Welcome, Admin</p>
             </div>
 
-            {/* Collapse Button Desktop */}
+            {}
             <button
               className="hidden md:block text-amber-200 text-xl"
               onClick={toggleSidebar}
@@ -64,7 +64,7 @@ const AdminDashboard = () => {
               {isSidebarOpen ? <FaChevronLeft /> : <FaChevronRight />}
             </button>
 
-            {/* Close button Mobile */}
+            {}
             <button
               className="md:hidden text-amber-200 text-xl"
               onClick={() => setIsMobileSidebarOpen(false)}
@@ -86,7 +86,7 @@ const AdminDashboard = () => {
                 {item.icon}
                 {isSidebarOpen && item.label}
 
-                {/* Tooltip for collapsed sidebar */}
+                {}
                 {!isSidebarOpen && (
                   <span className="absolute left-full top-1/2 -translate-y-1/2 ml-2 w-max px-2 py-1 rounded-md bg-amber-700 text-white text-sm opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
                     {item.label}
@@ -97,12 +97,12 @@ const AdminDashboard = () => {
           </nav>
         </aside>
 
-        {/* Main Content */}
+        {}
         <main
           className={`flex-1 flex flex-col transition-all duration-300 
             ${isSidebarOpen ? "md:ml-64" : "md:ml-20"}`}
         >
-          {/* Mobile Menu Button */}
+          {}
           <div className="p-4 md:hidden">
             <button
               className="text-2xl text-[#331A15]"

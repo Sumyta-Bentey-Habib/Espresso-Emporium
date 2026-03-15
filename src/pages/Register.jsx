@@ -170,7 +170,7 @@ const Register = () => {
           {role && (
             <>
               <form onSubmit={handleSubmit} className="space-y-5">
-                {/* Name */}
+                {}
                 <div>
                   <label className="block mb-1 text-sm font-medium text-black">Full Name / Business Name</label>
                   <input
@@ -184,7 +184,7 @@ const Register = () => {
                   />
                 </div>
 
-                {/* Email */}
+                {}
                 <div>
                   <label className="block mb-1 text-sm font-medium text-black">Email Address</label>
                   <input
@@ -198,7 +198,7 @@ const Register = () => {
                   />
                 </div>
 
-                {/* Password */}
+                {}
                 <div>
                   <label className="block mb-1 text-sm font-medium text-black">Password</label>
                   <input
@@ -212,7 +212,7 @@ const Register = () => {
                   />
                 </div>
 
-                {/* Location - only for Sellers */}
+                {}
                 {role === "Seller" && (
                   <div>
                     <label className="block mb-1 text-sm font-medium text-black">Location</label>
@@ -228,7 +228,7 @@ const Register = () => {
                   </div>
                 )}
 
-                {/* Profile Picture */}
+                {}
                 <div>
                   <label className="block mb-1 text-sm font-medium text-black">Profile Picture</label>
                   <input

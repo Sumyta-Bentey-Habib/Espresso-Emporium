@@ -27,13 +27,13 @@ const StartChatButton = ({ targetUser, className = "" }) => {
       return;
     }
 
-    // Optional: Send initial greeting or just open the chat
-    // For now, we'll just trigger the chat overlay by a custom event 
-    // or by letting the user know to check the chat bubble
+    
+    
+    
     
     try {
-      // Just check if conversation exists/create it with a ping if desired
-      // But we'll keep it simple: just tell the user chat is active
+      
+      
       Swal.fire({
         toast: true,
         position: 'top-end',
@@ -45,7 +45,7 @@ const StartChatButton = ({ targetUser, className = "" }) => {
         text: 'Check the chat bubble below.',
       });
       
-      // We could use a global state or custom event to open the chat bubble automatically
+      
       window.dispatchEvent(new CustomEvent('openChat', { detail: { otherUser: targetUser } }));
       
     } catch (error) {

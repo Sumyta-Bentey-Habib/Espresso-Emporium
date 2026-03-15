@@ -10,7 +10,7 @@ const CommentModal = ({ isOpen, onClose, reviews, coffeeName }) => {
         className="bg-white w-full max-w-2xl max-h-[85vh] rounded-[2.5rem] overflow-hidden shadow-2xl flex flex-col animate-in zoom-in-95 duration-300 border border-amber-900/10"
         onClick={(e) => e.stopPropagation()}
       >
-        {/* Header */}
+        {}
         <div className="p-8 border-b border-amber-900/10 flex justify-between items-center bg-gradient-to-r from-amber-50/5 to-transparent">
           <div>
             <h2 className="text-2xl font-bold text-amber-950 flex items-center gap-2">
@@ -27,7 +27,7 @@ const CommentModal = ({ isOpen, onClose, reviews, coffeeName }) => {
           </button>
         </div>
 
-        {/* Content */}
+        {}
         <div className="flex-1 overflow-y-auto p-8 space-y-6 custom-scrollbar">
           {reviews && reviews.length > 0 ? (
             reviews.map((rev, index) => (
@@ -78,7 +78,7 @@ const CommentModal = ({ isOpen, onClose, reviews, coffeeName }) => {
           )}
         </div>
 
-        {/* Footer */}
+        {}
         <div className="p-8 border-t border-amber-900/10 flex justify-center bg-amber-50/50/20">
           <button
             onClick={onClose}

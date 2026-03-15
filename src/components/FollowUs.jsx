@@ -11,11 +11,11 @@ const FollowUs = () => {
       }}
       className="py-24 px-6 relative overflow-hidden"
     >
-      {/* Dark overlay */}
+      {}
       <div className="absolute inset-0 bg-white/40 transition-colors duration-500 pointer-events-none"></div>
 
       <div className="relative z-10 container mx-auto">
-        {/* Heading */}
+        {}
         <div className="text-center mb-16 space-y-3">
           <span className="text-amber-700 font-black tracking-[0.3em] uppercase text-[10px]">Social Circle</span>
           <h1 className="text-5xl font-black text-amber-950 tracking-tight">
@@ -26,7 +26,7 @@ const FollowUs = () => {
           </p>
         </div>
 
-        {/* Grid of Images */}
+        {}
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-6">
           {[10,11,12,13,14,15].map(num => (
             <div key={num} className="group relative overflow-hidden rounded-2xl shadow-xl aspect-square">

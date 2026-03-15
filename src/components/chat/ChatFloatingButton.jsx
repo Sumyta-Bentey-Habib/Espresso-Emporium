@@ -31,7 +31,7 @@ const ChatFloatingButton = () => {
   return (
     <div className="fixed bottom-6 right-6 z-[9999]">
       <div className="relative">
-        {/* Chat Toggle Button */}
+        {}
         <button
           onClick={() => setIsOpen(!isOpen)}
           className={`p-4 rounded-full shadow-2xl transition-all duration-300 transform hover:scale-110 flex items-center justify-center ${
@@ -47,9 +47,9 @@ const ChatFloatingButton = () => {
           )}
         </button>
 
-        {/* Chat UI Overlay */}
+        {}
         {isOpen && (
-          <div className="absolute bottom-20 right-0 w-[400px] h-[550px] transition-all duration-300 animate-in fade-in slide-in-from-bottom-5">
+          <div className="absolute bottom-20 right-0 w-[calc(100vw-2rem)] md:w-[400px] h-[550px] max-h-[calc(100vh-120px)] transition-all duration-300 animate-in fade-in slide-in-from-bottom-5">
             {activeChat ? (
               <ChatBox 
                 currentUser={user} 

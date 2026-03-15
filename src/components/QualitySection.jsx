@@ -3,7 +3,7 @@ import React from "react";
 const QualitySection = () => {
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 px-6 py-20 bg-amber-50/50 transition-colors duration-500 border-b border-amber-900/10">
-      {/* Card 1 */}
+      {}
       <div className="flex flex-col items-center text-center p-8 rounded-[2rem] hover:bg-white hover:shadow-xl transition-all duration-300 border border-transparent hover:border-amber-900/10 group">
         <div className="w-16 h-16 bg-white rounded-2xl flex items-center justify-center mb-6 shadow-lg group-hover:rotate-12 transition-transform border border-amber-900/10">
           <img
@@ -20,7 +20,7 @@ const QualitySection = () => {
         </p>
       </div>
 
-      {/* Card 2 */}
+      {}
       <div className="flex flex-col items-center text-center p-8 rounded-[2rem] hover:bg-white hover:shadow-xl transition-all duration-300 border border-transparent hover:border-amber-900/10 group">
         <div className="w-16 h-16 bg-white rounded-2xl flex items-center justify-center mb-6 shadow-lg group-hover:rotate-12 transition-transform border border-amber-900/10">
           <img src="/icons/2.png" alt="High Quality" className="w-10 h-10 object-contain" />
@@ -33,7 +33,7 @@ const QualitySection = () => {
         </p>
       </div>
 
-      {/* Card 3 */}
+      {}
       <div className="flex flex-col items-center text-center p-8 rounded-[2rem] hover:bg-white hover:shadow-xl transition-all duration-300 border border-transparent hover:border-amber-900/10 group">
         <div className="w-16 h-16 bg-white rounded-2xl flex items-center justify-center mb-6 shadow-lg group-hover:rotate-12 transition-transform border border-amber-900/10">
           <img src="/icons/3.png" alt="Pure Grades" className="w-10 h-10 object-contain" />
@@ -46,7 +46,7 @@ const QualitySection = () => {
         </p>
       </div>
 
-      {/* Card 4 */}
+      {}
       <div className="flex flex-col items-center text-center p-8 rounded-[2rem] hover:bg-white hover:shadow-xl transition-all duration-300 border border-transparent hover:border-amber-900/10 group">
         <div className="w-16 h-16 bg-white rounded-2xl flex items-center justify-center mb-6 shadow-lg group-hover:rotate-12 transition-transform border border-amber-900/10">
           <img

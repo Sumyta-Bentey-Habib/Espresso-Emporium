@@ -5,7 +5,7 @@ import StartChatButton from "./chat/StartChatButton";
 const CoffeeCard = ({ coffee, onViewReviews, onAddToWishlist, onAddReview, user, isInWishlist }) => {
   return (
     <div className="group bg-white rounded-3xl overflow-hidden shadow-sm hover:shadow-2xl transition-all duration-500 border border-amber-900/10 flex flex-col h-full">
-      {/* Image Section */}
+      {}
       <div className="relative h-64 overflow-hidden">
         <img
           src={coffee.image || "/more/coffee-splash.jpg"}
@@ -24,7 +24,7 @@ const CoffeeCard = ({ coffee, onViewReviews, onAddToWishlist, onAddReview, user,
         )}
       </div>
 
-      {/* Content Section */}
+      {}
       <div className="p-6 flex flex-col flex-1">
         <div className="flex justify-between items-start mb-4">
           <div>
@@ -46,7 +46,7 @@ const CoffeeCard = ({ coffee, onViewReviews, onAddToWishlist, onAddReview, user,
           Sold by <span className="font-bold text-amber-950">{coffee.sellerName || "Espresso Artisan"}</span>
         </div>
 
-        {/* Action Section */}
+        {}
         <div className="grid grid-cols-2 gap-3 pt-4 border-t border-amber-900/10">
           <button
             onClick={() => onViewReviews(coffee)}

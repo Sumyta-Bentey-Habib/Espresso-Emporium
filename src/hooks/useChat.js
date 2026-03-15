@@ -2,9 +2,7 @@ import { useState, useEffect } from "react";
 import { useSocket } from "../context/SocketProvider";
 import { API_URL } from "../utils/utils";
 
-/**
- * Hook to listen for all conversations involving the current user.
- */
+
 export const useConversations = (email) => {
   const [conversations, setConversations] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -13,7 +11,7 @@ export const useConversations = (email) => {
   useEffect(() => {
     if (!email) return;
 
-    // Fetch initial conversations from backend
+    
     const fetchConversations = async () => {
       try {
         const res = await fetch(`${API_URL}/chat/conversations/${email}`);
@@ -32,7 +30,7 @@ export const useConversations = (email) => {
 
     if (!socket) return;
 
-    // Listen for real-time updates (e.g., new messages in any conversation)
+    
     const handleNewMessage = (message) => {
       setConversations(prev => {
         const index = prev.findIndex(c => c.id === message.conversationId);
@@ -43,7 +41,7 @@ export const useConversations = (email) => {
             lastMessage: message.text,
             lastMessageAt: message.createdAt
           };
-          // Move to top
+          
           const conv = updated.splice(index, 1)[0];
           return [conv, ...updated];
         }
@@ -58,9 +56,7 @@ export const useConversations = (email) => {
   return { conversations, loading };
 };
 
-/**
- * Hook to listen for messages in a specific conversation.
- */
+
 export const useMessages = (conversationId) => {
   const [messages, setMessages] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -69,7 +65,7 @@ export const useMessages = (conversationId) => {
   useEffect(() => {
     if (!conversationId) return;
 
-    // Fetch message history from backend
+    
     const fetchHistory = async () => {
       try {
         const res = await fetch(`${API_URL}/chat/history/${conversationId}`);
@@ -88,10 +84,10 @@ export const useMessages = (conversationId) => {
 
     if (!socket) return;
 
-    // Join room for real-time messages
+    
     socket.emit("join_room", conversationId);
 
-    // Listen for new messages
+    
     const handleNewMessage = (message) => {
       if (message.conversationId === conversationId) {
         setMessages(prev => [...prev, message]);

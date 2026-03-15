@@ -25,13 +25,13 @@ const SellerProducts = () => {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   
-  // Pagination State
+  
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(5);
   const [totalItems, setTotalItems] = useState(0);
   const [activeCategory, setActiveCategory] = useState("All");
 
-  // Modal state for product edit
+  
   const [editingProduct, setEditingProduct] = useState(null);
   const [formData, setFormData] = useState({
     name: "",
@@ -41,7 +41,7 @@ const SellerProducts = () => {
     image: "",
   });
 
-  // Modal state for reviews list
+  
   const [viewingReviewsFor, setViewingReviewsFor] = useState(null);
 
   useEffect(() => {
@@ -76,7 +76,7 @@ const SellerProducts = () => {
         })
       );
 
-      // Manual pagination
+      
       const start = (currentPage - 1) * itemsPerPage;
       const end = start + itemsPerPage;
       setProducts(productsWithReviews.slice(start, end));
@@ -144,7 +144,7 @@ const SellerProducts = () => {
           confirmButtonColor: "#331A15",
         });
         fetchMine();
-        // Update the modal view if open
+        
         if (viewingReviewsFor) {
           setViewingReviewsFor(prev => ({
             ...prev,
@@ -203,7 +203,7 @@ const SellerProducts = () => {
 
   return (
     <div className="space-y-8 animate-in fade-in duration-700">
-      {/* Header */}
+      {}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
         <div>
           <h1 className="text-4xl font-black text-amber-950 tracking-tight">Active Inventory</h1>
@@ -235,7 +235,7 @@ const SellerProducts = () => {
         </button>
       </div>
 
-      {/* Main Table */}
+      {}
       <div className="bg-white rounded-[3rem] shadow-xl shadow-amber-900/5 overflow-hidden border border-amber-900/10">
         <div className="overflow-x-auto custom-scrollbar">
           <table className="min-w-full">
@@ -349,7 +349,7 @@ const SellerProducts = () => {
         </div>
       </div>
 
-      {/* Edit Modal */}
+      {}
       {editingProduct && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-md flex justify-center items-center z-[110] p-4" onClick={() => setEditingProduct(null)}>
           <div className="bg-white border border-amber-900/10 rounded-[3rem] p-10 md:p-14 w-full max-w-2xl relative text-amber-950 shadow-2xl animate-in zoom-in-95 duration-500" onClick={e => e.stopPropagation()}>
@@ -392,7 +392,7 @@ const SellerProducts = () => {
         </div>
       )}
 
-      {/* Reviews Viewer Modal */}
+      {}
       {viewingReviewsFor && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-md flex justify-center items-center z-[110] p-4" onClick={() => setViewingReviewsFor(null)}>
           <div className="bg-white border border-amber-900/10 rounded-[3rem] w-full max-w-3xl max-h-[85vh] overflow-hidden flex flex-col shadow-2xl animate-in zoom-in-95 duration-500" onClick={e => e.stopPropagation()}>

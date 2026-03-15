@@ -30,7 +30,7 @@ const AllCoffee = ({ limit, search, category }) => {
     }
   });
 
-  // Fetch products and their reviews
+
   const fetchProducts = useCallback(async () => {
     try {
       const url = search
@@ -47,7 +47,7 @@ const AllCoffee = ({ limit, search, category }) => {
 
       setProducts(limit ? filteredData.slice(0, limit) : filteredData);
 
-      // Fetch and normalize reviews for all products
+      
       const reviewsData = await Promise.all(
         data.map(async (p) => {
           const r = await fetch(`${API_URL}/reviews/${p._id}`);
@@ -88,7 +88,7 @@ const AllCoffee = ({ limit, search, category }) => {
     fetchWishlist();
   }, [search, limit, category, fetchProducts, fetchWishlist]);
 
-  // Add to wishlist/cart
+  
   const handleAddToCart = async (coffee) => {
     if (!user) return Swal.fire("Login required", "Please login to add to wishlist", "info");
 
@@ -126,7 +126,7 @@ const AllCoffee = ({ limit, search, category }) => {
     }
   };
 
-  // Submit review
+  
   const submitReview = async () => {
     if (!ratingInput || !feedbackInput)
       return Swal.fire("Error", "Please enter rating and feedback", "warning");
@@ -216,14 +216,14 @@ const AllCoffee = ({ limit, search, category }) => {
           onClick={() => setSelectedCoffeeForReview(null)}
         >
           <div
-            className="bg-white border border-amber-900/10 rounded-[2.5rem] p-8 md:p-12 w-full max-w-lg relative text-amber-950 shadow-2xl animate-in zoom-in-95 duration-300 overflow-hidden"
+            className="bg-white border border-amber-900/10 rounded-3xl md:rounded-[2.5rem] p-6 md:p-12 w-full max-w-lg relative text-amber-950 shadow-2xl animate-in zoom-in-95 duration-300 overflow-hidden"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="absolute top-0 right-0 w-32 h-32 bg-amber-50/5 rounded-bl-full -z-10"></div>
-            
+
             <h2 className="text-3xl font-black mb-2 text-amber-950">Write a Review</h2>
             <p className="text-amber-900/60 mb-8 uppercase tracking-widest text-[10px] font-bold">Sharing experience for <span className="text-amber-600 italic font-black">{selectedCoffeeForReview.name}</span></p>
-            
+
             <div className="space-y-6">
               <div>
                 <label className="block text-[10px] font-black uppercase tracking-widest text-amber-900/60 mb-2 ml-1">Rating</label>

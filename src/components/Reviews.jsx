@@ -24,7 +24,7 @@ const Reviews = () => {
         backgroundImage: "url('/more/13.jpg')",
         backgroundSize: "cover",
         backgroundPosition: "center",}}>
-      {/* Dark overlay */}
+      {}
       <div className="absolute inset-0 bg-black/10 transition-colors duration-500 pointer-events-none"></div>
 
       <div className="p-8 md:p-12 bg-white rounded-[3rem] shadow-2xl space-y-10 my-12 max-w-5xl mx-auto relative z-10 border border-amber-900/10">

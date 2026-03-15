@@ -34,7 +34,7 @@ const Marketplace = () => {
         <div className="absolute inset-0 bg-black/50 transition-colors duration-500 pointer-events-none"></div>
         
         <div className="min-h-screen px-4 py-16 relative z-10 max-w-7xl mx-auto">
-          {/* Header Section */}
+          {}
           <div className="text-center mb-12 space-y-4">
             <h1 className="text-5xl md:text-7xl font-black text-white tracking-tight">
               Artisan <span className="text-amber-500 italic">Marketplace</span>
@@ -44,7 +44,7 @@ const Marketplace = () => {
             </p>
           </div>
 
-          {/* Search & Tabs */}
+          {}
           <div className="flex flex-col items-center gap-8 mb-16">
             <div className="w-full max-w-2xl bg-white/10 backdrop-blur-xl p-2 rounded-[2.5rem] border border-white/20 shadow-2xl flex flex-col md:flex-row gap-2">
               <input
@@ -73,12 +73,12 @@ const Marketplace = () => {
             </div>
           </div>
 
-          {/* Marketplace Content */}
+          {}
           <div className="animate-in fade-in slide-in-from-bottom-4 duration-1000">
             <AllCoffee search={search} category={activeTab} />
           </div>
 
-          {/* Footer Navigation */}
+          {}
           <div className="flex justify-center mt-20">
             <NavLink
               to="/coffee-store"

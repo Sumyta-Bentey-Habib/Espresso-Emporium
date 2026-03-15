@@ -25,7 +25,7 @@ import { useAuth } from "../../context/AuthProvider";
 const DashboardOverview = () => {
   const { user, role } = useAuth();
 
-  // Mock data for charts
+  
   const salesData = [
     { name: "Mon", sales: 4000, products: 2400 },
     { name: "Tue", sales: 3000, products: 1398 },
@@ -74,7 +74,7 @@ const DashboardOverview = () => {
 
   return (
     <div className="space-y-8 animate-in fade-in duration-700 h-full">
-      {/* Header */}
+      {}
       <div>
         <h1 className="text-4xl font-black text-amber-950 tracking-tight">
           Welcome back, {user?.displayName || user?.name || "Artisan"}
@@ -84,7 +84,7 @@ const DashboardOverview = () => {
         </p>
       </div>
 
-      {/* Stats Grid */}
+      {}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {stats.map((stat, i) => (
           <div key={i} className="group p-6 bg-white rounded-[2.5rem] border border-amber-900/10 shadow-xl shadow-amber-900/5 hover:scale-[1.02] transition-all cursor-default relative overflow-hidden">
@@ -105,9 +105,9 @@ const DashboardOverview = () => {
         ))}
       </div>
 
-      {/* Charts Section */}
+      {}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        {/* Sales Chart */}
+        {}
         <div className="lg:col-span-2 bg-white p-8 rounded-[3rem] border border-amber-900/10 shadow-xl shadow-amber-900/5 overflow-hidden">
           <div className="flex items-center justify-between mb-8">
             <div>
@@ -161,7 +161,7 @@ const DashboardOverview = () => {
           </div>
         </div>
 
-        {/* Category Distribution / Bar Chart */}
+        {}
         <div className="bg-white p-8 rounded-[3rem] border border-amber-900/10 shadow-xl shadow-amber-900/5 overflow-hidden">
           <div className="mb-8">
             <h3 className="text-xl font-black text-amber-950">Coffee Metrics</h3>

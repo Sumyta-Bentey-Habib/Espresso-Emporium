@@ -14,7 +14,7 @@ const CoffeeStore = () => {
     <>
       <SharedNav />
 
-      {/* Background wrapper */}
+      {}
       <div
         className="min-h-screen w-full relative"
         style={{
@@ -24,11 +24,11 @@ const CoffeeStore = () => {
           backgroundAttachment: "fixed",
         }}
       >
-        {/* Dark theme overlay */}
+        {}
         <div className="absolute inset-0 bg-black/40 transition-colors duration-500 pointer-events-none"></div>
-        {/* Content container */}
+        {}
         <div className="min-h-screen px-4 py-12 relative z-10">
-          {/* Back to Home */}
+          {}
           <div className="flex justify-center">
             <NavLink
               to="/"
@@ -39,7 +39,7 @@ const CoffeeStore = () => {
             </NavLink>
           </div>
 
-          {/* Search Bar */}
+          {}
           <div className="flex justify-center mt-10">
             <div className="w-full max-w-xl">
               <input
@@ -52,7 +52,7 @@ const CoffeeStore = () => {
             </div>
           </div>
 
-          {/* Coffee Products */}
+          {}
           <div className="mt-8">
             <AllCoffee search={search} category="Coffee" />
           </div>

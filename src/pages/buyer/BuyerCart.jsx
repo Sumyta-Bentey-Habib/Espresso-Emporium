@@ -18,7 +18,7 @@ const BuyerCart = () => {
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // Fetch cart items
+  
   const fetchCart = React.useCallback(async () => {
     if (!user?._id) return;
     setLoading(true);
@@ -35,7 +35,7 @@ const BuyerCart = () => {
     }
   }, [user?._id]);
 
-  // Remove item from cart
+  
   const removeItem = async (id) => {
     const confirm = await Swal.fire({
       title: "Remove from Bliss?",
@@ -75,7 +75,7 @@ const BuyerCart = () => {
 
   return (
     <div className="space-y-8 animate-in fade-in duration-700">
-      {/* Header */}
+      {}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
         <div>
           <h1 className="text-4xl font-black text-amber-950 tracking-tight">My Wishlist</h1>
@@ -91,7 +91,7 @@ const BuyerCart = () => {
         </button>
       </div>
 
-      {/* Wishlist Table */}
+      {}
       <div className="bg-white rounded-[3rem] shadow-xl shadow-amber-900/5 overflow-hidden border border-amber-900/10">
         <div className="overflow-x-auto custom-scrollbar">
           <table className="min-w-full">

@@ -10,14 +10,14 @@ import Register from "../pages/Register";
 import ErrorPage from "../components/ErrorPage";
 
 
-// Admin Pages
+
 import ManageUsers from "../pages/admin/ManageUsers";
 import ManageProducts from "../pages/admin/ManageProducts";
 
-// Buyer Pages
+
 import BuyerCart from "../pages/buyer/BuyerCart";
 
-// Seller Pages
+
 import SellerProducts from "../pages/seller/SellerProducts";
 import SellerAddProduct from "../pages/seller/SellerAddProduct";
 import CoffeeStore from "../pages/CoffeeStore";
@@ -39,15 +39,15 @@ const router = createBrowserRouter([
     element: <DashboardLayout />,
     children: [
       { index: true, element: <DashboardOverview /> },
-      // Admin
+      
       { path: "users", element: <ManageUsers /> },
       { path: "products", element: <ManageProducts /> },
 
-      // Buyer
+      
       
       { path: "wishlist", element: <BuyerCart /> },
 
-      // Seller
+      
       { path: "my-products", element: <SellerProducts /> },
       { path: "add-product", element: <SellerAddProduct /> },
     ],

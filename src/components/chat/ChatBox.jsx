@@ -7,7 +7,7 @@ import { useSocket } from "../../context/SocketProvider";
 const ChatBox = ({ currentUser, otherUser, onClose }) => {
   const [inputText, setInputText] = useState("");
   const socket = useSocket();
-  // Standardize on email for the conversation ID
+  
   const conversationId = [currentUser.email, otherUser.uid || otherUser.email].sort().join("_");
   const { messages, loading } = useMessages(conversationId);
   const scrollRef = useRef();
@@ -32,7 +32,7 @@ const ChatBox = ({ currentUser, otherUser, onClose }) => {
 
   return (
     <div className="flex flex-col h-full bg-white rounded-lg shadow-xl overflow-hidden border border-amber-200">
-      {/* Header */}
+      {}
       <div className="bg-amber-800 p-4 flex items-center justify-between text-white">
         <div className="flex items-center gap-3">
           <div className="relative">
@@ -69,7 +69,7 @@ const ChatBox = ({ currentUser, otherUser, onClose }) => {
         </button>
       </div>
 
-      {/* Messages */}
+      {}
       <div
         ref={scrollRef}
         className="flex-1 overflow-y-auto p-4 space-y-4 bg-amber-50/30 custom-scrollbar"

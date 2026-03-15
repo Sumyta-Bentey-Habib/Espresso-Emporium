@@ -23,7 +23,7 @@ const ChatList = ({ currentUser, onSelectConversation }) => {
         const res = await fetch(`${API_URL}/users?search=${encodeURIComponent(searchQuery)}`);
         if (res.ok) {
           const users = await res.json();
-          // Filter out current user and users already in recent conversations
+          
           const filteredResults = users.filter(u =>
             u.email !== currentUser.email &&
             !conversations.some(c => c.participants.includes(u.email))
@@ -40,7 +40,7 @@ const ChatList = ({ currentUser, onSelectConversation }) => {
     return () => clearTimeout(timer);
   }, [searchQuery, currentUser.email, conversations]);
 
-  // Filter conversations for the "Recent" section
+  
   const matchedConversations = conversations.filter(conv => {
     const otherUserUid = conv.participants.find(uid => uid !== currentUser.uid);
     const otherUser = conv.participantDetails[otherUserUid] || { name: "User" };
@@ -57,7 +57,7 @@ const ChatList = ({ currentUser, onSelectConversation }) => {
         </h3>
       </div>
 
-      {/* Search */}
+      {}
       <div className="p-3 border-b border-amber-50 bg-amber-50/20">
         <div className="relative">
           <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-amber-900/40" />
@@ -71,7 +71,7 @@ const ChatList = ({ currentUser, onSelectConversation }) => {
         </div>
       </div>
 
-      {/* Lists */}
+      {}
       <div className="flex-1 overflow-y-auto custom-scrollbar">
         {isSearchingGlobal || (conversationsLoading && searchQuery === "") ? (
           <div className="flex justify-center items-center h-40">
@@ -79,7 +79,7 @@ const ChatList = ({ currentUser, onSelectConversation }) => {
           </div>
         ) : (
           <>
-            {/* Recent Conversations */}
+            {}
             {matchedConversations.length > 0 && (
               <div className="mb-2">
                 <div className="px-4 py-2 bg-amber-50/50 text-[10px] font-black text-amber-900/40 uppercase tracking-widest flex items-center gap-2">
@@ -130,7 +130,7 @@ const ChatList = ({ currentUser, onSelectConversation }) => {
               </div>
             )}
 
-            {/* Global Results */}
+            {}
             {searchResults.length > 0 && (
               <div>
                 <div className="px-4 py-2 bg-amber-800 text-[10px] font-black text-white uppercase tracking-widest flex items-center gap-2">
@@ -144,7 +144,7 @@ const ChatList = ({ currentUser, onSelectConversation }) => {
                       name: u.name,
                       photo: u.image || u.photo,
                       role: u.role,
-                      uid: u.email // Using email as uid for chat identification
+                      uid: u.email 
                     })}
                     className="w-full p-4 flex items-center gap-3 hover:bg-amber-50 transition-colors border-b border-amber-50/50 text-left"
                   >
@@ -158,7 +158,7 @@ const ChatList = ({ currentUser, onSelectConversation }) => {
               </div>
             )}
 
-            {/* Empty State */}
+            {}
             {matchedConversations.length === 0 && searchResults.length === 0 && (
               <div className="flex flex-col items-center justify-center p-8 text-center text-amber-900/40 h-64">
                 <Search size={40} className="mb-2 opacity-20" />

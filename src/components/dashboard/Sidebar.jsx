@@ -54,11 +54,13 @@ const Sidebar = ({ isCollapsed, onToggle, role }) => {
 
   return (
     <aside
-      className={`relative h-screen bg-[#331a15] text-white flex flex-col shadow-2xl transition-all duration-500 z-50 shrink-0 ${
-        isCollapsed ? "w-20" : "w-72"
+      className={`fixed lg:relative h-screen bg-[#331a15] text-white flex flex-col shadow-2xl transition-all duration-500 z-50 shrink-0 ${
+        isCollapsed 
+          ? "-translate-x-full lg:translate-x-0 lg:w-20" 
+          : "translate-x-0 w-72"
       }`}
     >
-      {/* Branding */}
+      {}
       <div className="p-6 border-b border-white/10 flex items-center justify-between h-24 overflow-hidden shrink-0">
         <div className="flex items-center gap-4">
           <div className="w-10 h-10 rounded-xl bg-amber-700 flex items-center justify-center shrink-0">
@@ -73,7 +75,7 @@ const Sidebar = ({ isCollapsed, onToggle, role }) => {
         </div>
       </div>
 
-      {/* Navigation */}
+      {}
       <nav className="flex-1 p-4 space-y-2 mt-4 overflow-y-auto custom-scrollbar overflow-x-hidden">
         {menuItems.map((item) => (
           <NavLink
@@ -95,7 +97,7 @@ const Sidebar = ({ isCollapsed, onToggle, role }) => {
               </span>
             )}
             
-            {/* Tooltip for collapsed mode */}
+            {}
             {isCollapsed && (
               <div className="absolute left-[calc(100%+1rem)] top-1/2 -translate-y-1/2 px-3 py-1.5 bg-amber-900 text-white text-xs font-bold rounded-lg opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity z-[60] shadow-xl whitespace-nowrap">
                 {item.label}
@@ -105,7 +107,7 @@ const Sidebar = ({ isCollapsed, onToggle, role }) => {
         ))}
       </nav>
 
-      {/* Footer / User Info */}
+      {}
       <div className="p-4 border-t border-white/10 space-y-2 shrink-0">
         <NavLink
           to="/"
@@ -152,7 +154,7 @@ const Sidebar = ({ isCollapsed, onToggle, role }) => {
         )}
       </div>
 
-      {/* Toggle Button */}
+      {}
       <button
         onClick={onToggle}
         className="absolute -right-4 top-24 w-8 h-8 rounded-full bg-amber-700 text-white flex items-center justify-center shadow-xl border-4 border-amber-50 hover:scale-110 active:scale-90 transition-all z-[70]"

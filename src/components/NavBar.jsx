@@ -39,9 +39,9 @@ const NavBar = () => {
         backgroundPosition: "center",
       }}
     >
-      {/* Navbar Start */}
+      {}
       <div className="navbar-start">
-        {/* Mobile Dropdown */}
+        {}
         <div className="dropdown">
           <div tabIndex={0} role="button" className="btn btn-ghost lg:hidden">
             <svg
@@ -65,7 +65,7 @@ const NavBar = () => {
           >
             {navItems}
 
-            {/* Mobile User Info */}
+            {}
             {user ? (
               <div className="mt-2 border-t border-gray-600 pt-2 flex flex-col gap-2">
                 <div className="flex items-center gap-2">
@@ -105,20 +105,20 @@ const NavBar = () => {
           </ul>
         </div>
 
-        {/* Logo */}
+        {}
         <div className="flex items-center gap-2">
           <img src="/more/logo1.png" alt="Logo" className="h-10 w-auto" />
           <a className="normal-case text-2xl font-black text-white raleway">Espresso<span className="text-amber-400">Emporium</span></a>
         </div>
       </div>
 
-      {/* Navbar Center - Desktop Links */}
+      {}
       <div className="navbar-center hidden lg:flex">
         <ul className="menu menu-horizontal px-1 font-bold tracking-wide uppercase text-xs">{navItems}</ul>
       </div>
 
-      {/* Navbar End - Desktop User Info */}
-      <div className="navbar-end gap-5 flex">
+      {}
+      <div className="navbar-end gap-5 hidden sm:flex">
         {user ? (
           <>
             <div className="flex items-center gap-2">

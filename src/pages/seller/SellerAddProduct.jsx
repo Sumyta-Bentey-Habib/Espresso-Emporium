@@ -44,7 +44,7 @@ const SellerAddProduct = () => {
     try {
       let imageUrl = form.image;
 
-      // Upload image if a file is selected
+      
       if (imageFile) {
         imageUrl = await uploadImageToImgBB(imageFile);
       }

@@ -13,7 +13,7 @@ export const SocketProvider = ({ children }) => {
 
   useEffect(() => {
     if (user?.email) {
-      // Connect to the backend socket server
+      
       const newSocket = io(API_URL.replace("/api", ""), {
         query: { email: user.email }
       });

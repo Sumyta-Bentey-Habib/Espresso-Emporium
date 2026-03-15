@@ -68,6 +68,13 @@ const DashboardLayout = () => {
       <main 
         className="flex-1 overflow-y-auto h-full custom-scrollbar relative"
       >
+        <button 
+          onClick={() => setIsSidebarCollapsed(false)}
+          className="lg:hidden fixed top-6 left-6 z-40 p-3 bg-amber-800 text-white rounded-xl shadow-xl hover:bg-amber-900 transition-all active:scale-95"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+        </button>
+
         <div className="p-8 md:p-12 relative min-h-full">
           {/* Subtle background texture */}
           <div className="absolute inset-0 opacity-[0.03] pointer-events-none" style={{ backgroundImage: "url('/more/1.png')", backgroundSize: "400px" }}></div>

@@ -18,7 +18,7 @@ const ContactUs = () => {
           backgroundPosition: "center",
         }}
       >
-        {/* Light overlay */}
+        {}
         <div className="absolute inset-0 bg-white/40 transition-colors duration-500 pointer-events-none"></div>
 
         <div className="relative z-10 max-w-6xl mx-auto">

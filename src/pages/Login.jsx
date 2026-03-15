@@ -91,7 +91,7 @@ const Login = () => {
         }}
       >
         <div className="flex flex-col w-full max-w-4xl overflow-hidden md:flex-row">
-          {/* Lottie Animation */}
+          {}
           <div className="flex items-center justify-center w-full p-6 md:w-1/2">
             <Lottie
               animationData={loginAnimation}
@@ -100,14 +100,14 @@ const Login = () => {
             />
           </div>
 
-          {/* Login Form */}
+          {}
           <div className="w-full p-8 space-y-6 md:w-1/2 bg-white shadow-xl rounded-2xl">
             <h1 className="text-3xl font-bold text-center text-gray-900">
               Login
             </h1>
 
             <form onSubmit={handleSubmit} className="space-y-6">
-              {/* Email */}
+              {}
               <div>
                 <label htmlFor="email" className="block text-sm text-gray-900">
                   Email
@@ -130,7 +130,7 @@ const Login = () => {
                 />
               </div>
 
-              {/* Password with visibility toggle */}
+              {}
               <div>
                 <label
                   htmlFor="password"
@@ -171,7 +171,7 @@ const Login = () => {
                 </div>
               </div>
 
-              {/* Submit */}
+              {}
               <button
                 type="submit"
                 className="w-full py-2 font-semibold text-white rounded-lg bg-violet-500 hover:bg-violet-600 disabled:opacity-70"
@@ -181,7 +181,7 @@ const Login = () => {
               </button>
             </form>
 
-            {/* Google Login */}
+            {}
             <button
               onClick={handleGoogleLogin}
               className="w-full bg-gray-900 hover:bg-amber-700 text-white py-3 rounded-lg transition flex items-center justify-center gap-2"
@@ -190,7 +190,7 @@ const Login = () => {
               Continue with Google
             </button>
 
-            {/* Links */}
+            {}
             <p className="text-sm text-center text-gray-900">
               Don’t have an account?
               <NavLink

@@ -20,7 +20,7 @@ const Home = () => {
       <div className="relative">
         <div className="absolute top-0 left-0 w-full h-20 bg-gradient-to-b from-white to-transparent z-10 transition-colors duration-500"></div>
         <section className="py-24 relative overflow-hidden bg-white transition-colors duration-500">
-          {/* Decorative background elements */}
+          {}
           <div className="absolute top-0 right-0 w-96 h-96 bg-amber-500/5 rounded-full filter blur-3xl -mr-48 -mt-48 transition-all duration-700"></div>
           
           <div className="container mx-auto px-4 relative z-20">

@@ -21,7 +21,7 @@ const ManageProducts = () => {
     sellerLocation: "",
   });
 
-  // Pagination State
+  
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
   const [totalItems, setTotalItems] = useState(0);
@@ -45,7 +45,7 @@ const ManageProducts = () => {
         price: p.price?.$numberInt ? Number(p.price.$numberInt) : p.price,
       }));
 
-      // Manual pagination
+      
       const start = (currentPage - 1) * itemsPerPage;
       const end = start + itemsPerPage;
       setProducts(normalized.slice(start, end));
@@ -127,7 +127,7 @@ const ManageProducts = () => {
 
   return (
     <div className="space-y-8 animate-in fade-in duration-700">
-      {/* Header Area */}
+      {}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
         <div>
           <h1 className="text-4xl font-black text-amber-950 tracking-tight">Product Management</h1>
@@ -151,7 +151,7 @@ const ManageProducts = () => {
         </div>
       </div>
 
-      {/* Main Content Area - Table Design for better management */}
+      {}
       <div className="bg-white rounded-[3rem] shadow-xl shadow-amber-900/5 overflow-hidden border border-amber-900/10">
         <div className="overflow-x-auto custom-scrollbar">
           <table className="min-w-full">
@@ -253,7 +253,7 @@ const ManageProducts = () => {
         </div>
       </div>
 
-      {/* Update Modal */}
+      {}
       {selectedProduct && (
         <div
           className="fixed inset-0 bg-black/60 backdrop-blur-md flex justify-center items-center z-[110] p-4"

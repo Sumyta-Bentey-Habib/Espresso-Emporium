@@ -13,12 +13,12 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // Fetch user data from backend (MongoDB)
+  
   const fetchUserFromDB = async (uid, email) => {
     try {
       const res = await fetch(`${API_URL}/users/${uid}`); 
       if (!res.ok) {
-        // fallback: try email
+        
         const res2 = await fetch(`${API_URL}/users/${email}`);
         if (!res2.ok) return null;
         return await res2.json();
@@ -34,7 +34,7 @@ export const AuthProvider = ({ children }) => {
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       if (currentUser) {
         const dbUser = await fetchUserFromDB(currentUser.uid, currentUser.email);
-        setUser({ ...currentUser, ...dbUser }); // merge Firebase + DB
+        setUser({ ...currentUser, ...dbUser }); 
       } else {
         setUser(null);
       }
@@ -50,7 +50,7 @@ export const AuthProvider = ({ children }) => {
     const provider = new GoogleAuthProvider();
     const result = await signInWithPopup(auth, provider);
 
-    // fetch DB user after Google login
+    
     const dbUser = await fetchUserFromDB(result.user.uid, result.user.email);
     setUser({ ...result.user, ...dbUser });
 

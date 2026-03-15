@@ -14,7 +14,7 @@ const ManageUsers = () => {
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(true);
   
-  // Pagination State
+  
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
   const [totalItems, setTotalItems] = useState(0);
@@ -22,8 +22,8 @@ const ManageUsers = () => {
   const fetchUsers = useCallback(async () => {
     setLoading(true);
     try {
-      // The current backend doesn't seem to support pagination with limit/offset
-      // so we fetch all and paginate on frontend for now, or assume many for demo
+      
+      
       const url = search
         ? `${API_URL}/users?search=${encodeURIComponent(search)}`
         : `${API_URL}/users`;
@@ -33,7 +33,7 @@ const ManageUsers = () => {
       
       setTotalItems(data.length);
       
-      // Calculate start and end for manual pagination since API doesn't support it yet
+      
       const start = (currentPage - 1) * itemsPerPage;
       const end = start + itemsPerPage;
       setUsers(data.slice(start, end));
@@ -104,7 +104,7 @@ const ManageUsers = () => {
 
   return (
     <div className="space-y-8 animate-in fade-in duration-700">
-      {/* Header Area */}
+      {}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
         <div>
           <h1 className="text-4xl font-black text-amber-950 tracking-tight">User Management</h1>
@@ -128,7 +128,7 @@ const ManageUsers = () => {
         </div>
       </div>
 
-      {/* Main Table Area */}
+      {}
       <div className="bg-white rounded-[3rem] shadow-xl shadow-amber-900/5 overflow-hidden border border-amber-900/10">
         <div className="overflow-x-auto custom-scrollbar uppercase">
           <table className="min-w-full">
@@ -217,7 +217,7 @@ const ManageUsers = () => {
           </table>
         </div>
 
-        {/* Footer with Pagination */}
+        {}
         <div className="bg-amber-100/20 border-t border-amber-900/10 px-8 py-4">
           <Pagination
             currentPage={currentPage}
