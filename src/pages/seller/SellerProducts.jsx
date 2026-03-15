@@ -29,6 +29,7 @@ const SellerProducts = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(5);
   const [totalItems, setTotalItems] = useState(0);
+  const [activeCategory, setActiveCategory] = useState("All");
 
   // Modal state for product edit
   const [editingProduct, setEditingProduct] = useState(null);
@@ -53,7 +54,11 @@ const SellerProducts = () => {
       const res = await fetch(`${API_URL}/products`);
       const data = await res.json();
 
-      const filtered = data.filter((p) => p.sellerEmail === user?.email);
+      const filtered = data.filter((p) => {
+        const matchesSeller = p.sellerEmail === user?.email;
+        const matchesCategory = activeCategory === "All" || (p.category || "Coffee") === activeCategory;
+        return matchesSeller && matchesCategory;
+      });
       setTotalItems(filtered.length);
 
       const productsWithReviews = await Promise.all(
@@ -80,7 +85,7 @@ const SellerProducts = () => {
     } finally {
       setLoading(false);
     }
-  }, [user?.email, currentPage, itemsPerPage]);
+  }, [user?.email, currentPage, itemsPerPage, activeCategory]);
 
   useEffect(() => {
     if (user?.email) fetchMine();
@@ -201,16 +206,32 @@ const SellerProducts = () => {
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
         <div>
-          <h1 className="text-4xl font-black text-amber-950 tracking-tight">My Collections</h1>
-          <p className="text-amber-900/60 font-bold mt-1 uppercase tracking-widest text-xs">Managing {totalItems} Unique Blends</p>
+          <h1 className="text-4xl font-black text-amber-950 tracking-tight">Active Inventory</h1>
+          <p className="text-amber-900/60 font-bold mt-1 uppercase tracking-widest text-xs">Managing {totalItems} {activeCategory === 'All' ? 'Items' : activeCategory}</p>
+        </div>
+
+        <div className="flex bg-amber-100/30 p-1 rounded-[1.5rem] border border-amber-900/5">
+          {["All", "Coffee", "Beans", "Equipment", "Accessories"].map(cat => (
+            <button
+              key={cat}
+              onClick={() => { setActiveCategory(cat); setCurrentPage(1); }}
+              className={`px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${
+                activeCategory === cat 
+                ? "bg-amber-950 text-white shadow-lg" 
+                : "text-amber-900/40 hover:text-amber-950"
+              }`}
+            >
+              {cat}
+            </button>
+          ))}
         </div>
         
         <button
           onClick={() => window.location.href = "/dashboard/add-product"}
-          className="inline-flex items-center gap-2 bg-amber-950 text-white px-8 py-4 rounded-3xl font-black hover:bg-black transition-all shadow-xl shadow-amber-950/20 active:scale-95 group"
+          className="inline-flex items-center gap-2 bg-emerald-600 text-white px-8 py-4 rounded-3xl font-black hover:bg-emerald-700 transition-all shadow-xl shadow-emerald-950/20 active:scale-95 group"
         >
           <Plus size={20} className="group-hover:rotate-90 transition-transform" />
-          Add New Blend
+          Add Item
         </button>
       </div>
 

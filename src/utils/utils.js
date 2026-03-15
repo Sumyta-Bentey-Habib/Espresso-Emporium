@@ -1,5 +1,7 @@
 export const API_URL = import.meta.env.VITE_API_URL || "https://espresso-emporium-server-phi.vercel.app";
 
+export const CATEGORIES = ["Coffee", "Beans", "Equipment", "Accessories"];
+
 export async function uploadImageToImgBB(imageFile) {
   const apiKey = import.meta.env.VITE_IMGBB_API_KEY;
   const formData = new FormData();

@@ -7,7 +7,7 @@ import { Coffee as CoffeeIcon } from "lucide-react";
 import { API_URL } from "../utils/utils";
 import { useCallback } from "react";
 
-const AllCoffee = ({ limit, search }) => {
+const AllCoffee = ({ limit, search, category }) => {
   const { user } = useAuth();
   const [products, setProducts] = useState([]);
   const [reviews, setReviews] = useState({});
@@ -40,7 +40,12 @@ const AllCoffee = ({ limit, search }) => {
       const res = await fetch(url);
       const data = await res.json();
 
-      setProducts(limit ? data.slice(0, limit) : data);
+      let filteredData = data;
+      if (category) {
+        filteredData = data.filter(p => (p.category || "Coffee") === category);
+      }
+
+      setProducts(limit ? filteredData.slice(0, limit) : filteredData);
 
       // Fetch and normalize reviews for all products
       const reviewsData = await Promise.all(
@@ -65,7 +70,7 @@ const AllCoffee = ({ limit, search }) => {
     } catch (error) {
       console.error("Failed to fetch products or reviews:", error);
     }
-  }, [search, limit]);
+  }, [search, limit, category]);
 
   const fetchWishlist = useCallback(async () => {
     if (!user?._id) return;
@@ -81,7 +86,7 @@ const AllCoffee = ({ limit, search }) => {
   useEffect(() => {
     fetchProducts();
     fetchWishlist();
-  }, [search, limit, fetchProducts, fetchWishlist]);
+  }, [search, limit, category, fetchProducts, fetchWishlist]);
 
   // Add to wishlist/cart
   const handleAddToCart = async (coffee) => {

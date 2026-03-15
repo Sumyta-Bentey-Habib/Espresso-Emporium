@@ -54,7 +54,7 @@ const CoffeeStore = () => {
 
           {/* Coffee Products */}
           <div className="mt-8">
-            <AllCoffee search={search} />
+            <AllCoffee search={search} category="Coffee" />
           </div>
         </div>
       </div>

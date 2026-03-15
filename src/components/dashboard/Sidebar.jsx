@@ -36,13 +36,13 @@ const Sidebar = ({ isCollapsed, onToggle, role }) => {
         ];
       case "seller":
         return [
-          { to: "/dashboard", icon: <LayoutDashboard size={20} />, label: "Seller Stats" },
-          { to: "/dashboard/my-products", icon: <Coffee size={20} />, label: "My Coffees" },
-          { to: "/dashboard/add-product", icon: <PlusCircle size={20} />, label: "Add New Blend" },
+          { to: "/dashboard", icon: <LayoutDashboard size={20} />, label: "Sales Review" },
+          { to: "/dashboard/my-products", icon: <Box size={20} />, label: "Inventory" },
+          { to: "/dashboard/add-product", icon: <PlusCircle size={20} />, label: "Add Item" },
         ];
       case "buyer":
         return [
-          { to: "/dashboard", icon: <History size={20} />, label: "My Orders" },
+          { to: "/dashboard", icon: <History size={20} />, label: "Activity" },
           { to: "/dashboard/wishlist", icon: <ShoppingBag size={20} />, label: "Wishlist" },
         ];
       default:

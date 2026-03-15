@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useAuth } from "../../context/AuthProvider";
 import Swal from "sweetalert2";
-import { API_URL, uploadImageToImgBB } from "../../utils/utils";
-import { Coffee as CoffeeIcon, Plus } from "lucide-react";
+import { API_URL, uploadImageToImgBB, CATEGORIES } from "../../utils/utils";
+import { Coffee as CoffeeIcon, Plus, Package } from "lucide-react";
 
 const SellerAddProduct = () => {
   useEffect(() => {
@@ -14,6 +14,7 @@ const SellerAddProduct = () => {
     name: "",
     image: "",
     price: "",
+    category: "Coffee",
     availability: "",
     description: "",
   });
@@ -79,6 +80,7 @@ const SellerAddProduct = () => {
         name: "",
         image: "",
         price: "",
+        category: "Coffee",
         availability: "",
         description: "",
       });
@@ -102,7 +104,7 @@ const SellerAddProduct = () => {
       <div className="absolute top-0 right-0 w-48 h-48 bg-amber-50/5 rounded-bl-full -z-10"></div>
       
       <div className="mb-10">
-        <h2 className="text-4xl font-black text-amber-950 tracking-tight">Add New Blend</h2>
+        <h2 className="text-4xl font-black text-amber-950 tracking-tight">Add New Listing</h2>
         <p className="text-amber-900/60 font-bold mt-1 uppercase tracking-widest text-[10px]">Expand your artisanal collection</p>
       </div>
 
@@ -110,10 +112,10 @@ const SellerAddProduct = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           <div className="space-y-6">
             <div className="group">
-              <label className="block text-[10px] font-black uppercase tracking-widest text-amber-900/60 mb-2 ml-1">Blend Name</label>
+              <label className="block text-[10px] font-black uppercase tracking-widest text-amber-900/60 mb-2 ml-1">Product Name</label>
               <input
                 name="name"
-                placeholder="e.g. Ethiopian Yirgacheffe"
+                placeholder="e.g. Ethiopian Yirgacheffe or Burr Grinder"
                 value={form.name}
                 onChange={handleChange}
                 className="w-full px-6 py-4 bg-amber-50/50 border border-amber-900/10 rounded-2xl focus:ring-4 focus:ring-amber-500/10 outline-none font-bold text-amber-950 transition-all"
@@ -134,20 +136,35 @@ const SellerAddProduct = () => {
               />
             </div>
 
-            <div className="group">
-              <label className="block text-[10px] font-black uppercase tracking-widest text-amber-900/60 mb-2 ml-1">Availability</label>
-              <select
-                name="availability"
-                value={form.availability}
-                onChange={handleChange}
-                className="w-full px-6 py-4 bg-amber-50/50 border border-amber-900/10 rounded-2xl focus:ring-4 focus:ring-amber-500/10 outline-none font-bold text-amber-950 transition-all"
-                required
-              >
-                <option value="" disabled className="bg-white">Select Status</option>
-                <option value="Available" className="bg-white">Available</option>
-                <option value="Out of Stock" className="bg-white">Out of Stock</option>
-              </select>
-            </div>
+              <div className="group">
+                <label className="block text-[10px] font-black uppercase tracking-widest text-amber-900/60 mb-2 ml-1">Category</label>
+                <select
+                  name="category"
+                  value={form.category}
+                  onChange={handleChange}
+                  className="w-full px-6 py-4 bg-amber-50/50 border border-amber-900/10 rounded-2xl focus:ring-4 focus:ring-amber-500/10 outline-none font-bold text-amber-950 transition-all"
+                  required
+                >
+                  {CATEGORIES.map(cat => (
+                    <option key={cat} value={cat} className="bg-white">{cat}</option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="group">
+                <label className="block text-[10px] font-black uppercase tracking-widest text-amber-900/60 mb-2 ml-1">Availability</label>
+                <select
+                  name="availability"
+                  value={form.availability}
+                  onChange={handleChange}
+                  className="w-full px-6 py-4 bg-amber-50/50 border border-amber-900/10 rounded-2xl focus:ring-4 focus:ring-amber-500/10 outline-none font-bold text-amber-950 transition-all"
+                  required
+                >
+                  <option value="" disabled className="bg-white">Select Status</option>
+                  <option value="Available" className="bg-white">Available</option>
+                  <option value="Out of Stock" className="bg-white">Out of Stock</option>
+                </select>
+              </div>
           </div>
 
           <div className="space-y-6">
@@ -184,10 +201,10 @@ const SellerAddProduct = () => {
             </div>
 
             <div className="group">
-              <label className="block text-[10px] font-black uppercase tracking-widest text-amber-900/60 mb-2 ml-1">The Roast Story</label>
+              <label className="block text-[10px] font-black uppercase tracking-widest text-amber-900/60 mb-2 ml-1">The Product Story</label>
               <textarea
                 name="description"
-                placeholder="Describe the notes, aroma, and origin..."
+                placeholder="Describe the notes, origin, or technical specs..."
                 value={form.description}
                 onChange={handleChange}
                 rows="4"
@@ -207,8 +224,8 @@ const SellerAddProduct = () => {
             <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
           ) : (
             <>
-              <CoffeeIcon size={20} />
-              Publish Blend
+              <Package size={20} />
+              Publish Listing
             </>
           )}
         </button>

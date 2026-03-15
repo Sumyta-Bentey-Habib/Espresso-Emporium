@@ -50,23 +50,23 @@ const DashboardOverview = () => {
 
     if (role === "admin") {
       return [
-        { label: "Total Revenue", value: "$45,285", icon: <TrendingUp className="text-emerald-500" />, trend: "+12.5%" },
-        { label: "New Customers", value: "842", icon: <Users className="text-blue-500" />, trend: "+3.2%" },
-        { label: "Total Sales", value: "1,240", icon: <ShoppingBag className="text-purple-500" />, trend: "+8.1%" },
+        { label: "Gross Revenue", value: "$45,285", icon: <TrendingUp className="text-emerald-500" />, trend: "+12.5%" },
+        { label: "Total Members", value: "842", icon: <Users className="text-blue-500" />, trend: "+3.2%" },
+        { label: "Web Marketplace", value: "1,240 Sales", icon: <ShoppingBag className="text-purple-500" />, trend: "+8.1%" },
         ...common
       ];
     } else if (role === "seller") {
       return [
-        { label: "Total Earned", value: "$12,840", icon: <TrendingUp className="text-emerald-500" />, trend: "+15.2%" },
-        { label: "My Products", value: "24", icon: <Coffee className="text-amber-700" /> },
-        { label: "Items Sold", value: "312", icon: <ShoppingBag className="text-purple-500" />, trend: "+5.4%" },
+        { label: "Net Earnings", value: "$12,840", icon: <TrendingUp className="text-emerald-500" />, trend: "+15.2%" },
+        { label: "Live Inventory", value: "24 Items", icon: <Box className="text-amber-700" /> },
+        { label: "Items Shipped", value: "312", icon: <ShoppingBag className="text-purple-500" />, trend: "+5.4%" },
         ...common
       ];
     } else {
       return [
-        { label: "Total Spent", value: "$1,245", icon: <ShoppingBag className="text-amber-700" /> },
-        { label: "Wishlist Items", value: "8", icon: <Heart className="text-rose-500" /> },
-        { label: "Order Count", value: "15", icon: <Coffee className="text-amber-900" /> },
+        { label: "Wallet Activity", value: "$1,245", icon: <ShoppingBag className="text-amber-700" /> },
+        { label: "Saved Items", value: "8", icon: <Heart className="text-rose-500" /> },
+        { label: "Store Visits", value: "15", icon: <Coffee className="text-amber-900" /> },
         ...common
       ];
     }

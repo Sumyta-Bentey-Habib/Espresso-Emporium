@@ -22,6 +22,7 @@ import SellerProducts from "../pages/seller/SellerProducts";
 import SellerAddProduct from "../pages/seller/SellerAddProduct";
 import CoffeeStore from "../pages/CoffeeStore";
 import DashboardOverview from "../pages/dashboard/DashboardOverview";
+import Marketplace from "../pages/Marketplace";
 
 
 const router = createBrowserRouter([
@@ -32,6 +33,7 @@ const router = createBrowserRouter([
   {path:"/about-us",element:<AboutUs></AboutUs>},
   {path:"/contract",element:<ContactUs></ContactUs>},
   {path:"/coffee-store",element:<CoffeeStore></CoffeeStore>},
+  {path:"/marketplace",element:<Marketplace></Marketplace>},
   {
     path: "/dashboard",
     element: <DashboardLayout />,

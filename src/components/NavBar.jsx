@@ -13,6 +13,9 @@ const NavBar = () => {
       <li>
         <NavLink to="/coffee-store" className="hover:text-amber-200 transition-colors">Coffee Store</NavLink>
       </li>
+      <li>
+        <NavLink to="/marketplace" className="hover:text-amber-200 transition-colors">Marketplace</NavLink>
+      </li>
       {user && (
         <li>
           <NavLink to="/dashboard" className="hover:text-amber-200 transition-colors">Dashboard</NavLink>
