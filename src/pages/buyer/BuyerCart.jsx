@@ -11,6 +11,7 @@ import {
 } from "lucide-react";
 import Swal from "sweetalert2";
 import Loader from "../../components/Loader";
+import { API_URL } from "../../utils/utils";
 
 const BuyerCart = () => {
   const { user } = useAuth();
@@ -23,7 +24,7 @@ const BuyerCart = () => {
     setLoading(true);
     try {
       const res = await fetch(
-        `https://espresso-emporium-server-phi.vercel.app/cart/${encodeURIComponent(user._id)}`
+        `${API_URL}/cart/${encodeURIComponent(user._id)}`
       );
       const data = await res.json();
       setItems(data);
@@ -49,7 +50,7 @@ const BuyerCart = () => {
     if (!confirm.isConfirmed) return;
 
     try {
-      await fetch(`https://espresso-emporium-server-phi.vercel.app/cart/${id}`, {
+      await fetch(`${API_URL}/cart/${id}`, {
         method: "DELETE",
       });
       Swal.fire({

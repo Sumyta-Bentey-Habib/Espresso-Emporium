@@ -11,12 +11,20 @@ import {
   PlusCircle,
   History,
   LogOut,
-  Coffee
+  Coffee,
+  ArrowLeft
 } from "lucide-react";
 import { useAuth } from "../../context/AuthProvider";
+import { useNavigate } from "react-router-dom";
 
 const Sidebar = ({ isCollapsed, onToggle, role }) => {
   const { logOut, user } = useAuth();
+  const navigate = useNavigate();
+
+  const handleLogout = async () => {
+    await logOut();
+    navigate("/");
+  };
 
   const getMenuItems = () => {
     switch (role) {
@@ -113,7 +121,7 @@ const Sidebar = ({ isCollapsed, onToggle, role }) => {
         </NavLink>
         
         <button
-          onClick={logOut}
+          onClick={handleLogout}
           className={`w-full flex items-center gap-4 px-4 py-3 text-rose-300 hover:text-rose-100 hover:bg-rose-500/10 rounded-2xl transition-all group relative ${isCollapsed ? "justify-center px-0" : ""}`}
         >
           <LogOut size={20} />

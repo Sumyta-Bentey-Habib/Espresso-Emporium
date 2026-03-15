@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useAuth } from "../../context/AuthProvider";
 import Swal from "sweetalert2";
-import { uploadImageToImgBB } from "../../utils/utils";
+import { API_URL, uploadImageToImgBB } from "../../utils/utils";
 import { Coffee as CoffeeIcon, Plus } from "lucide-react";
 
 const SellerAddProduct = () => {
@@ -58,7 +58,7 @@ const SellerAddProduct = () => {
       };
 
       const res = await fetch(
-        "https://espresso-emporium-server-phi.vercel.app/products",
+        `${API_URL}/products`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },

@@ -6,7 +6,7 @@ import { auth } from "../firebase/firebase.init";
 import { useAuth } from "../context/AuthProvider";
 import { useNavigate, NavLink } from "react-router-dom";
 import { FcGoogle } from "react-icons/fc";
-import { uploadImageToImgBB } from "../utils/utils";
+import { uploadImageToImgBB, API_URL } from "../utils/utils";
 import registrationAnimation from "../assets/lottie/register.json";
 import SharedNav from "../shared/SharedNav";
 
@@ -52,7 +52,7 @@ const Register = () => {
 
   const saveUserToDB = async (user) => {
     try {
-      await fetch("https://espresso-emporium-server-phi.vercel.app/users", {
+      await fetch(`${API_URL}/users`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(user),

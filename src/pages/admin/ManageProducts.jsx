@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useCallback } from "react";
-import { Search, Edit2, Trash2, Box, MapPin, Tag, Plus, X, Image as ImageIcon, User } from "lucide-react";
+import { Search, Edit2, Trash2, Box, MapPin, Tag, Plus, X, Image as ImageIcon, User, Filter } from "lucide-react";
 import Pagination from "../../components/dashboard/Pagination";
+import { API_URL } from "../../utils/utils";
 import Swal from "sweetalert2";
 
 const ManageProducts = () => {
@@ -28,7 +29,7 @@ const ManageProducts = () => {
   const fetchProducts = useCallback(async () => {
     setLoading(true);
     try {
-      let url = `https://espresso-emporium-server-phi.vercel.app/products`;
+      let url = `${API_URL}/products`;
       if (search) {
         url += `?search=${encodeURIComponent(search)}`;
       }
@@ -72,7 +73,7 @@ const ManageProducts = () => {
 
     if (result.isConfirmed) {
       try {
-        await fetch(`https://espresso-emporium-server-phi.vercel.app/products/${id}`, {
+        await fetch(`${API_URL}/products/${id}`, {
           method: "DELETE",
         });
         Swal.fire("Deleted!", "Product has been removed.", "success");
@@ -98,7 +99,7 @@ const ManageProducts = () => {
   const submitUpdate = async () => {
     try {
       const res = await fetch(
-        `https://espresso-emporium-server-phi.vercel.app/products/${selectedProduct._id}`,
+        `${API_URL}/products/${selectedProduct._id}`,
         {
           method: "PUT",
           headers: { "Content-Type": "application/json" },

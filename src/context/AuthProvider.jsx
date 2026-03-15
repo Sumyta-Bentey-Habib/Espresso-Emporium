@@ -6,6 +6,7 @@ import {
   signInWithPopup 
 } from "firebase/auth";
 import { auth } from "../firebase/firebase.init";
+import { API_URL } from "../utils/utils";
 import { AuthContext } from "./AuthContext";
 
 export const AuthProvider = ({ children }) => {
@@ -15,10 +16,10 @@ export const AuthProvider = ({ children }) => {
   // Fetch user data from backend (MongoDB)
   const fetchUserFromDB = async (uid, email) => {
     try {
-      const res = await fetch(`https://espresso-emporium-server-phi.vercel.app/users/${uid}`); 
+      const res = await fetch(`${API_URL}/users/${uid}`); 
       if (!res.ok) {
         // fallback: try email
-        const res2 = await fetch(`https://espresso-emporium-server-phi.vercel.app/users/${email}`);
+        const res2 = await fetch(`${API_URL}/users/${email}`);
         if (!res2.ok) return null;
         return await res2.json();
       }

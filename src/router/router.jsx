@@ -21,6 +21,7 @@ import BuyerCart from "../pages/buyer/BuyerCart";
 import SellerProducts from "../pages/seller/SellerProducts";
 import SellerAddProduct from "../pages/seller/SellerAddProduct";
 import CoffeeStore from "../pages/CoffeeStore";
+import DashboardOverview from "../pages/dashboard/DashboardOverview";
 
 
 const router = createBrowserRouter([
@@ -35,6 +36,7 @@ const router = createBrowserRouter([
     path: "/dashboard",
     element: <DashboardLayout />,
     children: [
+      { index: true, element: <DashboardOverview /> },
       // Admin
       { path: "users", element: <ManageUsers /> },
       { path: "products", element: <ManageProducts /> },
@@ -44,7 +46,7 @@ const router = createBrowserRouter([
       { path: "wishlist", element: <BuyerCart /> },
 
       // Seller
-      { path: "seller-products", element: <SellerProducts /> },
+      { path: "my-products", element: <SellerProducts /> },
       { path: "add-product", element: <SellerAddProduct /> },
     ],
   },

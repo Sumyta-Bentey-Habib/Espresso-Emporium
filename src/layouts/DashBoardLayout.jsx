@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { Outlet } from "react-router-dom";
-import { useAuth } from "../context/AuthProvider"; 
+import { useAuth } from "../context/AuthProvider";
 import Sidebar from "../components/dashboard/Sidebar";
 import Loader from "../components/Loader";
+import { API_URL } from "../utils/utils";
 
 const DashboardLayout = () => {
-  const { user: authUser, loading: authLoading } = useAuth(); 
-  const [user, setUser] = useState(null); 
+  const { user: authUser, loading: authLoading } = useAuth();
+  const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
 
@@ -18,7 +19,7 @@ const DashboardLayout = () => {
 
     const fetchUserRole = async () => {
       try {
-        const res = await fetch(`https://espresso-emporium-server-phi.vercel.app/users/${authUser.email}`);
+        const res = await fetch(`${API_URL}/users/${authUser.email}`);
         const data = await res.json();
         setUser(data);
       } catch (error) {

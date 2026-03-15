@@ -1,7 +1,8 @@
 import React, { useEffect, useState, useCallback } from "react";
-import { Search, Edit2, Trash2, UserPlus, Shield, User as UserIcon, Mail } from "lucide-react";
+import { Search, Edit2, Trash2, UserCheck, ShieldAlert, Mail, Calendar, Shield } from "lucide-react";
 import Pagination from "../../components/dashboard/Pagination";
 import Swal from "sweetalert2";
+import { API_URL } from "../../utils/utils";
 
 const ManageUsers = () => {
   useEffect(() => {
@@ -23,8 +24,8 @@ const ManageUsers = () => {
       // The current backend doesn't seem to support pagination with limit/offset
       // so we fetch all and paginate on frontend for now, or assume many for demo
       const url = search
-        ? `https://espresso-emporium-server-phi.vercel.app/users?search=${encodeURIComponent(search)}`
-        : "https://espresso-emporium-server-phi.vercel.app/users";
+        ? `${API_URL}/users?search=${encodeURIComponent(search)}`
+        : `${API_URL}/users`;
       
       const res = await fetch(url);
       const data = await res.json();
@@ -59,7 +60,7 @@ const ManageUsers = () => {
 
     if (result.isConfirmed) {
       try {
-        await fetch(`https://espresso-emporium-server-phi.vercel.app/users/${id}`, { method: "DELETE" });
+        await fetch(`${API_URL}/users/${id}`, { method: "DELETE" });
         Swal.fire('Deleted!', 'User has been removed.', 'success');
         fetchUsers();
       } catch (error) {
@@ -86,7 +87,7 @@ const ManageUsers = () => {
 
     if (nextRole) {
       try {
-        await fetch(`https://espresso-emporium-server-phi.vercel.app/users/${id}`, {
+        await fetch(`${API_URL}/users/${id}`, {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ role: nextRole }),

@@ -4,6 +4,7 @@ import Swal from "sweetalert2";
 import CoffeeCard from "./CoffeeCard";
 import CommentModal from "./CommentModal";
 import { Coffee as CoffeeIcon } from "lucide-react";
+import { API_URL } from "../utils/utils";
 import { useCallback } from "react";
 
 const AllCoffee = ({ limit, search }) => {
@@ -33,8 +34,8 @@ const AllCoffee = ({ limit, search }) => {
   const fetchProducts = useCallback(async () => {
     try {
       const url = search
-        ? `https://espresso-emporium-server-phi.vercel.app/products?search=${encodeURIComponent(search)}`
-        : "https://espresso-emporium-server-phi.vercel.app/products";
+        ? `${API_URL}/products?search=${encodeURIComponent(search)}`
+        : `${API_URL}/products`;
 
       const res = await fetch(url);
       const data = await res.json();
@@ -44,7 +45,7 @@ const AllCoffee = ({ limit, search }) => {
       // Fetch and normalize reviews for all products
       const reviewsData = await Promise.all(
         data.map(async (p) => {
-          const r = await fetch(`https://espresso-emporium-server-phi.vercel.app/reviews/${p._id}`);
+          const r = await fetch(`${API_URL}/reviews/${p._id}`);
           const rdataRaw = await r.json();
 
           const rdata = rdataRaw.map((rev) => ({
@@ -69,7 +70,7 @@ const AllCoffee = ({ limit, search }) => {
   const fetchWishlist = useCallback(async () => {
     if (!user?._id) return;
     try {
-      const res = await fetch(`https://espresso-emporium-server-phi.vercel.app/cart/${user._id}`);
+      const res = await fetch(`${API_URL}/cart/${user._id}`);
       const data = await res.json();
       setWishlistItems(new Set(data.map(item => item.coffeeId)));
     } catch (error) {
@@ -103,7 +104,7 @@ const AllCoffee = ({ limit, search }) => {
       sellerLocation: coffee.sellerLocation,
     };
 
-    const res = await fetch("https://espresso-emporium-server-phi.vercel.app/cart", {
+    const res = await fetch(`${API_URL}/cart`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(cartItem),
@@ -133,7 +134,7 @@ const AllCoffee = ({ limit, search }) => {
       feedback: feedbackInput,
     };
 
-    const res = await fetch("https://espresso-emporium-server-phi.vercel.app/reviews", {
+    const res = await fetch(`${API_URL}/reviews`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(review),
@@ -145,7 +146,7 @@ const AllCoffee = ({ limit, search }) => {
       setFeedbackInput("");
       setSelectedCoffeeForReview(null);
 
-      const r = await fetch(`https://espresso-emporium-server-phi.vercel.app/reviews/${review.coffeeId}`);
+      const r = await fetch(`${API_URL}/reviews/${review.coffeeId}`);
       const rdataRaw = await r.json();
       const rdata = rdataRaw.map((rev) => ({
         ...rev,

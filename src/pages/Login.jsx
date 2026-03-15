@@ -48,7 +48,7 @@ const Login = () => {
         showConfirmButton: false,
       });
 
-      navigate("/");
+      navigate("/dashboard");
     } catch (error) {
       Swal.fire({
         icon: "error",
@@ -69,7 +69,7 @@ const Login = () => {
         timer: 1500,
         showConfirmButton: false,
       });
-      navigate("/");
+      navigate("/dashboard");
     } catch (error) {
       Swal.fire({
         icon: "error",

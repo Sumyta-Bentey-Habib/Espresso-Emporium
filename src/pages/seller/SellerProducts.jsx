@@ -1,21 +1,23 @@
 import React, { useEffect, useState, useCallback } from "react";
 import { useAuth } from "../../context/AuthProvider";
-import { 
-  Plus, 
-  Edit2, 
-  Trash2, 
-  MessageCircle, 
-  Star, 
-  Tag, 
-  Box, 
-  ChevronRight, 
-  X, 
+import {
+  Plus,
+  Edit2,
+  Trash2,
+  MessageCircle,
+  Star,
+  Tag,
+  Box,
+  ChevronRight,
+  X,
   Calendar,
   MoreVertical,
-  Coffee
+  Coffee,
+  Heart
 } from "lucide-react";
 import Pagination from "../../components/dashboard/Pagination";
 import Swal from "sweetalert2";
+import { API_URL } from "../../utils/utils";
 import Loader from "../../components/Loader";
 
 const SellerProducts = () => {
@@ -48,7 +50,7 @@ const SellerProducts = () => {
   const fetchMine = useCallback(async () => {
     setLoading(true);
     try {
-      const res = await fetch("https://espresso-emporium-server-phi.vercel.app/products");
+      const res = await fetch(`${API_URL}/products`);
       const data = await res.json();
 
       const filtered = data.filter((p) => p.sellerEmail === user?.email);
@@ -56,7 +58,7 @@ const SellerProducts = () => {
 
       const productsWithReviews = await Promise.all(
         filtered.map(async (p) => {
-          const revRes = await fetch(`https://espresso-emporium-server-phi.vercel.app/reviews/${p._id}`);
+          const revRes = await fetch(`${API_URL}/reviews/${p._id}`);
           const reviews = await revRes.json();
           return { 
             ...p, 
@@ -97,7 +99,7 @@ const SellerProducts = () => {
     if (!confirm.isConfirmed) return;
 
     try {
-      await fetch(`https://espresso-emporium-server-phi.vercel.app/products/${id}`, { method: "DELETE" });
+      await fetch(`${API_URL}/products/${id}`, { method: "DELETE" });
       Swal.fire({
         icon: "success",
         title: "Deleted!",
@@ -125,7 +127,7 @@ const SellerProducts = () => {
 
     try {
       const res = await fetch(
-        `https://espresso-emporium-server-phi.vercel.app/reviews/${reviewId}?requesterId=${user._id}`,
+        `${API_URL}/reviews/${reviewId}?requesterId=${user._id}`,
         { method: "DELETE" }
       );
 
@@ -168,7 +170,7 @@ const SellerProducts = () => {
     if (!editingProduct) return;
 
     try {
-      await fetch(`https://espresso-emporium-server-phi.vercel.app/products/${editingProduct._id}`, {
+      await fetch(`${API_URL}/products/${editingProduct._id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
