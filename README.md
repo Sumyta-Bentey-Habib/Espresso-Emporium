@@ -76,8 +76,14 @@ Espresso-Emporium/
 ## 🎯 Quick Start
 
 ### Credentials
-- **Admin**: `espresso@admin.com` / `12345678#$%ADiMn`
-- **Demo Users**: See the documentation for *The Daily Grind*, *Brew Theory*, and more.
+
+| Role | Email | Password |
+| :--- | :--- | :--- |
+| **Admin** | `espresso@admin.com` | `12345678#$%ADiMn` |
+| **The Daily Grind** | `thedailygrind@gmail.com` | `TDG!2025#Coffee` |
+| **Brew Theory** | `brewtheory@gmail.com` | `BrewTh3ory@21` |
+| **Velvet Bean** | `velvetbean@gmail.com` | `V3lv3tB3an$` |
+| **Morning Dew Café** | `morningdew.cafe@gmail.com` | `MDew@2025!` |
 
 ### Installation
 1. **Clone & Enter**:
@@ -99,5 +105,5 @@ Espresso-Emporium/
 ---
 
 <div align="center">
-  Made with ☕ and passion by [Sumyta-Bentey-Habib](https://github.com/Sumyta-Bentey-Habib)
+  Made with ☕ and passion by <a href="https://github.com/Sumyta-Bentey-Habib">Sumyta-Bentey-Habib</a>
 </div>
