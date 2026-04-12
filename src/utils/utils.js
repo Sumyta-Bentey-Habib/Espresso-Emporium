@@ -1,27 +1,9 @@
 const DEPLOY_URL = import.meta.env.VITE_API_URL || "https://coffestore.onrender.com";
 const LOCAL_URL = "http://localhost:3000";
 
-const checkLocalServer = async () => {
-    if (window.location.hostname !== "localhost" && window.location.hostname !== "127.0.0.1") {
-        return DEPLOY_URL;
-    }
-    
-    try {
-        const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 1000); // 1s timeout
-        
-        const response = await fetch(`${LOCAL_URL}/chat/participants`, { 
-            method: 'HEAD',
-            signal: controller.signal
-        });
-        clearTimeout(timeoutId);
-        return response.ok ? LOCAL_URL : DEPLOY_URL;
-    } catch (e) {
-        return DEPLOY_URL;
-    }
-};
-
-export const API_URL = await checkLocalServer();
+export const API_URL = (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1")
+    ? LOCAL_URL
+    : DEPLOY_URL;
 
 export const CATEGORIES = ["Coffee", "Beans", "Equipment", "Accessories"];
 

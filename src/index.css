@@ -13,6 +13,14 @@ body {
     font-style: normal;
 }
 
+.font-outfit {
+  font-family: "Outfit", sans-serif;
+}
+
+.font-inter {
+  font-family: "Inter", sans-serif;
+}
+
 .raleway {
   font-family: "Raleway", sans-serif;
   font-optical-sizing: auto;
@@ -21,7 +29,7 @@ body {
 }
 
 .chat-container {
-    font-family: "Raleway", sans-serif !important;
+    font-family: "Inter", sans-serif !important;
 }
 
 .chat-glass {

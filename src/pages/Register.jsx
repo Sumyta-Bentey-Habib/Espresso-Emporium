@@ -138,140 +138,199 @@ const Register = () => {
     <>
       <SharedNav />
       <div
-        className="flex flex-col items-center justify-center min-h-screen px-4 py-10 md:flex-row bg-white"
+        className="flex flex-col items-center justify-center min-h-screen px-4 py-12 md:flex-row bg-stone-50 font-inter"
         style={{
           backgroundImage: "url('/more/1.png')",
           backgroundSize: "cover",
           backgroundPosition: "center",
+          backgroundAttachment: "fixed"
         }}
       >
-        <div className="flex justify-center w-full mb-10 md:w-1/2 md:mb-0">
-          <Lottie animationData={registrationAnimation} loop className="w-full max-w-sm md:max-w-md" />
-        </div>
+        <div className="absolute inset-0 bg-black/50 backdrop-blur-[1px]"></div>
 
-        <div className="w-full max-w-md p-8 space-y-6 bg-white shadow-xl md:w-1/2 rounded-2xl">
-          <h1 className="text-3xl font-bold text-center text-black">Register</h1>
-
-          <div className="flex justify-center gap-4 mb-4">
-            {["Buyer", "Seller"].map((r) => (
-              <button
-                key={r}
-                type="button"
-                onClick={() => setRole(r)}
-                className={`px-4 py-2 rounded-lg font-semibold border ${
-                  role === r ? "bg-violet-500 text-white" : "bg-gray-200 text-black"
-                }`}
-              >
-                {r}
-              </button>
-            ))}
+        <div className="relative flex flex-col md:flex-row w-full max-w-6xl bg-white/90 backdrop-blur-2xl rounded-3xl md:rounded-[3rem] shadow-2xl overflow-hidden border border-white/40 animate-in fade-in zoom-in duration-700">
+          {}
+          <div className="flex flex-col items-center justify-center w-full p-8 md:p-16 md:w-5/12 bg-gradient-to-br from-stone-900 to-amber-950 text-white">
+            <div className="text-center space-y-3 md:space-y-4 mb-6 md:mb-10">
+              <h2 className="text-3xl md:text-5xl font-outfit font-bold tracking-tight">Join the Craft</h2>
+              <p className="text-amber-200/70 font-inter text-xs md:text-base leading-relaxed max-w-xs mx-auto">
+                Become part of our exclusive coffee community. Whether you brew it or buy it, we have a seat for you.
+              </p>
+            </div>
+            <div className="w-full max-w-[180px] md:max-w-xs drop-shadow-3xl transform hover:scale-105 transition-transform duration-500 opacity-90 md:opacity-100">
+              <Lottie animationData={registrationAnimation} loop className="w-full" />
+            </div>
           </div>
 
-          {role && (
-            <>
-              <form onSubmit={handleSubmit} className="space-y-5">
-                {}
-                <div>
-                  <label className="block mb-1 text-sm font-medium text-black">Full Name / Business Name</label>
-                  <input
-                    type="text"
-                    name="name"
-                    placeholder="Enter your name or business name"
-                    value={formData.name}
-                    onChange={handleChange}
-                    required
-                    className="w-full px-4 py-2 border rounded-lg text-black placeholder-black focus:outline-none focus:ring-2 focus:ring-violet-400"
-                  />
-                </div>
+          {}
+          <div className="w-full p-6 md:p-14 space-y-6 md:space-y-8 md:w-7/12 overflow-y-auto max-h-[none] md:max-h-[90vh] custom-scrollbar">
+            <div className="space-y-1 md:space-y-2">
+              <h1 className="text-2xl md:text-4xl font-outfit font-black text-stone-900 tracking-tight">Create Account</h1>
+              <p className="text-stone-500 text-xs md:text-sm">Fill in the details to start your journey with Espresso Emporium.</p>
+            </div>
 
-                {}
-                <div>
-                  <label className="block mb-1 text-sm font-medium text-black">Email Address</label>
-                  <input
-                    type="email"
-                    name="email"
-                    placeholder="Enter your email"
-                    value={formData.email}
-                    onChange={handleChange}
-                    required
-                    className="w-full px-4 py-2 border rounded-lg text-black placeholder-black focus:outline-none focus:ring-2 focus:ring-violet-400"
-                  />
-                </div>
+            <div className="space-y-4">
+              <label className="block text-xs font-bold text-stone-400 uppercase tracking-widest ml-1">Select Your Role</label>
+              <div className="flex gap-3">
+                {["Buyer", "Seller"].map((r) => (
+                  <button
+                    key={r}
+                    type="button"
+                    onClick={() => setRole(r)}
+                    className={`flex-1 px-6 py-4 rounded-2xl font-outfit font-bold text-sm border-2 transition-all duration-300 ${
+                      role === r 
+                        ? "bg-stone-900 text-white border-stone-900 shadow-xl shadow-stone-900/20 scale-[1.02]" 
+                        : "bg-white text-stone-600 border-stone-100 hover:border-amber-200 hover:bg-amber-50/30"
+                    }`}
+                  >
+                    {r === "Buyer" ? "☕ Coffee Lover" : "🏪 Coffee Merchant"}
+                  </button>
+                ))}
+              </div>
+            </div>
 
-                {}
-                <div>
-                  <label className="block mb-1 text-sm font-medium text-black">Password</label>
-                  <input
-                    type="password"
-                    name="password"
-                    placeholder="Enter your password"
-                    value={formData.password}
-                    onChange={handleChange}
-                    required
-                    className="w-full px-4 py-2 border rounded-lg text-black placeholder-black focus:outline-none focus:ring-2 focus:ring-violet-400"
-                  />
-                </div>
+            {role && (
+              <div className="animate-in fade-in slide-in-from-top-4 duration-500">
+                <form onSubmit={handleSubmit} className="space-y-6">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                    {}
+                    <div className="space-y-2">
+                      <label className="block text-xs font-bold text-stone-500 uppercase tracking-widest ml-1">Full Name</label>
+                      <input
+                        type="text"
+                        name="name"
+                        placeholder="Espresso Enthusiast"
+                        value={formData.name}
+                        onChange={handleChange}
+                        required
+                        className="w-full px-5 py-3.5 bg-stone-100/50 border border-stone-200 rounded-2xl text-stone-900 font-inter focus:outline-none focus:ring-4 focus:ring-amber-500/10 focus:border-amber-600/50 focus:bg-white transition-all"
+                      />
+                    </div>
 
-                {}
-                {role === "Seller" && (
-                  <div>
-                    <label className="block mb-1 text-sm font-medium text-black">Location</label>
-                    <input
-                      type="text"
-                      name="location"
-                      placeholder="Enter your shop location"
-                      value={formData.location}
-                      onChange={handleChange}
-                      required
-                      className="w-full px-4 py-2 border rounded-lg text-black placeholder-black focus:outline-none focus:ring-2 focus:ring-violet-400"
-                    />
+                    {}
+                    <div className="space-y-2">
+                      <label className="block text-xs font-bold text-stone-500 uppercase tracking-widest ml-1">Email Address</label>
+                      <input
+                        type="email"
+                        name="email"
+                        placeholder="enthusiast@espresso.com"
+                        value={formData.email}
+                        onChange={handleChange}
+                        required
+                        className="w-full px-5 py-3.5 bg-stone-100/50 border border-stone-200 rounded-2xl text-stone-900 font-inter focus:outline-none focus:ring-4 focus:ring-amber-500/10 focus:border-amber-600/50 focus:bg-white transition-all"
+                      />
+                    </div>
+
+                    {}
+                    <div className="space-y-2">
+                      <label className="block text-xs font-bold text-stone-500 uppercase tracking-widest ml-1">Password</label>
+                      <input
+                        type="password"
+                        name="password"
+                        placeholder="••••••••"
+                        value={formData.password}
+                        onChange={handleChange}
+                        required
+                        className="w-full px-5 py-3.5 bg-stone-100/50 border border-stone-200 rounded-2xl text-stone-900 font-inter focus:outline-none focus:ring-4 focus:ring-amber-500/10 focus:border-amber-600/50 focus:bg-white transition-all"
+                      />
+                    </div>
+
+                    {}
+                    {role === "Seller" && (
+                      <div className="space-y-2 animate-in zoom-in-95 duration-300">
+                        <label className="block text-xs font-bold text-stone-500 uppercase tracking-widest ml-1">Shop Location</label>
+                        <input
+                          type="text"
+                          name="location"
+                          placeholder="City, Country"
+                          value={formData.location}
+                          onChange={handleChange}
+                          required
+                          className="w-full px-5 py-3.5 bg-stone-100/50 border border-stone-200 rounded-2xl text-stone-900 font-inter focus:outline-none focus:ring-4 focus:ring-amber-500/10 focus:border-amber-600/50 focus:bg-white transition-all"
+                        />
+                      </div>
+                    )}
+                  </div>
+
+                  {}
+                  <div className="space-y-4 pt-2">
+                    <label className="block text-xs font-bold text-stone-500 uppercase tracking-widest ml-1">Profile Photo</label>
+                    <div className="flex items-center gap-6 p-6 bg-stone-50 border-2 border-dashed border-stone-200 rounded-[2rem] hover:border-amber-300/50 transition-colors group">
+                      <div className="relative w-20 h-20 shrink-0">
+                        {preview ? (
+                          <img src={preview} alt="Preview" className="w-full h-full object-cover rounded-2xl shadow-lg shadow-stone-900/10" />
+                        ) : (
+                          <div className="w-full h-full bg-stone-200 rounded-2xl flex items-center justify-center text-stone-400 group-hover:bg-amber-100 transition-colors">
+                            <span className="text-2xl">📸</span>
+                          </div>
+                        )}
+                        <input
+                          type="file"
+                          accept="image/*"
+                          onChange={handleFileChange}
+                          className="absolute inset-0 opacity-0 cursor-pointer"
+                        />
+                      </div>
+                      <div className="flex flex-col">
+                        <span className="text-sm font-bold text-stone-700">Choose an image</span>
+                        <span className="text-xs text-stone-400">JPG, PNG or WEBP (Max 2MB)</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <button
+                    type="submit"
+                    className="group relative w-full overflow-hidden rounded-[1.5rem] bg-stone-900 py-4.5 font-outfit font-bold text-white shadow-xl transition-all duration-300 hover:bg-black hover:shadow-stone-900/20 active:scale-[0.98] disabled:opacity-70"
+                    disabled={loading}
+                  >
+                    <span className="relative z-10 flex items-center justify-center gap-2">
+                      {loading ? (
+                        <>
+                          <div className="h-4 w-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                          Creating Account...
+                        </>
+                      ) : (
+                        `Register as ${role}`
+                      )}
+                    </span>
+                    <div className="absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/10 to-transparent group-hover:translate-x-full transition-transform duration-1000"></div>
+                  </button>
+                </form>
+
+                {role === "Buyer" && (
+                  <div className="mt-6 space-y-4">
+                    <div className="relative flex items-center py-2">
+                      <div className="flex-grow border-t border-stone-100"></div>
+                      <span className="mx-4 text-[10px] font-bold text-stone-400 uppercase tracking-[0.2em]">Quick Sign Up</span>
+                      <div className="flex-grow border-t border-stone-100"></div>
+                    </div>
+                    <button
+                      onClick={handleGoogleRegister}
+                      className="w-full group flex items-center justify-center gap-3 px-5 py-4 bg-white border-2 border-stone-100 rounded-2xl font-inter font-bold text-stone-700 hover:border-amber-200 hover:bg-amber-50/30 transition-all duration-300 shadow-sm"
+                    >
+                      <FcGoogle className="w-6 h-6 group-hover:scale-110 transition-transform" />
+                      <span>Continue with Google</span>
+                    </button>
                   </div>
                 )}
+              </div>
+            )}
 
-                {}
-                <div>
-                  <label className="block mb-1 text-sm font-medium text-black">Profile Picture</label>
-                  <input
-                    type="file"
-                    accept="image/*"
-                    onChange={handleFileChange}
-                    className="w-full px-4 py-2 border rounded-lg text-black placeholder-black focus:outline-none focus:ring-2 focus:ring-violet-400"
-                  />
-                  {preview && (
-                    <img src={preview} alt="Preview" className="w-24 h-24 object-cover rounded-full mx-auto mt-2" />
-                  )}
-                </div>
-
-                <button
-                  type="submit"
-                  className="w-full py-2 font-semibold text-white rounded-lg bg-violet-500 hover:bg-violet-600"
-                  disabled={loading}
-                >
-                  {loading ? "Registering..." : "Register"}
-                </button>
-              </form>
-
-              {role === "Buyer" && (
-                <button
-                  onClick={handleGoogleRegister}
-                  className="w-full bg-gray-900 hover:bg-amber-700 text-white py-3 rounded-md flex items-center justify-center gap-2 mt-2"
-                >
-                  <FcGoogle className="w-5 h-5" /> Continue with Google
-                </button>
-              )}
-            </>
-          )}
-
-          <p className="text-sm text-center text-black mt-4">
-            Already have an account?
-            <NavLink to="/login" className="ml-1 text-black hover:underline">
-              Login
-            </NavLink>
-            <br />
-            <NavLink to="/" className="ml-1 text-black hover:underline">
-              Return Home
-            </NavLink>
-          </p>
+            <div className="pt-4 border-t border-stone-100">
+              <p className="text-center font-inter text-sm text-stone-500">
+                Already have an account?{" "}
+                <NavLink to="/login" className="font-bold text-amber-700 hover:text-amber-800 underline-offset-4 hover:underline transition-all">
+                  Sign in here
+                </NavLink>
+              </p>
+              
+              <div className="mt-6 flex justify-center">
+                <NavLink to="/" className="inline-flex items-center gap-2 px-5 py-2.5 bg-stone-100 hover:bg-stone-200 text-stone-600 rounded-xl text-xs font-bold transition-colors">
+                  <span>← Back to Shop</span>
+                </NavLink>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </>

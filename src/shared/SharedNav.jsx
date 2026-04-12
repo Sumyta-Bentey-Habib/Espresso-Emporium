@@ -9,11 +9,11 @@ const SharedNav = () => {
         backgroundSize: "cover",
         backgroundPosition: "center",
       }}
-      className="py-4"
+      className="py-6 md:py-8 border-b border-white/10"
     >
-      <div className="flex items-center justify-center gap-2 text-white">
-        <img src="/more/logo1.png" alt="Logo" className="h-10 w-auto " />
-        Espresso Emporium
+      <div className="flex items-center justify-center gap-3 text-white font-outfit font-black text-2xl md:text-3xl tracking-tighter">
+        <img src="/more/logo1.png" alt="Logo" className="h-10 md:h-12 w-auto drop-shadow-lg" />
+        <span className="drop-shadow-md">Espresso <span className="text-amber-400">Emporium</span></span>
       </div>
     </div>
   );

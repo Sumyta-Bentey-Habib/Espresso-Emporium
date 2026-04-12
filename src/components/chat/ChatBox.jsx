@@ -35,18 +35,28 @@ const ChatBox = ({ currentUser, otherUser, onClose }) => {
   const handleDeleteChat = async () => {
     const result = await Swal.fire({
       title: 'Delete Conversation?',
-      text: "This will permanently remove all messages in this chat history.",
+      text: "Permanent action: This will wipe your history with " + otherUser.name,
       icon: 'warning',
+      iconColor: '#78350f',
       showCancelButton: true,
-      confirmButtonColor: '#78350f', // amber-800
-      cancelButtonColor: '#ef4444', // red-500
-      confirmButtonText: 'Yes, delete it!',
-      background: '#fff',
+      confirmButtonText: 'Clear Chat',
+      cancelButtonText: 'Keep it',
+      reverseButtons: true,
+      background: 'rgba(255, 255, 255, 0.95)',
+      backdrop: `rgba(69, 26, 3, 0.4) blur(4px)`,
       customClass: {
-        title: 'font-bold text-amber-950',
-        popup: 'rounded-3xl border-2 border-amber-100',
-        confirmButton: 'rounded-xl px-6 py-3 font-bold uppercase tracking-widest text-xs',
-        cancelButton: 'rounded-xl px-6 py-3 font-bold uppercase tracking-widest text-xs'
+        title: 'text-2xl font-outfit font-black text-stone-900',
+        htmlContainer: 'text-sm font-inter text-stone-500 leading-relaxed',
+        popup: 'rounded-[2rem] border-none shadow-[0_20px_50px_rgba(0,0,0,0.2)] p-8',
+        confirmButton: 'rounded-2xl px-8 py-4 bg-red-500 hover:bg-red-600 text-white font-bold text-xs uppercase tracking-widest transition-all hover:scale-105 active:scale-95 shadow-lg shadow-red-500/20',
+        cancelButton: 'rounded-2xl px-8 py-4 bg-stone-100 hover:bg-stone-200 text-stone-600 font-bold text-xs uppercase tracking-widest transition-all active:scale-95 mr-3'
+      },
+      buttonsStyling: false,
+      showClass: {
+        popup: 'animate__animated animate__fadeInUp animate__faster'
+      },
+      hideClass: {
+        popup: 'animate__animated animate__fadeOutDown animate__faster'
       }
     });
 
@@ -58,11 +68,17 @@ const ChatBox = ({ currentUser, otherUser, onClose }) => {
         
         if (res.ok) {
           Swal.fire({
-            title: 'Deleted!',
-            text: 'Your conversation has been wiped clean.',
+            title: 'History Wiped',
+            text: 'Your conversation has been successfully cleared.',
             icon: 'success',
-            confirmButtonColor: '#78350f',
-            timer: 2000
+            iconColor: '#059669',
+            timer: 2000,
+            showConfirmButton: false,
+            background: 'rgba(255, 255, 255, 0.95)',
+            customClass: {
+              title: 'font-outfit font-black text-stone-900',
+              popup: 'rounded-[2rem] p-8 shadow-2xl'
+            }
           });
           onClose(); // Go back to list
         } else {
@@ -70,7 +86,12 @@ const ChatBox = ({ currentUser, otherUser, onClose }) => {
         }
       } catch (error) {
         console.error("Delete failed:", error);
-        Swal.fire('Error', 'We couldn\'t delete this chat. Please try again.', 'error');
+        Swal.fire({
+          title: 'Action Failed',
+          text: 'We couldn\'t clear the history. Try again later.',
+          icon: 'error',
+          confirmButtonColor: '#78350f'
+        });
       }
     }
   };
@@ -78,40 +99,40 @@ const ChatBox = ({ currentUser, otherUser, onClose }) => {
   return (
     <div className="flex flex-col h-full bg-white/95 backdrop-blur-xl overflow-hidden chat-container animate-in fade-in zoom-in-95 duration-300">
       {}
-      <div className="chat-glass-dark p-4 flex items-center justify-between text-white shrink-0 z-10 shadow-lg">
-        <div className="flex items-center gap-2">
+      <div className="chat-glass-dark p-3 md:p-4 flex items-center justify-between text-white shrink-0 z-10 shadow-lg">
+        <div className="flex items-center gap-1.5 md:gap-2">
           <button 
             onClick={onClose}
-            className="p-2 hover:bg-white/10 rounded-xl transition-all duration-300 mr-1 flex items-center gap-1 group"
+            className="p-1.5 md:p-2 hover:bg-white/10 rounded-xl transition-all duration-300 flex items-center gap-1 group"
             title="Back to Messages"
           >
-            <ChevronLeft size={20} className="group-hover:-translate-x-1 transition-transform" />
-            <span className="text-xs font-bold uppercase tracking-widest hidden md:inline">Back</span>
+            <ChevronLeft size={18} className="md:size-5 group-hover:-translate-x-1 transition-transform" />
+            <span className="text-[10px] md:text-xs font-bold uppercase tracking-widest hidden sm:inline">Back</span>
           </button>
           
-          <div className="w-[1px] h-8 bg-white/10 mx-1 hidden md:block"></div>
+          <div className="w-[1px] h-6 md:h-8 bg-white/10 mx-0.5 md:mx-1"></div>
 
-          <div className="relative group ml-1">
+          <div className="relative group ml-0.5 md:ml-1">
             {otherUser.photo ? (
-              <img src={otherUser.photo} alt={otherUser.name} className="w-11 h-11 rounded-2xl object-cover border-2 border-amber-400/30 group-hover:border-amber-400 transition-all duration-300 shadow-md" />
+              <img src={otherUser.photo} alt={otherUser.name} className="w-9 h-9 md:w-11 md:h-11 rounded-xl md:rounded-2xl object-cover border-2 border-amber-400/30 group-hover:border-amber-400 transition-all duration-300 shadow-md" />
             ) : (
-              <div className="w-11 h-11 rounded-2xl bg-gradient-to-br from-amber-700 to-amber-900 flex items-center justify-center border-2 border-amber-400/30 shadow-md">
-                <User size={22} className="text-amber-100" />
+              <div className="w-9 h-9 md:w-11 md:h-11 rounded-xl md:rounded-2xl bg-gradient-to-br from-amber-700 to-amber-900 flex items-center justify-center border-2 border-amber-400/30 shadow-md">
+                <User size={18} className="text-amber-100" />
               </div>
             )}
             {otherUser.lastActive && (new Date() - new Date(otherUser.lastActive)) < 7 * 60 * 1000 && (
-              <span className="absolute -bottom-1 -right-1 w-4 h-4 bg-green-500 border-2 border-amber-900 rounded-full shadow-sm"></span>
+              <span className="absolute -bottom-0.5 -right-0.5 w-3 h-3 md:w-4 md:h-4 bg-green-500 border-2 border-amber-900 rounded-full shadow-sm"></span>
             )}
           </div>
-          <div className="flex flex-col ml-1">
-            <h3 className="font-extrabold text-sm tracking-tight leading-none mb-1">{otherUser.name}</h3>
-            <div className="flex items-center gap-2">
-              <span className="text-[10px] font-bold text-amber-200 uppercase tracking-widest px-1.5 py-0.5 bg-amber-800/50 rounded-md border border-amber-700/50">{otherUser.role}</span>
+          <div className="flex flex-col ml-1 md:ml-1.5 min-w-0">
+            <h3 className="font-outfit font-black text-xs md:text-sm tracking-tight leading-none mb-1 truncate">{otherUser.name}</h3>
+            <div className="flex items-center gap-1.5 md:gap-2">
+              <span className="text-[8px] md:text-[10px] font-inter font-bold text-amber-200/90 uppercase tracking-[0.1em] md:tracking-[0.15em] px-1 md:px-1.5 py-0.5 bg-white/5 rounded-md border border-white/10">{otherUser.role}</span>
               {otherUser.lastActive && (
-                <span className="text-[10px] font-medium text-amber-300/80">
+                <span className="text-[8px] md:text-[10px] font-inter font-medium text-amber-300/60 tracking-wide truncate max-w-[100px] md:max-w-none">
                   {(new Date() - new Date(otherUser.lastActive)) < 7 * 60 * 1000
-                    ? "• Online"
-                    : `• Active ${new Date(otherUser.lastActive).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`}
+                    ? "Online"
+                    : `Active ${new Date(otherUser.lastActive).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`}
                 </span>
               )}
             </div>
@@ -121,10 +142,10 @@ const ChatBox = ({ currentUser, otherUser, onClose }) => {
         <div className="flex items-center gap-1">
           <button 
             onClick={handleDeleteChat}
-            className="p-2.5 text-amber-200/50 hover:text-red-400 hover:bg-white/10 rounded-xl transition-all duration-300 group"
+            className="p-1.5 md:p-2.5 text-amber-200/50 hover:text-red-400 hover:bg-white/10 rounded-xl transition-all duration-300 group"
             title="Delete Chat"
           >
-            <Trash2 size={18} className="group-hover:scale-110" />
+            <Trash2 size={16} className="md:size-[18px] group-hover:scale-110" />
           </button>
         </div>
       </div>
