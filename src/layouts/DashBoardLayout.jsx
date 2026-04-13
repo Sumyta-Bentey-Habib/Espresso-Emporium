@@ -3,7 +3,6 @@ import { Outlet } from "react-router-dom";
 import { useAuth } from "../context/AuthProvider";
 import Sidebar from "../components/dashboard/Sidebar";
 import Loader from "../components/Loader";
-import ChatFloatingButton from "../components/chat/ChatFloatingButton";
 import { usePresence } from "../hooks/usePresence";
 import { API_URL } from "../utils/utils";
 
@@ -82,7 +81,6 @@ const DashboardLayout = () => {
           <div className="relative z-10 max-w-7xl mx-auto">
             <Outlet context={{ user }} />
           </div>
-          <ChatFloatingButton />
         </div>
       </main>
     </div>

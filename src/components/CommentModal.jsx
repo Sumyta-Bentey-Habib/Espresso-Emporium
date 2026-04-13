@@ -1,7 +1,8 @@
 import React from "react";
 import { X, Star, Calendar, User, Quote, MessageSquare } from "lucide-react";
+import StartChatButton from "./chat/StartChatButton";
 
-const CommentModal = ({ isOpen, onClose, reviews, coffeeName }) => {
+const CommentModal = ({ isOpen, onClose, reviews, coffeeName, user }) => {
   if (!isOpen) return null;
 
   return (
@@ -55,9 +56,23 @@ const CommentModal = ({ isOpen, onClose, reviews, coffeeName }) => {
                       </div>
                     </div>
                   </div>
-                  <div className="flex items-center bg-white px-3 py-1 rounded-2xl shadow-sm border border-amber-900/10">
-                    <Star size={14} className="text-amber-500 fill-amber-500 mr-1" />
-                    <span className="text-sm font-bold text-amber-950">{rev.rating}/5</span>
+                  <div className="flex items-center bg-white px-3 py-1 rounded-2xl shadow-sm border border-amber-900/10 gap-2">
+                    {user && (rev.buyerEmail || rev.buyerId) && user.email !== (rev.buyerEmail || rev.buyerId) && user.uid !== (rev.buyerEmail || rev.buyerId) && (
+                      <StartChatButton 
+                        targetUser={{ 
+                          uid: rev.buyerEmail || rev.buyerId, 
+                          name: rev.buyerName || "User",
+                          role: "buyer"
+                        }}
+                        buttonText="Say Hi"
+                        autoMessage={`Hi ${rev.buyerName}! I saw your review on ${coffeeName}.`}
+                        className="!p-1.5 !bg-amber-100 !text-amber-800 hover:!bg-amber-200 !shadow-none !rounded-xl !transform-none"
+                      />
+                    )}
+                    <div className="flex items-center">
+                      <Star size={14} className="text-amber-500 fill-amber-500 mr-1" />
+                      <span className="text-sm font-bold text-amber-950">{rev.rating}/5</span>
+                    </div>
                   </div>
                 </div>
                 <p className="text-amber-900/60 leading-relaxed italic relative z-10">

@@ -9,12 +9,15 @@ const ChatFloatingButton = () => {
   const { user } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
   const [activeChat, setActiveChat] = useState(null);
+  const [autoMessage, setAutoMessage] = useState("");
   const { conversations } = useConversations(user?.uid);
   
   useEffect(() => {
     const handleOpenChat = (e) => {
       const otherUser = e.detail.otherUser;
+      const initialMessage = e.detail.autoMessage || "";
       setActiveChat(otherUser);
+      setAutoMessage(initialMessage);
       setIsOpen(true);
     };
 
@@ -65,6 +68,8 @@ const ChatFloatingButton = () => {
                   currentUser={user} 
                   otherUser={activeChat} 
                   onClose={() => setActiveChat(null)} 
+                  autoMessage={autoMessage}
+                  clearAutoMessage={() => setAutoMessage("")}
                 />
               ) : (
                 <ChatList 

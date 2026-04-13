@@ -3,7 +3,7 @@ import { MessageCircle } from "lucide-react";
 import { useAuth } from "../../context/AuthProvider";
 import Swal from "sweetalert2";
 
-const StartChatButton = ({ targetUser, className = "" }) => {
+const StartChatButton = ({ targetUser, className = "", buttonText = "Chat Now", autoMessage = "" }) => {
   const { user } = useAuth();
 
   const handleStartChat = async () => {
@@ -27,13 +27,25 @@ const StartChatButton = ({ targetUser, className = "" }) => {
       return;
     }
 
-    
-    
-    
-    
     try {
-      
-      
+      if (autoMessage) {
+        const result = await Swal.fire({
+          title: 'Say Hi?',
+          text: `Send a quick greeting to ${targetUser.name}: "${autoMessage}"`,
+          icon: 'question',
+          showCancelButton: true,
+          confirmButtonText: 'Send',
+          cancelButtonText: 'Cancel',
+          confirmButtonColor: '#92400e',
+          background: 'rgba(255, 255, 255, 0.95)',
+          customClass: {
+            title: 'font-outfit font-black text-amber-950',
+            popup: 'rounded-[2rem] p-8 shadow-2xl border border-amber-900/10'
+          }
+        });
+        if (!result.isConfirmed) return;
+      }
+
       Swal.fire({
         toast: true,
         position: 'top-end',
@@ -42,11 +54,15 @@ const StartChatButton = ({ targetUser, className = "" }) => {
         timerProgressBar: true,
         icon: 'success',
         title: `Say hello to ${targetUser.name}!`,
-        text: 'Check the chat bubble below.',
+        text: autoMessage ? 'Your greeting is being sent...' : 'Check the chat bubble below.',
       });
       
-      
-      window.dispatchEvent(new CustomEvent('openChat', { detail: { otherUser: targetUser } }));
+      window.dispatchEvent(new CustomEvent('openChat', { 
+        detail: { 
+          otherUser: targetUser,
+          autoMessage: autoMessage
+        } 
+      }));
       
     } catch (error) {
       console.error("Error starting chat:", error);
@@ -59,7 +75,7 @@ const StartChatButton = ({ targetUser, className = "" }) => {
       className={`flex items-center gap-2 bg-amber-800 hover:bg-amber-900 text-white px-4 py-2 rounded-lg font-bold transition-all transform hover:scale-105 shadow-md ${className}`}
     >
       <MessageCircle size={18} />
-      <span>Chat Now</span>
+      <span>{buttonText}</span>
     </button>
   );
 };

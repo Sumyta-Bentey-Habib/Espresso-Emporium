@@ -135,6 +135,7 @@ const AllCoffee = ({ limit, search, category }) => {
       coffeeId: selectedCoffeeForReview._id,
       buyerId: user._id,
       buyerName: user.name,
+      buyerEmail: user.email,
       rating: Number(ratingInput),
       feedback: feedbackInput,
     };
@@ -281,6 +282,7 @@ const AllCoffee = ({ limit, search, category }) => {
         }}
         reviews={selectedCoffeeForComments ? reviews[selectedCoffeeForComments._id] : []}
         coffeeName={selectedCoffeeForComments?.name}
+        user={user}
       />
     </div>
   );

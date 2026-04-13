@@ -65,7 +65,9 @@ export const useMessages = (conversationId) => {
   useEffect(() => {
     if (!conversationId) return;
 
-    
+    setMessages([]);
+    setLoading(true);
+
     const fetchHistory = async () => {
       try {
         const res = await fetch(`${API_URL}/chat/history/${conversationId}`);

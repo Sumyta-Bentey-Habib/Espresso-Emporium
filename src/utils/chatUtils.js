@@ -10,7 +10,7 @@ export const sendMessageViaSocket = (socket, sender, receiver, text) => {
   if (!socket) return;
 
   const senderId = sender.email;
-  const receiverId = receiver.uid || receiver.email; 
+  const receiverId = receiver.email || receiver.uid; 
   const conversationId = getConversationId(senderId, receiverId);
 
   const messageData = {

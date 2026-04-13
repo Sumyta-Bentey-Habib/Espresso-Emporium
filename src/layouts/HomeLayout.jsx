@@ -2,8 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Outlet } from "react-router";
 import NavBar from "../components/NavBar";
 import Footer from "../components/Footer";
-import Loading from "../components/Loading"; 
-import ChatFloatingButton from "../components/chat/ChatFloatingButton";
+import Loading from "../components/Loading";
 import { useAuth } from "../context/AuthProvider";
 import { usePresence } from "../hooks/usePresence";
 
@@ -27,7 +26,6 @@ const HomeLayout = () => {
       <NavBar />
       <Outlet />
       <Footer />
-      <ChatFloatingButton />
     </div>
   );
 };

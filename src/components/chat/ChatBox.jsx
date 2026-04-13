@@ -6,13 +6,25 @@ import { useSocket } from "../../context/SocketProvider";
 import Swal from "sweetalert2";
 import { API_URL } from "../../utils/utils";
 
-const ChatBox = ({ currentUser, otherUser, onClose }) => {
+const ChatBox = ({ currentUser, otherUser, onClose, autoMessage, clearAutoMessage }) => {
   const [inputText, setInputText] = useState("");
   const socket = useSocket();
   
-  const conversationId = [currentUser.email, otherUser.uid || otherUser.email].sort().join("_");
+  const otherIdentifier = otherUser.email || otherUser.uid;
+  const conversationId = [currentUser.email, otherIdentifier].sort().join("_");
   const { messages, loading } = useMessages(conversationId);
   const scrollRef = useRef();
+
+  useEffect(() => {
+    if (autoMessage && socket && currentUser && otherUser && !loading) {
+      // Small timeout to ensure everything is initialized
+      const timer = setTimeout(() => {
+        sendMessageViaSocket(socket, currentUser, otherUser, autoMessage);
+        if (clearAutoMessage) clearAutoMessage();
+      }, 500);
+      return () => clearTimeout(timer);
+    }
+  }, [autoMessage, socket, currentUser, otherUser, loading, clearAutoMessage]);
 
   useEffect(() => {
     if (scrollRef.current) {

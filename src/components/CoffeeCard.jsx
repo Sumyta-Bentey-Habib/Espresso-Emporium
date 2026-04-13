@@ -80,10 +80,12 @@ const CoffeeCard = ({ coffee, onViewReviews, onAddToWishlist, onAddReview, user,
           <div className="flex flex-col gap-2 mt-3">
             <StartChatButton 
               targetUser={{ 
-                uid: coffee.sellerUid || coffee.sellerEmail, 
+                uid: coffee.sellerEmail || coffee.sellerId || coffee.sellerUid, 
                 name: coffee.sellerName || "Seller",
                 role: "seller"
               }} 
+              autoMessage={`Hi ${coffee.sellerName || "Seller"}! I'm interested in your ${coffee.name}.`}
+              buttonText="Say Hi & Chat"
               className="w-full !py-2 !text-xs"
             />
             <button
