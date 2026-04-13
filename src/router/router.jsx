@@ -22,6 +22,7 @@ import SellerProducts from "../pages/seller/SellerProducts";
 import SellerAddProduct from "../pages/seller/SellerAddProduct";
 import CoffeeStore from "../pages/CoffeeStore";
 import DashboardOverview from "../pages/dashboard/DashboardOverview";
+import Profile from "../pages/dashboard/Profile";
 import Marketplace from "../pages/Marketplace";
 
 
@@ -39,6 +40,7 @@ const router = createBrowserRouter([
     element: <DashboardLayout />,
     children: [
       { index: true, element: <DashboardOverview /> },
+      { path: "profile", element: <Profile /> },
       
       { path: "users", element: <ManageUsers /> },
       { path: "products", element: <ManageProducts /> },

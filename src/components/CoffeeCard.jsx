@@ -5,45 +5,47 @@ import StartChatButton from "./chat/StartChatButton";
 const CoffeeCard = ({ coffee, onViewReviews, onAddToWishlist, onAddReview, user, isInWishlist }) => {
   return (
     <div className="group bg-white rounded-3xl overflow-hidden shadow-sm hover:shadow-2xl transition-all duration-500 border border-amber-900/10 flex flex-col h-full">
-      {}
       <div className="relative h-64 overflow-hidden">
         <img
           src={coffee.image || "/more/coffee-splash.jpg"}
           alt={coffee.name}
           className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex items-end p-6">
-          <p className="text-white text-sm line-clamp-2 translate-y-4 group-hover:translate-y-0 transition-transform duration-500">
-            {coffee.description || "Indulge in the rich, aromatic experience of our premium blend."}
-          </p>
-        </div>
+        {coffee.description && (
+          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex items-end p-6">
+            <p className="text-white text-sm line-clamp-2 translate-y-4 group-hover:translate-y-0 transition-transform duration-500">
+              {coffee.description}
+            </p>
+          </div>
+        )}
         {coffee.availability === "Available" && (
-          <div className="absolute top-4 left-4 bg-green-500/90 backdrop-blur-md text-white px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider shadow-lg">
+          <div className="absolute top-4 left-4 bg-emerald-500/90 backdrop-blur-md text-white px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest shadow-lg">
             Fresh Brew
           </div>
         )}
       </div>
 
-      {}
+      {/* Content */}
       <div className="p-6 flex flex-col flex-1">
         <div className="flex justify-between items-start mb-4">
-          <div>
-            <h3 className="text-2xl font-bold text-amber-950 group-hover:text-amber-800 transition-colors">
+          <div className="min-w-0 flex-1">
+            <h3 className="text-xl font-black text-amber-950 group-hover:text-amber-800 transition-colors truncate">
               {coffee.name}
             </h3>
-            <div className="flex items-center text-amber-900/60 text-xs mt-1 font-medium">
-              <MapPin size={14} className="mr-1" />
-              {coffee.sellerLocation || "Premium Origin"}
-            </div>
+            {coffee.sellerLocation && (
+              <div className="flex items-center text-amber-900/60 text-[10px] mt-1 font-black uppercase tracking-widest">
+                <MapPin size={12} className="mr-1" />
+                {coffee.sellerLocation}
+              </div>
+            )}
           </div>
-          <div className="bg-amber-100/10 text-amber-600 px-3 py-1.5 rounded-2xl font-bold flex items-center shadow-inner border border-amber-500/10">
-            <BadgeDollarSign size={16} className="mr-1" />
-            {coffee.price}
+          <div className="bg-amber-100/10 text-amber-600 px-3 py-1.5 rounded-2xl font-black text-sm shadow-inner border border-amber-500/10 shrink-0 ml-4">
+            ${coffee.price}
           </div>
         </div>
 
-        <div className="text-sm text-amber-900/60 mb-6 flex-1 italic">
-          Sold by <span className="font-bold text-amber-950">{coffee.sellerName || "Espresso Artisan"}</span>
+        <div className="text-[10px] text-amber-900/40 mb-6 flex-1 font-bold uppercase tracking-widest">
+          Sourced by <span className="text-amber-950">{coffee.sellerName || "Unknown Seller"}</span>
         </div>
 
         {}
