@@ -2,6 +2,7 @@ import React from "react";
 import { NavLink } from "react-router-dom";
 import { 
   Users, 
+  User,
   Box, 
   Home, 
   ChevronLeft, 
@@ -27,26 +28,33 @@ const Sidebar = ({ isCollapsed, onToggle, role }) => {
   };
 
   const getMenuItems = () => {
+    const common = [
+      { to: "/dashboard/profile", icon: <User size={20} />, label: "Profile" },
+    ];
+
     switch (role) {
       case "admin":
         return [
           { to: "/dashboard", icon: <LayoutDashboard size={20} />, label: "Overview" },
           { to: "/dashboard/users", icon: <Users size={20} />, label: "Manage Users" },
           { to: "/dashboard/products", icon: <Box size={20} />, label: "Manage Products" },
+          ...common
         ];
       case "seller":
         return [
           { to: "/dashboard", icon: <LayoutDashboard size={20} />, label: "Sales Review" },
           { to: "/dashboard/my-products", icon: <Box size={20} />, label: "Inventory" },
           { to: "/dashboard/add-product", icon: <PlusCircle size={20} />, label: "Add Item" },
+          ...common
         ];
       case "buyer":
         return [
           { to: "/dashboard", icon: <History size={20} />, label: "Activity" },
           { to: "/dashboard/wishlist", icon: <ShoppingBag size={20} />, label: "Wishlist" },
+          ...common
         ];
       default:
-        return [];
+        return common;
     }
   };
 
