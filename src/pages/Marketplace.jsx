@@ -2,12 +2,14 @@ import React, { useEffect, useState } from "react";
 import SharedNav from "../shared/SharedNav";
 import AllCoffee from "../components/AllCoffee";
 import { NavLink } from "react-router-dom";
-import { ShoppingBag, Package, Coffee } from "lucide-react";
+import { ShoppingBag, Package, Coffee, ArrowLeft } from "lucide-react";
 import Button from "../components/ui/Button";
+import { useNavigate } from "react-router-dom";
 
 const Marketplace = () => {
   const [search, setSearch] = useState("");
   const [activeTab, setActiveTab] = useState("Beans");
+  const navigate = useNavigate();
 
   useEffect(() => {
     document.title = "Marketplace | Espresso Emporium";
@@ -34,7 +36,21 @@ const Marketplace = () => {
       >
         <div className="absolute inset-0 bg-black/60 transition-colors duration-500 pointer-events-none"></div>
         
+        
         <div className="min-h-screen px-4 py-20 relative z-10 max-w-7xl mx-auto flex flex-col items-center">
+          {/* Back Navigation */}
+          <div className="w-full mb-10 flex justify-start animate-in fade-in slide-in-from-left-10 duration-700">
+            <button 
+              onClick={() => navigate("/")}
+              className="flex items-center gap-3 text-white/60 hover:text-amber-500 transition-all font-black uppercase text-[10px] tracking-widest group"
+            >
+              <div className="w-9 h-9 rounded-full bg-white/10 border border-white/20 flex items-center justify-center group-hover:bg-amber-500 group-hover:text-amber-950 group-hover:border-amber-500 group-hover:shadow-lg group-hover:shadow-amber-500/20 transition-all">
+                <ArrowLeft size={16} />
+              </div>
+              Return to Sanctuary
+            </button>
+          </div>
+
           {/* Marketplace Header */}
           <div className="text-center mb-16 space-y-4 animate-in fade-in slide-in-from-top-10 duration-700">
              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-amber-500/10 text-amber-500 font-black text-[10px] tracking-[0.3em] uppercase border border-amber-500/20 mb-4">
@@ -87,7 +103,14 @@ const Marketplace = () => {
           </div>
 
           {/* Footer CTA */}
-          <div className="flex justify-center mt-24">
+          <div className="flex flex-col sm:flex-row justify-center items-center gap-4 mt-24 animate-in slide-in-from-bottom-10 duration-700">
+            <Button 
+                variant="ghost" 
+                onClick={() => navigate("/")}
+                className="!bg-transparent text-white/80 hover:text-amber-500 transition-colors px-10 py-5 shadow-none"
+            >
+                Back to Sanctuary
+            </Button>
             <NavLink to="/coffee-store">
                 <Button variant="outline" className="text-amber-500 border-amber-500/30 hover:bg-amber-500 hover:text-amber-950 px-12 py-5 shadow-2xl">
                     View Cafe Menu Instead
