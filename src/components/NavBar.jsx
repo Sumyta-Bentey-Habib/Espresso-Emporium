@@ -1,6 +1,7 @@
 import React from "react";
 import { NavLink } from "react-router-dom";
 import { useAuth } from "../context/AuthProvider";
+import Button from "./ui/Button";
 
 const NavBar = () => {
   const { user, logOut } = useAuth();
@@ -39,11 +40,11 @@ const NavBar = () => {
         backgroundPosition: "center",
       }}
     >
-      {}
+      {/* Navbar Start */}
       <div className="navbar-start">
-        {}
+        {/* Mobile Dropdown */}
         <div className="dropdown">
-          <div tabIndex={0} role="button" className="btn btn-ghost lg:hidden">
+          <div tabIndex={0} role="button" className="btn btn-ghost lg:hidden focus:bg-white/10 active:bg-white/20">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               className="h-5 w-5"
@@ -61,97 +62,97 @@ const NavBar = () => {
           </div>
           <ul
             tabIndex={0}
-            className="menu menu-sm dropdown-content bg-[#331A15] text-white rounded-box z-10 mt-3 w-52 p-2 shadow"
+            className="menu menu-sm dropdown-content bg-[#331A15] text-white rounded-[1.5rem] z-10 mt-3 w-52 p-4 shadow-2xl border border-white/10"
           >
             {navItems}
 
-            {}
             {user ? (
-              <div className="mt-2 border-t border-gray-600 pt-2 flex flex-col gap-2">
-                <div className="flex items-center gap-2">
+              <div className="mt-4 border-t border-white/10 pt-4 flex flex-col gap-3">
+                <div className="flex items-center gap-2 px-1">
                   {user.photoURL ? (
                     <img
                       src={user.photoURL}
                       alt={user.displayName || "User"}
-                      className="w-8 h-8 rounded-full border border-white"
+                      className="w-8 h-8 rounded-xl object-cover border border-white/20"
                     />
                   ) : (
-                    <div className="w-8 h-8 rounded-full bg-gray-500 flex items-center justify-center text-sm">
-                      {user.displayName?.charAt(0) || "U"}
+                    <div className="w-8 h-8 rounded-xl bg-amber-700 flex items-center justify-center text-xs font-black">
+                      {user.displayName?.charAt(0) || user.email?.charAt(0) || "U"}
                     </div>
                   )}
-                  <span>{user.displayName || user.email}</span>
+                  <span className="text-[10px] font-bold truncate max-w-[120px]">{user.displayName || user.email}</span>
                 </div>
-                <button
-                  onClick={logOut}
-                  className="btn btn-outline btn-sm text-white border-white hover:bg-white hover:text-black"
-                >
+                <Button variant="outline" size="sm" onClick={logOut} className="w-full">
                   Logout
-                </button>
+                </Button>
               </div>
             ) : (
-              <div className="mt-2 border-t border-gray-600 pt-2 flex flex-col gap-2">
-                <NavLink
-                  to="/login"
-                  className="btn btn-outline btn-sm text-white border-white hover:bg-white hover:text-black"
-                >
-                  Login
+              <div className="mt-4 border-t border-white/10 pt-4 flex flex-col gap-2">
+                <NavLink to="/login">
+                  <Button variant="outline" size="sm" className="w-full">Login</Button>
                 </NavLink>
-                <NavLink to="/register" className="btn btn-primary btn-sm">
-                  Register
+                <NavLink to="/register">
+                  <Button variant="primary" size="sm" className="w-full">Register</Button>
                 </NavLink>
               </div>
             )}
           </ul>
         </div>
 
-        {}
-        <div className="flex items-center gap-2">
+        {/* Brand Logo */}
+        <div className="flex items-center gap-2 hover:scale-105 transition-transform cursor-pointer">
           <img src="/more/logo1.png" alt="Logo" className="h-10 w-auto" />
-          <a className="normal-case text-xl font-black text-white font-georama tracking-tight">Espresso<span className="text-amber-400">Emporium</span></a>
+          <a className="normal-case text-xl font-black text-white font-georama tracking-tight">
+            Espresso<span className="text-amber-400">Emporium</span>
+          </a>
         </div>
       </div>
 
-      {}
+      {/* Navbar Center */}
       <div className="navbar-center hidden lg:flex">
-        <ul className="menu menu-horizontal px-1 font-bold tracking-wide uppercase text-xs">{navItems}</ul>
+        <ul className="menu menu-horizontal px-1 font-bold tracking-wide uppercase text-[10px] gap-2">
+          {navItems}
+        </ul>
       </div>
 
-      {}
-      <div className="navbar-end gap-5 hidden sm:flex">
+      {/* Navbar End */}
+      <div className="navbar-end gap-4 hidden sm:flex">
         {user ? (
           <>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-3 bg-white/10 px-4 py-2 rounded-2xl border border-white/10">
+              <div className="flex flex-col items-end">
+                <span className="text-[10px] font-black uppercase tracking-widest leading-none truncate max-w-[100px]">
+                    {user.displayName || "Artisan"}
+                </span>
+                <span className="text-[8px] text-amber-400 font-bold tracking-tighter mt-0.5">Online</span>
+              </div>
               {user.photoURL ? (
                 <img
                   src={user.photoURL}
                   alt={user.displayName || "User"}
-                  className="w-8 h-8 rounded-full border border-white"
+                  className="w-9 h-9 rounded-xl object-cover border-2 border-amber-600/30 shadow-lg"
                 />
               ) : (
-                <div className="w-8 h-8 rounded-full bg-gray-500 flex items-center justify-center text-sm">
-                  {user.displayName?.charAt(0) || "U"}
+                <div className="w-9 h-9 rounded-xl bg-amber-700 flex items-center justify-center text-sm font-black shadow-lg">
+                  {user.displayName?.charAt(0) || user.email?.charAt(0) || "U"}
                 </div>
               )}
-              <span>{user.displayName || user.email}</span>
             </div>
-            <button
-              onClick={logOut}
-              className="btn btn-outline btn-sm text-white border-white hover:bg-white hover:text-black"
-            >
+            <Button variant="ghost" size="sm" onClick={logOut} className="text-rose-200 hover:text-rose-400 hover:bg-rose-500/10">
               Logout
-            </button>
+            </Button>
           </>
         ) : (
           <>
-            <NavLink
-              to="/login"
-              className="btn btn-outline btn-sm text-white border-white hover:bg-white hover:text-black"
-            >
-              Login
+            <NavLink to="/login">
+              <Button variant="outline" size="sm" className="border-white/20 text-white hover:bg-white hover:text-amber-950">
+                Login
+              </Button>
             </NavLink>
-            <NavLink to="/register" className="btn btn-primary btn-sm">
-              Register
+            <NavLink to="/register">
+              <Button size="sm" className="bg-amber-400 text-amber-950 hover:bg-amber-300">
+                Join Us
+              </Button>
             </NavLink>
           </>
         )}

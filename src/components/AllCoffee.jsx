@@ -1,17 +1,21 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useAuth } from "../context/AuthProvider";
 import Swal from "sweetalert2";
 import CoffeeCard from "./CoffeeCard";
 import CommentModal from "./CommentModal";
 import { Coffee as CoffeeIcon } from "lucide-react";
 import { API_URL } from "../utils/utils";
-import { useCallback } from "react";
+import { useProducts } from "../hooks/useProducts";
+import { useWishlist } from "../hooks/useWishlist";
+import Button from "./ui/Button";
+import Card from "./ui/Card";
+import Input from "./ui/Input";
 
 const AllCoffee = ({ limit, search, category }) => {
   const { user } = useAuth();
-  const [products, setProducts] = useState([]);
-  const [reviews, setReviews] = useState({});
-  const [wishlistItems, setWishlistItems] = useState(new Set());
+  const { products, reviews, isLoading, refreshReviews } = useProducts(search, limit, category);
+  const { wishlistItems, addToWishlist } = useWishlist(user);
+  
   const [selectedCoffeeForReview, setSelectedCoffeeForReview] = useState(null);
   const [selectedCoffeeForComments, setSelectedCoffeeForComments] = useState(null);
   const [isCommentModalOpen, setIsCommentModalOpen] = useState(false);
@@ -24,109 +28,21 @@ const AllCoffee = ({ limit, search, category }) => {
     showConfirmButton: false,
     timer: 3000,
     timerProgressBar: true,
-    didOpen: (toast) => {
-      toast.addEventListener('mouseenter', Swal.stopTimer)
-      toast.addEventListener('mouseleave', Swal.resumeTimer)
-    }
+    background: '#451a03',
+    color: '#fff',
+    iconColor: '#fbbf24'
   });
 
-
-  const fetchProducts = useCallback(async () => {
-    try {
-      const url = search
-        ? `${API_URL}/products?search=${encodeURIComponent(search)}`
-        : `${API_URL}/products`;
-
-      const res = await fetch(url);
-      const data = await res.json();
-
-      let filteredData = data;
-      if (category) {
-        filteredData = data.filter(p => (p.category || "Coffee") === category);
-      }
-
-      setProducts(limit ? filteredData.slice(0, limit) : filteredData);
-
-      
-      const reviewsData = await Promise.all(
-        data.map(async (p) => {
-          const r = await fetch(`${API_URL}/reviews/${p._id}`);
-          const rdataRaw = await r.json();
-
-          const rdata = rdataRaw.map((rev) => ({
-            ...rev,
-            _id: rev._id?.$oid || rev._id,
-            rating: rev.rating?.$numberInt ? Number(rev.rating.$numberInt) : rev.rating,
-            createdAt: rev.createdAt?.$date?.$numberLong
-              ? new Date(Number(rev.createdAt.$date.$numberLong))
-              : rev.createdAt,
-          }));
-
-          return [p._id, rdata];
-        })
-      );
-
-      setReviews(Object.fromEntries(reviewsData));
-    } catch (error) {
-      console.error("Failed to fetch products or reviews:", error);
-    }
-  }, [search, limit, category]);
-
-  const fetchWishlist = useCallback(async () => {
-    if (!user?._id) return;
-    try {
-      const res = await fetch(`${API_URL}/cart/${user._id}`);
-      const data = await res.json();
-      setWishlistItems(new Set(data.map(item => item.coffeeId)));
-    } catch (error) {
-      console.error("Failed to fetch wishlist:", error);
-    }
-  }, [user]);
-
-  useEffect(() => {
-    fetchProducts();
-    fetchWishlist();
-  }, [search, limit, category, fetchProducts, fetchWishlist]);
-
-  
   const handleAddToCart = async (coffee) => {
-    if (!user) return Swal.fire("Login required", "Please login to add to wishlist", "info");
-
-    if (wishlistItems.has(coffee._id)) {
-      return Toast.fire({
-        icon: 'info',
-        title: 'Already in your wishlist'
-      });
-    }
-
-    const cartItem = {
-      buyerId: user._id,
-      coffeeId: coffee._id,
-      name: coffee.name,
-      price: coffee.price,
-      image: coffee.image,
-      sellerName: coffee.sellerName,
-      sellerLocation: coffee.sellerLocation,
-    };
-
-    const res = await fetch(`${API_URL}/cart`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(cartItem),
-    });
-
-    if (res.ok) {
-      setWishlistItems(prev => new Set([...prev, coffee._id]));
+    const success = await addToWishlist(coffee);
+    if (success) {
       Toast.fire({
         icon: 'success',
         title: `${coffee.name} added to wishlist`
       });
-    } else {
-      Swal.fire("Error", "Failed to add coffee", "error");
     }
   };
 
-  
   const submitReview = async () => {
     if (!ratingInput || !feedbackInput)
       return Swal.fire("Error", "Please enter rating and feedback", "warning");
@@ -140,31 +56,31 @@ const AllCoffee = ({ limit, search, category }) => {
       feedback: feedbackInput,
     };
 
-    const res = await fetch(`${API_URL}/reviews`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(review),
-    });
+    try {
+      const res = await fetch(`${API_URL}/reviews`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(review),
+      });
 
-    if (res.ok) {
-      Swal.fire("Thank you!", "Review submitted successfully", "success");
-      setRatingInput("");
-      setFeedbackInput("");
-      setSelectedCoffeeForReview(null);
-
-      const r = await fetch(`${API_URL}/reviews/${review.coffeeId}`);
-      const rdataRaw = await r.json();
-      const rdata = rdataRaw.map((rev) => ({
-        ...rev,
-        _id: rev._id?.$oid || rev._id,
-        rating: rev.rating?.$numberInt ? Number(rev.rating.$numberInt) : rev.rating,
-        createdAt: rev.createdAt?.$date?.$numberLong
-          ? new Date(Number(rev.createdAt.$date.$numberLong))
-          : rev.createdAt,
-      }));
-
-      setReviews((prev) => ({ ...prev, [review.coffeeId]: rdata }));
-    } else Swal.fire("Error", "Failed to submit review", "error");
+      if (res.ok) {
+        Swal.fire({
+            icon: "success",
+            title: "Thank you!",
+            text: "Review submitted successfully",
+            confirmButtonColor: "#451a03",
+            customClass: { popup: 'rounded-[2.5rem]' }
+        });
+        setRatingInput("");
+        setFeedbackInput("");
+        setSelectedCoffeeForReview(null);
+        refreshReviews(review.coffeeId);
+      } else {
+        Swal.fire("Error", "Failed to submit review", "error");
+      }
+    } catch (e) {
+      Swal.fire("Error", "Something went wrong", "error");
+    }
   };
 
   const handleViewReviews = (coffee) => {
@@ -172,18 +88,26 @@ const AllCoffee = ({ limit, search, category }) => {
     setIsCommentModalOpen(true);
   };
 
+  if (isLoading && products.length === 0) {
+      return (
+          <div className="flex justify-center items-center py-40">
+              <span className="loading loading-spinner loading-lg text-amber-900"></span>
+          </div>
+      );
+  }
+
   return (
     <div className="section-container py-20 px-4 md:px-8">
       {!limit && (
         <div className="text-center mb-16 space-y-4">
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-amber-50/10 text-amber-600 font-bold text-sm tracking-widest uppercase border border-amber-500/10">
-            <CoffeeIcon size={16} />
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-amber-50 text-amber-900 font-black text-[10px] tracking-widest uppercase border border-amber-900/10">
+            <CoffeeIcon size={14} />
             Pure Bliss in a Cup
           </div>
-          <h1 className="font-black text-amber-950 tracking-tight">
-            The Coffee <span className="text-amber-700 font-gorditas italic">Selection</span>
+          <h1 className="text-5xl font-black text-amber-950 tracking-tighter">
+            The Coffee <span className="text-amber-700 italic font-display">Selection</span>
           </h1>
-          <p className="max-w-xl mx-auto text-amber-900/60 text-lg">
+          <p className="max-w-xl mx-auto text-amber-900/60 font-medium text-lg">
             Explore our hand-picked collection of premium blends, curated from the world's most passionate roasters.
           </p>
         </div>
@@ -210,25 +134,28 @@ const AllCoffee = ({ limit, search, category }) => {
         </div>
       )}
 
-      {/* Review Formulation Modal (Write Review) */}
+      {/* Review Formulation Modal */}
       {selectedCoffeeForReview && (
         <div
-          className="fixed inset-0 bg-black/60 backdrop-blur-md flex justify-center items-center z-[110] p-4"
+          className="fixed inset-0 bg-black/60 backdrop-blur-md flex justify-center items-center z-[110] p-4 animate-in fade-in duration-300"
           onClick={() => setSelectedCoffeeForReview(null)}
         >
-          <div
-            className="bg-white border border-amber-900/10 rounded-3xl md:rounded-[2.5rem] p-6 md:p-12 w-full max-w-lg relative text-amber-950 shadow-2xl animate-in zoom-in-95 duration-300 overflow-hidden"
+          <Card
+            className="w-full max-w-lg relative text-amber-950 shadow-2xl animate-in zoom-in-95 duration-300"
             onClick={(e) => e.stopPropagation()}
+            padding="p-8 md:p-12"
           >
-            <div className="absolute top-0 right-0 w-32 h-32 bg-amber-50/5 rounded-bl-full -z-10"></div>
+            <div className="absolute top-0 right-0 w-32 h-32 bg-amber-50 rounded-bl-full -z-10 opacity-50"></div>
 
-            <h2 className="text-3xl font-black mb-2 text-amber-950">Write a Review</h2>
-            <p className="text-amber-900/60 mb-8 uppercase tracking-widest text-[10px] font-bold">Sharing experience for <span className="text-amber-600 italic font-black">{selectedCoffeeForReview.name}</span></p>
+            <h2 className="text-3xl font-black mb-2 text-amber-950 tracking-tight">Write a Review</h2>
+            <p className="text-amber-900/60 mb-8 uppercase tracking-widest text-[10px] font-black">
+                Sharing experience for <span className="text-amber-700 font-black underline underline-offset-4">{selectedCoffeeForReview.name}</span>
+            </p>
 
             <div className="space-y-6">
               <div>
-                <label className="block text-[10px] font-black uppercase tracking-widest text-amber-900/60 mb-2 ml-1">Rating</label>
-                <div className="flex items-center gap-4">
+                <label className="block text-[10px] font-black uppercase tracking-widest text-amber-900/40 mb-3 ml-1">Rating</label>
+                <div className="flex items-center gap-6">
                   <input
                     type="number"
                     min="1"
@@ -236,40 +163,40 @@ const AllCoffee = ({ limit, search, category }) => {
                     placeholder="5"
                     value={ratingInput}
                     onChange={(e) => setRatingInput(e.target.value)}
-                    className="bg-amber-50/50 border border-amber-900/10 rounded-2xl p-4 w-24 text-2xl font-black focus:ring-4 focus:ring-amber-500/10 transition-all outline-none text-amber-950"
+                    className="bg-amber-50 border border-amber-900/10 rounded-2xl p-4 w-24 text-2xl font-black focus:ring-4 focus:ring-amber-500/10 transition-all outline-none text-amber-950"
                   />
-                  <div className="flex text-amber-400 gap-1">
-                    {[1,2,3,4,5].map(s => <CoffeeIcon key={s} size={20} className={s <= Number(ratingInput) ? "fill-amber-400" : ""} />)}
+                  <div className="flex text-amber-400 gap-1.5 bg-amber-50/50 p-3 rounded-2xl border border-amber-900/5">
+                    {[1,2,3,4,5].map(s => (
+                        <CoffeeIcon 
+                            key={s} 
+                            size={20} 
+                            className={`${s <= Number(ratingInput) ? "fill-amber-400 text-amber-400" : "text-amber-900/10"}`} 
+                        />
+                    ))}
                   </div>
                 </div>
               </div>
 
-              <div>
-                <label className="block text-[10px] font-black uppercase tracking-widest text-amber-900/60 mb-2 ml-1">Feedback</label>
+              <div className="space-y-2">
+                <label className="block text-[10px] font-black uppercase tracking-widest text-amber-900/40 mb-1 ml-1">Feedback</label>
                 <textarea
                   placeholder="Describe the aroma, taste, and experience..."
                   value={feedbackInput}
                   onChange={(e) => setFeedbackInput(e.target.value)}
-                  className="bg-amber-50/50 border border-amber-900/10 rounded-2xl p-6 w-full min-h-[150px] focus:ring-4 focus:ring-amber-500/10 transition-all outline-none resize-none text-amber-950"
+                  className="bg-amber-50 border border-amber-900/10 rounded-2xl p-6 w-full min-h-[150px] font-medium text-sm focus:ring-4 focus:ring-amber-500/10 transition-all outline-none resize-none text-amber-950 placeholder:text-amber-900/20"
                 />
               </div>
 
               <div className="flex gap-4 pt-4">
-                <button
-                  onClick={() => setSelectedCoffeeForReview(null)}
-                  className="flex-1 px-8 py-4 rounded-2xl bg-amber-50/50 text-amber-950 font-bold hover:bg-amber-950 hover:text-white transition-all active:scale-95"
-                >
+                <Button variant="ghost" onClick={() => setSelectedCoffeeForReview(null)} className="flex-1">
                   Discard
-                </button>
-                <button
-                  onClick={submitReview}
-                  className="flex-1 px-8 py-4 rounded-2xl bg-amber-950 text-white font-bold hover:bg-black transition-all shadow-xl shadow-amber-900/20 active:scale-95"
-                >
+                </Button>
+                <Button variant="primary" onClick={submitReview} className="flex-1">
                   Share Review
-                </button>
+                </Button>
               </div>
             </div>
-          </div>
+          </Card>
         </div>
       )}
 

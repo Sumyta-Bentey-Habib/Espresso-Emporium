@@ -1,0 +1,35 @@
+:root {
+  /* Primary Palette - Coffee & Amber */
+  --color-primary-50: #fffbeb;
+  --color-primary-100: #fef3c7;
+  --color-primary-200: #fde68a;
+  --color-primary-300: #fcd34d;
+  --color-primary-400: #fbbf24;
+  --color-primary-500: #f59e0b;
+  --color-primary-600: #d97706;
+  --color-primary-700: #b45309;
+  --color-primary-800: #92400e;
+  --color-primary-900: #78350f;
+  --color-primary-950: #451a03;
+
+  /* Accent - Greens & Earth */
+  --color-accent-600: #059669;
+  --color-accent-700: #047857;
+
+  /* Surfaces & Borders */
+  --surface-white: #ffffff;
+  --surface-glass: rgba(255, 255, 255, 0.7);
+  --border-light: rgba(69, 26, 3, 0.1);
+  --border-subtle: rgba(255, 255, 255, 0.2);
+
+  /* Shadows */
+  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+  --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+  --shadow-primary: 0 10px 15px -3px rgba(69, 26, 3, 0.1), 0 4px 6px -4px rgba(69, 26, 3, 0.1);
+
+  /* Typography */
+  --font-main: "Georama", sans-serif;
+  --font-display: "Gorditas", serif;
+}

@@ -2,6 +2,7 @@ import React from "react";
 import { MessageCircle } from "lucide-react";
 import { useAuth } from "../../context/AuthProvider";
 import Swal from "sweetalert2";
+import Button from "../ui/Button";
 
 const StartChatButton = ({ targetUser, className = "", buttonText = "Chat Now", autoMessage = "" }) => {
   const { user } = useAuth();
@@ -12,7 +13,10 @@ const StartChatButton = ({ targetUser, className = "", buttonText = "Chat Now", 
         icon: 'warning',
         title: 'Login Required',
         text: 'Please login to chat with others.',
-        confirmButtonColor: '#92400e',
+        confirmButtonColor: '#451a03',
+        customClass: {
+          popup: 'rounded-[2rem] border-amber-900/10'
+        }
       });
       return;
     }
@@ -22,7 +26,10 @@ const StartChatButton = ({ targetUser, className = "", buttonText = "Chat Now", 
         icon: 'info',
         title: 'Note',
         text: 'You cannot chat with yourself.',
-        confirmButtonColor: '#92400e',
+        confirmButtonColor: '#451a03',
+        customClass: {
+          popup: 'rounded-[2rem] border-amber-900/10'
+        }
       });
       return;
     }
@@ -31,16 +38,16 @@ const StartChatButton = ({ targetUser, className = "", buttonText = "Chat Now", 
       if (autoMessage) {
         const result = await Swal.fire({
           title: 'Say Hi?',
-          text: `Send a quick greeting to ${targetUser.name}: "${autoMessage}"`,
+          text: `Send a quick greeting to ${targetUser.name || 'Artisan'}: "${autoMessage}"`,
           icon: 'question',
           showCancelButton: true,
-          confirmButtonText: 'Send',
+          confirmButtonText: 'Send Greeting',
           cancelButtonText: 'Cancel',
-          confirmButtonColor: '#92400e',
-          background: 'rgba(255, 255, 255, 0.95)',
+          confirmButtonColor: '#451a03',
+          background: 'rgba(255, 255, 255, 0.98)',
           customClass: {
             title: 'font-outfit font-black text-amber-950',
-            popup: 'rounded-[2rem] p-8 shadow-2xl border border-amber-900/10'
+            popup: 'rounded-[2.5rem] p-10 shadow-2xl border border-amber-900/10'
           }
         });
         if (!result.isConfirmed) return;
@@ -53,8 +60,11 @@ const StartChatButton = ({ targetUser, className = "", buttonText = "Chat Now", 
         timer: 3000,
         timerProgressBar: true,
         icon: 'success',
-        title: `Say hello to ${targetUser.name}!`,
+        title: `Connecting with ${targetUser.name || 'Artisan'}!`,
         text: autoMessage ? 'Your greeting is being sent...' : 'Check the chat bubble below.',
+        background: '#451a03',
+        color: '#fff',
+        iconColor: '#fbbf24'
       });
       
       window.dispatchEvent(new CustomEvent('openChat', { 
@@ -70,13 +80,14 @@ const StartChatButton = ({ targetUser, className = "", buttonText = "Chat Now", 
   };
 
   return (
-    <button
+    <Button
       onClick={handleStartChat}
-      className={`flex items-center gap-2 bg-amber-800 hover:bg-amber-900 text-white px-4 py-2 rounded-lg font-bold transition-all transform hover:scale-105 shadow-md ${className}`}
+      variant="primary"
+      icon={MessageCircle}
+      className={className}
     >
-      <MessageCircle size={18} />
-      <span>{buttonText}</span>
-    </button>
+      {buttonText}
+    </Button>
   );
 };
 

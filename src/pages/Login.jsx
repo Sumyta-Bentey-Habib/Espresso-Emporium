@@ -7,9 +7,12 @@ import { useNavigate, NavLink } from "react-router-dom";
 import Swal from "sweetalert2";
 import { FcGoogle } from "react-icons/fc";
 import { FaEye, FaEyeSlash } from "react-icons/fa"; 
+import { Mail, Lock } from "lucide-react";
 
 import loginAnimation from "../assets/lottie/login.json";
 import SharedNav from "../shared/SharedNav";
+import Input from "../components/ui/Input";
+import Button from "../components/ui/Button";
 
 const Login = () => {
   const { googleLogin } = useAuth();
@@ -20,7 +23,7 @@ const Login = () => {
   const [showPassword, setShowPassword] = useState(false); 
 
   useEffect(() => {
-    document.title = "Login";
+    document.title = "Login | Espresso Emporium";
   }, []);
 
   const handleChange = (e) => {
@@ -32,7 +35,12 @@ const Login = () => {
     const { email, password } = formData;
 
     if (!email || !password) {
-      Swal.fire("Error", "Please enter email and password.", "error");
+      Swal.fire({
+        icon: "error",
+        title: "Missing Fields",
+        text: "Please enter both email and password.",
+        confirmButtonColor: "#451a03"
+      });
       return;
     }
 
@@ -42,18 +50,21 @@ const Login = () => {
 
       Swal.fire({
         icon: "success",
-        title: "Login Successful",
-        text: `Welcome, ${email}!`,
-        timer: 1500,
+        title: "Welcome Back!",
+        text: `The perfect brew is being prepared for you.`,
+        timer: 2000,
         showConfirmButton: false,
+        background: '#fff',
+        customClass: { popup: 'rounded-[2.5rem]' }
       });
 
       navigate("/dashboard");
     } catch (error) {
       Swal.fire({
         icon: "error",
-        title: "Login Failed",
+        title: "Authentication Failed",
         text: error.message,
+        confirmButtonColor: "#451a03"
       });
     } finally {
       setLoading(false);
@@ -65,16 +76,18 @@ const Login = () => {
       await googleLogin();
       Swal.fire({
         icon: "success",
-        title: "Google Login Successful",
+        title: "Google Sync Successful",
         timer: 1500,
         showConfirmButton: false,
+        customClass: { popup: 'rounded-[1.5rem]' }
       });
       navigate("/dashboard");
     } catch (error) {
       Swal.fire({
         icon: "error",
-        title: "Google Login Failed",
+        title: "Sync Failed",
         text: error.message,
+        confirmButtonColor: "#451a03"
       });
     }
   };
@@ -83,7 +96,7 @@ const Login = () => {
     <>
       <SharedNav />
       <div
-        className="flex items-center justify-center min-h-screen px-4 py-8 md:py-12 bg-stone-50 font-inter"
+        className="flex items-center justify-center min-h-screen px-4 py-8 md:py-12 bg-stone-50 font-georama"
         style={{
           backgroundImage: "url('/more/1.png')",
           backgroundSize: "cover",
@@ -91,139 +104,118 @@ const Login = () => {
           backgroundAttachment: "fixed"
         }}
       >
-        <div className="absolute inset-0 bg-black/40 backdrop-blur-[2px]"></div>
+        <div className="absolute inset-0 bg-black/60 backdrop-blur-[4px]"></div>
 
-        <div className="relative flex flex-col w-full max-w-5xl overflow-hidden md:flex-row bg-white/80 backdrop-blur-xl rounded-3xl md:rounded-[2.5rem] shadow-2xl border border-white/50 animate-in fade-in zoom-in duration-700">
-          {}
-          <div className="flex flex-col items-center justify-center w-full p-8 md:p-12 md:w-5/12 bg-gradient-to-br from-amber-900/90 to-stone-900/95 text-white">
-            <div className="text-center space-y-3 md:space-y-4 mb-6 md:mb-8">
-              <h2 className="text-3xl md:text-5xl font-outfit font-bold tracking-tight">Welcome Back</h2>
-              <p className="text-amber-200/80 font-inter text-xs md:text-base tracking-wide leading-relaxed">
-                The perfect brew is just one login away. Fresh beans, better mornings.
+        <div className="relative flex flex-col w-full max-w-5xl overflow-hidden md:flex-row bg-white/90 backdrop-blur-2xl rounded-[3rem] shadow-2xl animate-in fade-in zoom-in duration-700">
+          {/* Left Panel: Hero */}
+          <div className="flex flex-col items-center justify-center w-full p-8 md:p-12 md:w-5/12 bg-gradient-to-br from-amber-950 to-stone-900 text-white relative">
+            <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none opacity-10">
+                <div className="absolute -top-10 -left-10 w-40 h-40 bg-white rounded-full blur-3xl"></div>
+            </div>
+            
+            <div className="text-center space-y-4 mb-8 relative z-10">
+              <h2 className="text-4xl md:text-5xl font-black font-display tracking-tight text-amber-100">Welcome Back</h2>
+              <p className="text-amber-100/60 font-medium text-xs md:text-sm tracking-widest uppercase leading-relaxed">
+                The daily grind begins with excellence.
               </p>
             </div>
-            <div className="w-full max-w-[200px] md:max-w-xs drop-shadow-2xl opacity-90 md:opacity-100">
+            
+            <div className="w-full max-w-[200px] md:max-w-xs drop-shadow-2xl relative z-10">
               <Lottie
                 animationData={loginAnimation}
                 loop
-                className="w-full h-auto scale-100 md:scale-110"
+                className="w-full h-auto"
               />
             </div>
           </div>
 
-          {}
-          <div className="w-full p-6 md:p-14 space-y-6 md:space-y-8 md:w-7/12 flex flex-col justify-center">
-            <div className="space-y-1 md:space-y-2">
-              <h1 className="text-2xl md:text-4xl font-outfit font-black text-stone-900 tracking-tight">
-                Account Login
-              </h1>
-              <p className="text-stone-500 font-inter text-xs md:text-sm">Enter your credentials to access your coffee paradise.</p>
+          {/* Right Panel: Form */}
+          <div className="w-full p-8 md:p-16 space-y-8 md:w-7/12 flex flex-col justify-center bg-white/50">
+            <div className="space-y-2">
+              <h1 className="text-3xl font-black text-amber-950 tracking-tight">Account Login</h1>
+              <p className="text-amber-900/40 text-[10px] font-black uppercase tracking-[0.3em]">Credentials for Artisan Access</p>
             </div>
 
-            <form onSubmit={handleSubmit} className="space-y-5">
-              <div className="space-y-4">
-                {}
-                <div className="group">
-                  <label htmlFor="email" className="block text-xs font-bold text-stone-500 uppercase tracking-widest mb-2 ml-1 group-focus-within:text-amber-700 transition-colors">
-                    Email Address
-                  </label>
-                  <div className="relative">
-                    <input
-                      type="email"
-                      name="email"
-                      id="email"
-                      placeholder="enthusiast@espresso.com"
-                      value={formData.email}
-                      onChange={handleChange}
-                      className="w-full px-5 py-3.5 bg-stone-100/50 border border-stone-200 rounded-2xl text-stone-900 font-inter focus:outline-none focus:ring-4 focus:ring-amber-500/10 focus:border-amber-600/50 focus:bg-white transition-all duration-300 placeholder:text-stone-400"
-                      disabled={loading}
-                    />
-                  </div>
-                </div>
+            <form onSubmit={handleSubmit} className="space-y-6">
+              <div className="space-y-5">
+                <Input 
+                  label="Email Address"
+                  icon={Mail}
+                  name="email"
+                  type="email"
+                  placeholder="artisan@espresso.com"
+                  value={formData.email}
+                  onChange={handleChange}
+                  disabled={loading}
+                />
 
-                {}
-                <div className="group">
-                  <div className="flex justify-between items-center mb-2 ml-1">
-                    <label htmlFor="password" className="block text-xs font-bold text-stone-500 uppercase tracking-widest group-focus-within:text-amber-700 transition-colors">
-                      Password
-                    </label>
-                    <a href="#" className="text-[11px] font-bold text-amber-700 hover:text-amber-800 uppercase tracking-wider underline-offset-4 hover:underline">
-                      Forgot?
-                    </a>
-                  </div>
-                  <div className="relative">
-                    <input
-                      type={showPassword ? "text" : "password"}
-                      name="password"
-                      id="password"
-                      placeholder="••••••••"
-                      value={formData.password}
-                      onChange={handleChange}
-                      className="w-full px-5 py-3.5 bg-stone-100/50 border border-stone-200 rounded-2xl text-stone-900 font-inter focus:outline-none focus:ring-4 focus:ring-amber-500/10 focus:border-amber-600/50 focus:bg-white transition-all duration-300 placeholder:text-stone-400 pr-12"
-                      disabled={loading}
-                    />
-                    <button
-                      type="button"
-                      onClick={() => setShowPassword((prev) => !prev)}
-                      className="absolute inset-y-0 right-4 flex items-center text-stone-400 hover:text-amber-700 transition-colors"
-                      tabIndex={-1}
-                    >
-                      {showPassword ? <FaEyeSlash size={18} /> : <FaEye size={18} />}
-                    </button>
-                  </div>
+                <div className="relative group">
+                   <div className="flex justify-between items-center mb-1">
+                      <label className="text-[9px] text-amber-900/40 font-black uppercase tracking-[0.2em] flex items-center gap-2">
+                        <Lock size={12} /> Password
+                      </label>
+                      <NavLink to="/forgot-password" size="sm" className="text-[9px] text-amber-700 font-bold uppercase tracking-widest hover:underline">
+                        Forgot?
+                      </NavLink>
+                   </div>
+                   <div className="relative">
+                      <input
+                        type={showPassword ? "text" : "password"}
+                        name="password"
+                        placeholder="••••••••"
+                        value={formData.password}
+                        onChange={handleChange}
+                        className="w-full bg-amber-50/50 border border-amber-100 rounded-xl p-3 text-sm font-bold text-amber-950 focus:outline-none focus:ring-2 focus:ring-amber-500/20 transition-all pr-12"
+                        disabled={loading}
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setShowPassword((prev) => !prev)}
+                        className="absolute inset-y-0 right-4 flex items-center text-amber-950/20 hover:text-amber-700 transition-colors"
+                        tabIndex={-1}
+                      >
+                        {showPassword ? <FaEyeSlash size={18} /> : <FaEye size={18} />}
+                      </button>
+                   </div>
                 </div>
               </div>
 
-              <button
+              <Button
                 type="submit"
-                className="group relative w-full overflow-hidden rounded-2xl bg-stone-900 py-4 font-outfit font-bold text-white shadow-xl transition-all duration-300 hover:bg-black hover:shadow-stone-900/20 active:scale-[0.98] disabled:opacity-70"
+                className="w-full py-4"
                 disabled={loading}
               >
-                <span className="relative z-10 flex items-center justify-center gap-2">
-                  {loading ? (
-                    <>
-                      <div className="h-4 w-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
-                      Authenticating...
-                    </>
-                  ) : (
-                    "Sign In to Emporium"
-                  )}
-                </span>
-                <div className="absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/10 to-transparent group-hover:translate-x-full transition-transform duration-1000"></div>
-              </button>
+                {loading ? "Authenticating..." : "Sign In to Emporium"}
+              </Button>
             </form>
 
-            <div className="relative py-2">
-              <div className="absolute inset-0 flex items-center">
-                <div className="w-full border-t border-stone-200"></div>
-              </div>
-              <div className="relative flex justify-center text-xs uppercase">
-                <span className="bg-transparent px-4 text-stone-400 font-bold tracking-widest backdrop-blur-sm">Or continue with</span>
-              </div>
+            <div className="relative py-2 flex items-center justify-center">
+              <div className="absolute w-full h-[1px] bg-amber-900/10"></div>
+              <span className="relative bg-[#faf9f6] px-4 text-[9px] font-black text-amber-900/20 uppercase tracking-[0.3em]">Or synchronize</span>
             </div>
 
             <button
               onClick={handleGoogleLogin}
-              className="w-full group flex items-center justify-center gap-3 px-5 py-4 bg-white border-2 border-stone-100 rounded-2xl font-inter font-bold text-stone-700 hover:border-amber-200 hover:bg-amber-50/30 transition-all duration-300 shadow-sm"
+              className="w-full flex items-center justify-center gap-3 px-6 py-3.5 bg-white border border-amber-900/10 rounded-2xl font-black text-[10px] uppercase tracking-widest text-amber-950 hover:bg-amber-50 transition-all shadow-sm active:scale-95"
             >
-              <FcGoogle className="w-6 h-6 group-hover:scale-110 transition-transform" />
+              <FcGoogle className="w-5 h-5" />
               <span>Login with Google</span>
             </button>
 
-            <p className="text-center font-inter text-sm text-stone-500">
-              New to our beans?{" "}
-              <NavLink
-                to="/register"
-                className="font-bold text-amber-700 hover:text-amber-800 underline-offset-4 hover:underline transition-all"
-              >
-                Create an account
-              </NavLink>
-            </p>
-            
-            <div className="pt-2 flex justify-center">
-              <NavLink to="/" className="inline-flex items-center gap-2 px-4 py-2 bg-stone-100 hover:bg-stone-200 text-stone-600 rounded-xl text-xs font-bold transition-colors">
-                <span>← Return to Home</span>
-              </NavLink>
+            <div className="flex flex-col items-center gap-4 pt-4">
+                <p className="text-center text-xs font-bold text-amber-900/40">
+                  New to our beans?{" "}
+                  <NavLink
+                    to="/register"
+                    className="text-amber-700 hover:text-amber-900 underline underline-offset-4 decoration-2"
+                  >
+                    Create an account
+                  </NavLink>
+                </p>
+                
+                <NavLink to="/" className="inline-flex items-center gap-2 px-6 py-2 bg-amber-50 text-amber-900/60 rounded-xl text-[9px] font-black uppercase tracking-widest hover:bg-amber-100 transition-all active:scale-95">
+                    ← Return to Home
+                </NavLink>
             </div>
           </div>
         </div>

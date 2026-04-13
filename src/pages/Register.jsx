@@ -6,9 +6,13 @@ import { auth } from "../firebase/firebase.init";
 import { useAuth } from "../context/AuthProvider";
 import { useNavigate, NavLink } from "react-router-dom";
 import { FcGoogle } from "react-icons/fc";
+import { User, Mail, Lock, MapPin, Camera } from "lucide-react";
 import { uploadImageToImgBB, API_URL } from "../utils/utils";
 import registrationAnimation from "../assets/lottie/register.json";
 import SharedNav from "../shared/SharedNav";
+import Input from "../components/ui/Input";
+import Button from "../components/ui/Button";
+import Card from "../components/ui/Card";
 
 const Register = () => {
   const { googleLogin } = useAuth();
@@ -27,7 +31,7 @@ const Register = () => {
   const [preview, setPreview] = useState(null);
 
   useEffect(() => {
-    document.title = "Register";
+    document.title = "Register | Espresso Emporium";
     if (profileFile) {
       const objectUrl = URL.createObjectURL(profileFile);
       setPreview(objectUrl);
@@ -66,15 +70,32 @@ const Register = () => {
     e.preventDefault();
     const { name, email, password, location } = formData;
 
-    if (!role) return Swal.fire("Error", "Please select a role first.", "error");
-    if (!name || !email || !password)
-      return Swal.fire("Error", "Please fill out all required fields.", "error");
-    if (!validatePassword(password))
-      return Swal.fire(
-        "Weak Password",
-        "Password must be at least 6 characters and include uppercase and lowercase letters.",
-        "error"
-      );
+    if (!role) {
+        return Swal.fire({
+            icon: "warning",
+            title: "Role Required",
+            text: "Please select whether you're a Lover or a Merchant.",
+            confirmButtonColor: "#451a03"
+        });
+    }
+    
+    if (!name || !email || !password) {
+        return Swal.fire({
+            icon: "error",
+            title: "Required Fields",
+            text: "Please fill out all mandatory fields.",
+            confirmButtonColor: "#451a03"
+        });
+    }
+
+    if (!validatePassword(password)) {
+      return Swal.fire({
+        icon: "error",
+        title: "Weak Password",
+        text: "Password must be at least 6 characters with upper & lowercase letters.",
+        confirmButtonColor: "#451a03"
+      });
+    }
 
     setLoading(true);
     try {
@@ -95,20 +116,41 @@ const Register = () => {
         location: role === "Seller" ? location : "",
       });
 
-      Swal.fire("Success", `Registration completed as ${role}!`, "success");
+      Swal.fire({
+        icon: "success",
+        title: "Welcome to the Emporium!",
+        text: `Registration completed as ${role}.`,
+        confirmButtonColor: "#451a03",
+        timer: 2000,
+        showConfirmButton: false,
+        customClass: { popup: 'rounded-[2.5rem]' }
+      });
+
       setFormData({ name: "", email: "", password: "", photoURL: "", location: "" });
       setRole("");
       setProfileFile(null);
       navigate("/");
     } catch (error) {
-      Swal.fire("Registration Failed", error.message, "error");
+      Swal.fire({
+        icon: "error",
+        title: "Registration Failed",
+        text: error.message,
+        confirmButtonColor: "#451a03"
+      });
     } finally {
       setLoading(false);
     }
   };
 
   const handleGoogleRegister = async () => {
-    if (!role) return Swal.fire("Error", "Please select a role first.", "error");
+    if (!role) {
+        return Swal.fire({
+            icon: "warning",
+            title: "Select Role",
+            text: "Please select your role before using Google signup.",
+            confirmButtonColor: "#451a03"
+        });
+    }
     try {
       const result = await googleLogin();
       const saveUser = {
@@ -123,14 +165,15 @@ const Register = () => {
 
       Swal.fire({
         icon: "success",
-        title: "Google Registration Successful",
+        title: "Sync Successful",
         timer: 1500,
         showConfirmButton: false,
+        customClass: { popup: 'rounded-[1.5rem]' }
       });
 
       navigate("/");
     } catch (error) {
-      Swal.fire({ icon: "error", title: "Google Registration Failed", text: error.message });
+      Swal.fire({ icon: "error", title: "Google Sync Failed", text: error.message, confirmButtonColor: "#451a03" });
     }
   };
 
@@ -138,7 +181,7 @@ const Register = () => {
     <>
       <SharedNav />
       <div
-        className="flex flex-col items-center justify-center min-h-screen px-4 py-12 md:flex-row bg-stone-50 font-inter"
+        className="flex flex-col items-center justify-center min-h-screen px-4 py-12 bg-stone-50 font-georama"
         style={{
           backgroundImage: "url('/more/1.png')",
           backgroundSize: "cover",
@@ -146,192 +189,184 @@ const Register = () => {
           backgroundAttachment: "fixed"
         }}
       >
-        <div className="absolute inset-0 bg-black/50 backdrop-blur-[1px]"></div>
+        <div className="absolute inset-0 bg-black/60 backdrop-blur-[4px]"></div>
 
-        <div className="relative flex flex-col md:flex-row w-full max-w-6xl bg-white/90 backdrop-blur-2xl rounded-3xl md:rounded-[3rem] shadow-2xl overflow-hidden border border-white/40 animate-in fade-in zoom-in duration-700">
-          {}
-          <div className="flex flex-col items-center justify-center w-full p-8 md:p-16 md:w-5/12 bg-gradient-to-br from-stone-900 to-amber-950 text-white">
-            <div className="text-center space-y-3 md:space-y-4 mb-6 md:mb-10">
-              <h2 className="text-3xl md:text-5xl font-outfit font-bold tracking-tight">Join the Craft</h2>
-              <p className="text-amber-200/70 font-inter text-xs md:text-base leading-relaxed max-w-xs mx-auto">
-                Become part of our exclusive coffee community. Whether you brew it or buy it, we have a seat for you.
+        <Card
+          className="relative flex flex-col md:flex-row w-full max-w-6xl overflow-hidden bg-white/90 backdrop-blur-2xl animate-in fade-in zoom-in duration-700"
+          padding="p-0"
+          rounded="rounded-[3rem]"
+        >
+          {/* Left Panel: Branding */}
+          <div className="flex flex-col items-center justify-center w-full p-8 md:p-16 md:w-5/12 bg-gradient-to-br from-amber-950 to-stone-900 text-white relative">
+            <div className="absolute top-0 right-0 w-full h-full overflow-hidden pointer-events-none opacity-5">
+                <div className="absolute -bottom-20 -right-20 w-64 h-64 bg-white rounded-full blur-3xl"></div>
+            </div>
+            
+            <div className="text-center space-y-4 mb-8 relative z-10">
+              <h2 className="text-4xl md:text-5xl font-black font-display tracking-tight text-amber-100">Join the Craft</h2>
+              <p className="text-amber-100/60 font-medium text-xs md:text-sm tracking-widest uppercase leading-relaxed max-w-xs mx-auto">
+                Become part of our exclusive community.
               </p>
             </div>
-            <div className="w-full max-w-[180px] md:max-w-xs drop-shadow-3xl transform hover:scale-105 transition-transform duration-500 opacity-90 md:opacity-100">
+            <div className="w-full max-w-[180px] md:max-w-xs drop-shadow-2xl relative z-10 opacity-90 transition-transform hover:scale-105 duration-700">
               <Lottie animationData={registrationAnimation} loop className="w-full" />
             </div>
           </div>
 
-          {}
-          <div className="w-full p-6 md:p-14 space-y-6 md:space-y-8 md:w-7/12 overflow-y-auto max-h-[none] md:max-h-[90vh] custom-scrollbar">
-            <div className="space-y-1 md:space-y-2">
-              <h1 className="text-2xl md:text-4xl font-outfit font-black text-stone-900 tracking-tight">Create Account</h1>
-              <p className="text-stone-500 text-xs md:text-sm">Fill in the details to start your journey with Espresso Emporium.</p>
+          {/* Right Panel: Form Content */}
+          <div className="w-full p-8 md:p-16 space-y-10 md:w-7/12 overflow-y-auto max-h-[none] md:max-h-[95vh] custom-scrollbar bg-white/40">
+            <div className="space-y-2">
+              <h1 className="text-3xl font-black text-amber-950 tracking-tight">Create Account</h1>
+              <p className="text-amber-900/40 text-[10px] font-black uppercase tracking-[0.3em]">Ignite your passion for excellence</p>
             </div>
 
+            {/* Role Selection */}
             <div className="space-y-4">
-              <label className="block text-xs font-bold text-stone-400 uppercase tracking-widest ml-1">Select Your Role</label>
-              <div className="flex gap-3">
-                {["Buyer", "Seller"].map((r) => (
+              <label className="text-[9px] text-amber-900/40 font-black uppercase tracking-[0.2em] ml-1">Select Identity</label>
+              <div className="flex gap-4">
+                {[
+                    { val: "Buyer", label: "Artisan Lover", icon: "☕" },
+                    { val: "Seller", label: "Merchant", icon: "🏪" }
+                ].map((r) => (
                   <button
-                    key={r}
+                    key={r.val}
                     type="button"
-                    onClick={() => setRole(r)}
-                    className={`flex-1 px-6 py-4 rounded-2xl font-outfit font-bold text-sm border-2 transition-all duration-300 ${
-                      role === r 
-                        ? "bg-stone-900 text-white border-stone-900 shadow-xl shadow-stone-900/20 scale-[1.02]" 
-                        : "bg-white text-stone-600 border-stone-100 hover:border-amber-200 hover:bg-amber-50/30"
+                    onClick={() => setRole(r.val)}
+                    className={`flex-1 px-6 py-5 rounded-2xl font-black text-[10px] uppercase tracking-widest border-2 transition-all duration-500 shadow-sm ${
+                      role === r.val 
+                        ? "bg-amber-950 text-white border-amber-950 shadow-xl shadow-amber-950/20 scale-[1.02]" 
+                        : "bg-white text-amber-900/60 border-amber-900/5 hover:border-amber-900/20 hover:bg-amber-50"
                     }`}
                   >
-                    {r === "Buyer" ? "☕ Coffee Lover" : "🏪 Coffee Merchant"}
+                    <span className="block text-2xl mb-1">{r.icon}</span>
+                    {r.label}
                   </button>
                 ))}
               </div>
             </div>
 
             {role && (
-              <div className="animate-in fade-in slide-in-from-top-4 duration-500">
-                <form onSubmit={handleSubmit} className="space-y-6">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                    {}
-                    <div className="space-y-2">
-                      <label className="block text-xs font-bold text-stone-500 uppercase tracking-widest ml-1">Full Name</label>
-                      <input
-                        type="text"
-                        name="name"
-                        placeholder="Espresso Enthusiast"
-                        value={formData.name}
-                        onChange={handleChange}
-                        required
-                        className="w-full px-5 py-3.5 bg-stone-100/50 border border-stone-200 rounded-2xl text-stone-900 font-inter focus:outline-none focus:ring-4 focus:ring-amber-500/10 focus:border-amber-600/50 focus:bg-white transition-all"
-                      />
-                    </div>
+              <div className="animate-in fade-in slide-in-from-top-6 duration-700">
+                <form onSubmit={handleSubmit} className="space-y-8">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <Input 
+                      label="Full Name"
+                      icon={User}
+                      name="name"
+                      placeholder="Espresso Enthusiast"
+                      value={formData.name}
+                      onChange={handleChange}
+                    />
 
-                    {}
-                    <div className="space-y-2">
-                      <label className="block text-xs font-bold text-stone-500 uppercase tracking-widest ml-1">Email Address</label>
-                      <input
-                        type="email"
-                        name="email"
-                        placeholder="enthusiast@espresso.com"
-                        value={formData.email}
-                        onChange={handleChange}
-                        required
-                        className="w-full px-5 py-3.5 bg-stone-100/50 border border-stone-200 rounded-2xl text-stone-900 font-inter focus:outline-none focus:ring-4 focus:ring-amber-500/10 focus:border-amber-600/50 focus:bg-white transition-all"
-                      />
-                    </div>
+                    <Input 
+                      label="Email Address"
+                      icon={Mail}
+                      name="email"
+                      type="email"
+                      placeholder="enthusiast@espresso.com"
+                      value={formData.email}
+                      onChange={handleChange}
+                    />
 
-                    {}
-                    <div className="space-y-2">
-                      <label className="block text-xs font-bold text-stone-500 uppercase tracking-widest ml-1">Password</label>
-                      <input
-                        type="password"
-                        name="password"
-                        placeholder="••••••••"
-                        value={formData.password}
-                        onChange={handleChange}
-                        required
-                        className="w-full px-5 py-3.5 bg-stone-100/50 border border-stone-200 rounded-2xl text-stone-900 font-inter focus:outline-none focus:ring-4 focus:ring-amber-500/10 focus:border-amber-600/50 focus:bg-white transition-all"
-                      />
-                    </div>
+                    <Input 
+                      label="Security Secret"
+                      icon={Lock}
+                      name="password"
+                      type="password"
+                      placeholder="••••••••"
+                      value={formData.password}
+                      onChange={handleChange}
+                    />
 
-                    {}
                     {role === "Seller" && (
-                      <div className="space-y-2 animate-in zoom-in-95 duration-300">
-                        <label className="block text-xs font-bold text-stone-500 uppercase tracking-widest ml-1">Shop Location</label>
-                        <input
-                          type="text"
-                          name="location"
-                          placeholder="City, Country"
-                          value={formData.location}
-                          onChange={handleChange}
-                          required
-                          className="w-full px-5 py-3.5 bg-stone-100/50 border border-stone-200 rounded-2xl text-stone-900 font-inter focus:outline-none focus:ring-4 focus:ring-amber-500/10 focus:border-amber-600/50 focus:bg-white transition-all"
-                        />
+                      <div className="animate-in zoom-in-95 duration-500">
+                         <Input 
+                           label="Merchant Hub"
+                           icon={MapPin}
+                           name="location"
+                           placeholder="City, Country"
+                           value={formData.location}
+                           onChange={handleChange}
+                         />
                       </div>
                     )}
                   </div>
 
-                  {}
-                  <div className="space-y-4 pt-2">
-                    <label className="block text-xs font-bold text-stone-500 uppercase tracking-widest ml-1">Profile Photo</label>
-                    <div className="flex items-center gap-6 p-6 bg-stone-50 border-2 border-dashed border-stone-200 rounded-[2rem] hover:border-amber-300/50 transition-colors group">
-                      <div className="relative w-20 h-20 shrink-0">
+                  {/* Profile Photo Upload */}
+                  <div className="space-y-4">
+                    <label className="text-[9px] text-amber-900/40 font-black uppercase tracking-[0.2em] ml-1">Profile Identity Image</label>
+                    <div className="flex items-center gap-8 p-8 bg-amber-50/50 border-2 border-dashed border-amber-900/10 rounded-[2.5rem] hover:border-amber-900/30 transition-all group/upload relative overflow-hidden">
+                      <div className="absolute inset-0 bg-white/20 opacity-0 group-hover/upload:opacity-100 transition-opacity pointer-events-none"></div>
+                      
+                      <div className="relative w-24 h-24 shrink-0 group/img transition-transform hover:scale-110 duration-500">
                         {preview ? (
-                          <img src={preview} alt="Preview" className="w-full h-full object-cover rounded-2xl shadow-lg shadow-stone-900/10" />
+                          <img src={preview} alt="Preview" className="w-full h-full object-cover rounded-[1.5rem] shadow-xl border-2 border-white ring-4 ring-amber-950/5" />
                         ) : (
-                          <div className="w-full h-full bg-stone-200 rounded-2xl flex items-center justify-center text-stone-400 group-hover:bg-amber-100 transition-colors">
-                            <span className="text-2xl">📸</span>
+                          <div className="w-full h-full bg-white rounded-[1.5rem] flex items-center justify-center text-amber-950/20 shadow-inner group-hover/upload:text-amber-700 transition-colors">
+                            <Camera size={32} />
                           </div>
                         )}
                         <input
                           type="file"
                           accept="image/*"
                           onChange={handleFileChange}
-                          className="absolute inset-0 opacity-0 cursor-pointer"
+                          className="absolute inset-0 opacity-0 cursor-pointer z-20"
                         />
                       </div>
-                      <div className="flex flex-col">
-                        <span className="text-sm font-bold text-stone-700">Choose an image</span>
-                        <span className="text-xs text-stone-400">JPG, PNG or WEBP (Max 2MB)</span>
+                      
+                      <div className="flex flex-col relative z-10">
+                        <span className="text-xs font-black text-amber-950 uppercase tracking-widest mb-1">Upload Portrait</span>
+                        <span className="text-[10px] text-amber-900/40 font-bold uppercase tracking-tighter">JPG, PNG or WEBP (Max 2MB)</span>
+                        <div className="mt-3 flex items-center gap-2 group/btn">
+                             <span className="text-[9px] bg-amber-950 text-white px-3 py-1 rounded-lg font-black uppercase transition-all group-hover/upload:bg-black">Choose File</span>
+                        </div>
                       </div>
                     </div>
                   </div>
 
-                  <button
+                  <Button
                     type="submit"
-                    className="group relative w-full overflow-hidden rounded-[1.5rem] bg-stone-900 py-4.5 font-outfit font-bold text-white shadow-xl transition-all duration-300 hover:bg-black hover:shadow-stone-900/20 active:scale-[0.98] disabled:opacity-70"
+                    className="w-full py-5 text-sm"
                     disabled={loading}
+                    variant={loading ? "ghost" : "primary"}
                   >
-                    <span className="relative z-10 flex items-center justify-center gap-2">
-                      {loading ? (
-                        <>
-                          <div className="h-4 w-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
-                          Creating Account...
-                        </>
-                      ) : (
-                        `Register as ${role}`
-                      )}
-                    </span>
-                    <div className="absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/10 to-transparent group-hover:translate-x-full transition-transform duration-1000"></div>
-                  </button>
+                    {loading ? "Initializing Artisan Identity..." : `Establish Account as ${role}`}
+                  </Button>
                 </form>
 
                 {role === "Buyer" && (
-                  <div className="mt-6 space-y-4">
-                    <div className="relative flex items-center py-2">
-                      <div className="flex-grow border-t border-stone-100"></div>
-                      <span className="mx-4 text-[10px] font-bold text-stone-400 uppercase tracking-[0.2em]">Quick Sign Up</span>
-                      <div className="flex-grow border-t border-stone-100"></div>
+                  <div className="mt-8 space-y-6">
+                    <div className="relative flex items-center justify-center">
+                      <div className="absolute w-full h-[1px] bg-amber-900/10"></div>
+                      <span className="relative bg-[#faf9f6]/80 px-4 text-[9px] font-black text-amber-900/20 uppercase tracking-[0.3em]">Or quick establish</span>
                     </div>
+                    
                     <button
                       onClick={handleGoogleRegister}
-                      className="w-full group flex items-center justify-center gap-3 px-5 py-4 bg-white border-2 border-stone-100 rounded-2xl font-inter font-bold text-stone-700 hover:border-amber-200 hover:bg-amber-50/30 transition-all duration-300 shadow-sm"
+                      className="w-full flex items-center justify-center gap-3 px-6 py-4 bg-white border border-amber-900/10 rounded-2xl font-black text-[10px] uppercase tracking-widest text-amber-950 hover:bg-amber-50 transition-all shadow-sm active:scale-95"
                     >
-                      <FcGoogle className="w-6 h-6 group-hover:scale-110 transition-transform" />
-                      <span>Continue with Google</span>
+                      <FcGoogle className="w-5 h-5 transition-transform group-hover:scale-110" />
+                      <span>Synchronize with Google</span>
                     </button>
                   </div>
                 )}
               </div>
             )}
 
-            <div className="pt-4 border-t border-stone-100">
-              <p className="text-center font-inter text-sm text-stone-500">
-                Already have an account?{" "}
-                <NavLink to="/login" className="font-bold text-amber-700 hover:text-amber-800 underline-offset-4 hover:underline transition-all">
+            <div className="pt-8 border-t border-amber-900/10 flex flex-col items-center gap-6">
+              <p className="text-center text-xs font-bold text-amber-900/40">
+                Already part of the legacy?{" "}
+                <NavLink to="/login" className="text-amber-700 font-black hover:text-amber-950 underline underline-offset-4 decoration-2">
                   Sign in here
                 </NavLink>
               </p>
               
-              <div className="mt-6 flex justify-center">
-                <NavLink to="/" className="inline-flex items-center gap-2 px-5 py-2.5 bg-stone-100 hover:bg-stone-200 text-stone-600 rounded-xl text-xs font-bold transition-colors">
-                  <span>← Back to Shop</span>
-                </NavLink>
-              </div>
+              <NavLink to="/" className="inline-flex items-center gap-2 px-6 py-2.5 bg-amber-50 text-amber-900/60 rounded-xl text-[9px] font-black uppercase tracking-widest hover:bg-amber-100 transition-all active:scale-95 shadow-sm">
+                  <span>← Back to the Shop</span>
+              </NavLink>
             </div>
           </div>
-        </div>
+        </Card>
       </div>
     </>
   );
