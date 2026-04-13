@@ -1,17 +1,21 @@
-import React, { useEffect, useState, useCallback } from "react";
-import { Search, Edit2, Trash2, Box, MapPin, Tag, Plus, X, Image as ImageIcon, User, Filter } from "lucide-react";
+import React, { useEffect, useState } from "react";
+import { Search, Edit2, Trash2, Box, MapPin, Tag, Plus, X, Image as ImageIcon, User } from "lucide-react";
 import Pagination from "../../components/dashboard/Pagination";
 import { API_URL } from "../../utils/utils";
+import { useAdminProducts } from "../../hooks/useAdminProducts";
 import Swal from "sweetalert2";
+import Button from "../../components/ui/Button";
+import Card from "../../components/ui/Card";
+import Input from "../../components/ui/Input";
 
 const ManageProducts = () => {
   useEffect(() => {
     document.title = "Manage Products | Espresso Admin";
   }, []);
 
-  const [products, setProducts] = useState([]);
   const [search, setSearch] = useState("");
-  const [loading, setLoading] = useState(true);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(10);
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [updateData, setUpdateData] = useState({
     name: "",
@@ -21,66 +25,32 @@ const ManageProducts = () => {
     sellerLocation: "",
   });
 
-  
-  const [currentPage, setCurrentPage] = useState(1);
-  const [itemsPerPage, setItemsPerPage] = useState(10);
-  const [totalItems, setTotalItems] = useState(0);
-
-  const fetchProducts = useCallback(async () => {
-    setLoading(true);
-    try {
-      let url = `${API_URL}/products`;
-      if (search) {
-        url += `?search=${encodeURIComponent(search)}`;
-      }
-
-      const res = await fetch(url);
-      const data = await res.json();
-
-      setTotalItems(data.length);
-      
-      const normalized = data.map((p) => ({
-        ...p,
-        _id: p._id?.$oid || p._id,
-        price: p.price?.$numberInt ? Number(p.price.$numberInt) : p.price,
-      }));
-
-      
-      const start = (currentPage - 1) * itemsPerPage;
-      const end = start + itemsPerPage;
-      setProducts(normalized.slice(start, end));
-    } catch (error) {
-      console.error("Error fetching products:", error);
-    } finally {
-      setLoading(false);
-    }
-  }, [search, currentPage, itemsPerPage]);
-
-  useEffect(() => {
-    fetchProducts();
-  }, [fetchProducts]);
+  const { products, loading, totalItems, fetchProducts } = useAdminProducts(search, currentPage, itemsPerPage);
 
   const deleteProduct = async (id) => {
     const result = await Swal.fire({
-      title: "Are you sure?",
-      text: "This blend will be removed from the store permanently!",
+      title: "Remove this Blend?",
+      text: "This masterpiece will be vanished from the emporium archives.",
       icon: "warning",
       showCancelButton: true,
-      confirmButtonColor: "#331A15",
-      cancelButtonColor: "#d33",
-      confirmButtonText: "Yes, delete it!",
+      confirmButtonColor: "#451a03",
+      cancelButtonColor: "#ef4444",
+      confirmButtonText: "Yes, Delete It",
+      customClass: { popup: 'rounded-[2.5rem]' }
     });
 
     if (result.isConfirmed) {
       try {
-        await fetch(`${API_URL}/products/${id}`, {
-          method: "DELETE",
+        await fetch(`${API_URL}/products/${id}`, { method: "DELETE" });
+        Swal.fire({
+            icon: 'success',
+            title: 'Blend Removed',
+            text: 'Catalog updated successfully.',
+            confirmButtonColor: '#451a03'
         });
-        Swal.fire("Deleted!", "Product has been removed.", "success");
         fetchProducts();
       } catch (error) {
-        console.error("Failed to delete product:", error);
-        Swal.fire("Error", "Failed to delete product", "error");
+        Swal.fire("Error", "Removal failed.", "error");
       }
     }
   };
@@ -98,50 +68,47 @@ const ManageProducts = () => {
 
   const submitUpdate = async () => {
     try {
-      const res = await fetch(
-        `${API_URL}/products/${selectedProduct._id}`,
-        {
-          method: "PUT",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(updateData),
-        }
-      );
+      const res = await fetch(`${API_URL}/products/${selectedProduct._id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(updateData),
+      });
 
       if (res.ok) {
         Swal.fire({
           icon: 'success',
-          title: 'Updated!',
-          text: 'The blend details have been refined.',
-          confirmButtonColor: '#331A15',
+          title: 'Blend Refined',
+          text: 'The characteristics have been updated.',
+          confirmButtonColor: '#451a03',
+          customClass: { popup: 'rounded-[1.5rem]' }
         });
         setSelectedProduct(null);
         fetchProducts();
       } else {
-        Swal.fire("Error", "Failed to update product", "error");
+        Swal.fire("Error", "Update failed.", "error");
       }
     } catch (error) {
-      console.error("Failed to update product:", error);
-      Swal.fire("Error", "Failed to update product", "error");
+      Swal.fire("Error", "Something went wrong.", "error");
     }
   };
 
   return (
-    <div className="space-y-8 animate-in fade-in duration-700">
-      {}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+    <div className="space-y-10 animate-in fade-in slide-in-from-bottom-6 duration-700">
+      {/* Search & Header */}
+      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-8">
         <div>
-          <h1 className="text-4xl font-black text-amber-950 tracking-tight">Product Management</h1>
-          <p className="text-amber-900/60 font-bold mt-1 uppercase tracking-widest text-xs">Total Catalog: {totalItems}</p>
+          <h1 className="text-4xl font-black text-amber-950 tracking-tighter">Catalog Core</h1>
+          <p className="text-amber-700/60 font-black mt-1 uppercase tracking-[0.2em] text-[10px]">Active Master Blends: {totalItems}</p>
         </div>
         
         <div className="relative group max-w-md w-full">
-          <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+          <div className="absolute inset-y-0 left-5 flex items-center pointer-events-none">
             <Search size={18} className="text-amber-900/30 group-focus-within:text-amber-700 transition-colors" />
           </div>
           <input
             type="text"
-            className="w-full pl-12 pr-4 py-4 bg-white border-2 border-amber-900/10 rounded-3xl shadow-sm focus:border-amber-700/20 focus:ring-4 focus:ring-amber-500/5 transition-all outline-none font-medium text-amber-950 placeholder:text-amber-900/20"
-            placeholder="Search our catalog..."
+            className="w-full pl-14 pr-6 py-5 bg-white border border-amber-950/10 rounded-[2rem] shadow-sm focus:border-amber-700/20 focus:ring-8 focus:ring-amber-500/5 transition-all outline-none font-bold text-amber-950 placeholder:text-amber-900/20"
+            placeholder="Search catalog by blend name..."
             value={search}
             onChange={(e) => {
               setSearch(e.target.value);
@@ -151,86 +118,99 @@ const ManageProducts = () => {
         </div>
       </div>
 
-      {}
-      <div className="bg-white rounded-[3rem] shadow-xl shadow-amber-900/5 overflow-hidden border border-amber-900/10">
+      {/* Product Registry Table */}
+      <Card className="shadow-2xl shadow-amber-900/5 overflow-hidden border border-amber-950/5" padding="p-0">
         <div className="overflow-x-auto custom-scrollbar">
           <table className="min-w-full">
             <thead>
-              <tr className="bg-amber-100/20 border-b border-amber-900/10 uppercase tracking-[0.2em] text-[10px] font-black text-amber-900/60">
-                <th className="px-8 py-6 text-left">The Blend</th>
-                <th className="px-8 py-6 text-left whitespace-nowrap">Price / Market</th>
-                <th className="px-8 py-6 text-left">Artisan info</th>
-                <th className="px-8 py-6 text-right">Actions</th>
+              <tr className="bg-amber-50/30 border-b border-amber-950/5 text-[9px] font-black text-amber-900/30 uppercase tracking-[0.3em]">
+                <th className="px-8 py-7 text-left">The Master Blend</th>
+                <th className="px-8 py-7 text-left">Market Valuation</th>
+                <th className="px-8 py-7 text-left">Source Origin</th>
+                <th className="px-8 py-7 text-right">Inventory Logic</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-amber-900/10">
+            <tbody className="divide-y divide-amber-950/5">
               {loading ? (
                 Array.from({ length: itemsPerPage }).map((_, i) => (
                   <tr key={i} className="animate-pulse">
-                    <td className="px-8 py-6"><div className="h-16 w-16 bg-amber-50 rounded-2xl"></div></td>
-                    <td className="px-8 py-6"><div className="h-4 w-24 bg-amber-50 rounded-lg"></div></td>
-                    <td className="px-8 py-6"><div className="h-4 w-48 bg-amber-50 rounded-lg"></div></td>
-                    <td className="px-8 py-6"><div className="h-8 w-32 bg-amber-50 rounded-xl ml-auto"></div></td>
+                    <td className="px-8 py-8"><div className="h-20 w-20 bg-amber-50 rounded-2xl"></div></td>
+                    <td className="px-8 py-8"><div className="h-6 w-24 bg-amber-50 rounded-full"></div></td>
+                    <td className="px-8 py-8"><div className="h-4 w-48 bg-amber-50 rounded-full"></div></td>
+                    <td className="px-8 py-8"><div className="h-10 w-32 bg-amber-50 rounded-xl ml-auto"></div></td>
                   </tr>
                 ))
               ) : products.length > 0 ? (
                 products.map((p) => (
-                  <tr key={p._id} className="hover:bg-amber-50/50 transition-colors group">
-                    <td className="px-8 py-6">
-                      <div className="flex items-center gap-5">
-                        <img 
-                          src={p.image || "/more/coffee-splash.jpg"} 
-                          alt={p.name} 
-                          className="w-16 h-16 rounded-2xl object-cover shadow-lg group-hover:scale-110 transition-transform"
-                        />
+                  <tr key={p._id} className="hover:bg-amber-50/30 transition-all group font-georama">
+                    <td className="px-8 py-8">
+                      <div className="flex items-center gap-6">
+                        <div className="relative w-20 h-20 shrink-0">
+                            <img 
+                              src={p.image || "/more/coffee-splash.jpg"} 
+                              alt={p.name} 
+                              className="w-full h-full rounded-2xl object-cover shadow-xl border border-white group-hover:scale-110 transition-transform duration-500"
+                            />
+                            <div className="absolute -bottom-2 -right-2 bg-amber-950 text-white w-8 h-8 rounded-lg flex items-center justify-center shadow-lg">
+                                <Box size={14} />
+                            </div>
+                        </div>
                         <div>
-                          <p className="font-extrabold text-amber-950 text-xl leading-tight">{p.name}</p>
-                          <p className="text-[10px] text-amber-900/60 font-black tracking-widest mt-1 uppercase">Serial: {p._id.slice(-8).toUpperCase()}</p>
+                          <p className="font-black text-amber-950 text-2xl tracking-tighter leading-tight">{p.name}</p>
+                          <p className="text-[10px] text-amber-900/40 font-black tracking-widest mt-2 uppercase">Serial: {p._id.slice(-8).toUpperCase()}</p>
                         </div>
                       </div>
                     </td>
-                    <td className="px-8 py-6">
-                      <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-amber-100/10 text-amber-600 font-black text-lg border border-amber-500/10">
+                    <td className="px-8 py-8">
+                      <div className="inline-flex items-center gap-2.5 px-5 py-2.5 rounded-2xl bg-white text-amber-950 font-black text-xl shadow-lg border border-amber-950/5">
                         <Tag size={16} className="text-amber-700" />
                         ${p.price}
                       </div>
                     </td>
-                    <td className="px-8 py-6">
-                      <div className="space-y-1">
-                        <div className="flex items-center gap-2 text-amber-950 font-bold text-sm">
-                          <User size={14} className="text-amber-700" />
+                    <td className="px-8 py-8">
+                      <div className="space-y-2">
+                        <div className="flex items-center gap-3 text-amber-950 font-black text-sm tracking-tight">
+                          <div className="w-8 h-8 rounded-lg bg-amber-50 flex items-center justify-center">
+                            <User size={14} className="text-amber-950/20" />
+                          </div>
                           {p.sellerName || "Artisan"}
                         </div>
-                        <div className="flex items-center gap-2 text-amber-900/60 font-bold text-[10px] uppercase tracking-wider">
-                          <MapPin size={12} />
+                        <div className="flex items-center gap-3 text-amber-900/40 font-black text-[9px] uppercase tracking-[0.2em] pl-1">
+                          <MapPin size={10} />
                           {p.sellerLocation || "Global Origin"}
                         </div>
                       </div>
                     </td>
-                    <td className="px-8 py-6 text-right">
+                    <td className="px-8 py-8 text-right">
                       <div className="flex items-center justify-end gap-3">
-                        <button
+                        <Button
+                          variant="ghost"
+                          size="sm"
                           onClick={() => openUpdateModal(p)}
-                          className="flex items-center gap-2 px-5 py-2.5 rounded-2xl bg-amber-950 text-white text-xs font-black uppercase tracking-widest hover:bg-black transition-all active:scale-95 shadow-xl shadow-amber-950/20"
+                          icon={Edit2}
+                          className="!px-5 !py-3 !rounded-xl !bg-amber-950 !text-white hover:!bg-black active:!scale-95 shadow-xl"
                         >
-                          <Edit2 size={14} />
                           Refine
-                        </button>
-                        <button
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="sm"
                           onClick={() => deleteProduct(p._id)}
-                          className="p-3 rounded-2xl bg-rose-50 text-rose-500 hover:bg-rose-500 hover:text-white transition-all active:scale-90"
-                        >
-                          <Trash2 size={18} />
-                        </button>
+                          icon={Trash2}
+                          className="!p-3 !rounded-xl !text-rose-500 hover:!bg-rose-50 border border-rose-100/50"
+                        />
                       </div>
                     </td>
                   </tr>
                 ))
               ) : (
                 <tr>
-                  <td colSpan={4} className="px-8 py-32 text-center">
-                    <Box size={64} strokeWidth={1} className="mx-auto text-amber-900/10 mb-6" />
-                    <p className="text-2xl font-black text-amber-900/40 uppercase tracking-[0.2em]">The Vault is Empty</p>
+                  <td colSpan={4} className="px-8 py-40 text-center">
+                    <div className="relative inline-block">
+                        <Box size={80} className="mx-auto text-amber-950/5 mb-6" />
+                        <div className="absolute inset-0 bg-amber-500/5 blur-3xl rounded-full -z-10"></div>
+                    </div>
+                    <p className="text-3xl font-black text-amber-950/20 tracking-tighter uppercase italic">The Vault is Silent</p>
                   </td>
                 </tr>
               )}
@@ -238,7 +218,7 @@ const ManageProducts = () => {
           </table>
         </div>
 
-        <div className="bg-amber-100/20 border-t border-amber-900/10 px-8 py-4">
+        <div className="bg-amber-50/30 border-t border-amber-950/5 px-10 py-6">
           <Pagination
             currentPage={currentPage}
             totalPages={Math.ceil(totalItems / itemsPerPage)}
@@ -251,110 +231,83 @@ const ManageProducts = () => {
             totalItems={totalItems}
           />
         </div>
-      </div>
+      </Card>
 
-      {}
+      {/* Refinement Modal */}
       {selectedProduct && (
         <div
-          className="fixed inset-0 bg-black/60 backdrop-blur-md flex justify-center items-center z-[110] p-4"
+          className="fixed inset-0 bg-black/60 backdrop-blur-md flex justify-center items-center z-[110] p-4 animate-in fade-in duration-500"
           onClick={() => setSelectedProduct(null)}
         >
-          <div
-            className="bg-white border border-amber-900/10 rounded-[3rem] p-10 md:p-14 w-full max-w-2xl relative text-amber-950 shadow-2xl animate-in zoom-in-95 duration-500"
+          <Card
+            className="w-full max-w-2xl relative text-amber-950 shadow-2xl animate-in zoom-in-95 duration-500 overflow-hidden"
             onClick={(e) => e.stopPropagation()}
+            padding="p-10 md:p-14"
           >
-            <div className="absolute top-0 right-0 w-48 h-48 bg-amber-50/5 rounded-bl-full -z-10"></div>
+            <div className="absolute top-0 right-0 w-64 h-64 bg-amber-50 rounded-bl-full -z-10 opacity-50"></div>
             
             <button 
               onClick={() => setSelectedProduct(null)}
-              className="absolute top-8 right-8 p-3 hover:bg-amber-50 rounded-2xl transition-all text-amber-900/20 hover:text-amber-900"
+              className="absolute top-8 right-8 p-3 hover:bg-amber-950/5 rounded-2xl transition-all text-amber-950/10 hover:text-amber-950"
             >
               <X size={24} />
             </button>
 
-            <h2 className="text-4xl font-black tracking-tight mb-2 text-amber-950">Refine Blend</h2>
-            <p className="text-amber-900/60 font-bold uppercase tracking-widest text-[10px] mb-10">Updating: {selectedProduct.name}</p>
+            <h2 className="text-4xl font-black tracking-tight mb-2 text-amber-950">Refine Characteristics</h2>
+            <p className="text-amber-900/40 font-black uppercase tracking-[0.3em] text-[10px] mb-12">Updating Catalog Artifact: <span className="text-amber-700">{selectedProduct.name}</span></p>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
               <div className="space-y-6">
-                <div className="group">
-                  <label className="block text-[10px] font-black uppercase tracking-widest text-amber-900/60 mb-2 ml-1">Blend Name</label>
-                  <div className="relative">
-                    <Box className="absolute left-4 top-1/2 -translate-y-1/2 text-amber-900/20" size={18} />
-                    <input
-                      type="text"
-                      value={updateData.name}
-                      onChange={(e) => setUpdateData({ ...updateData, name: e.target.value })}
-                      className="w-full pl-12 pr-4 py-4 bg-amber-50/50 border border-amber-900/10 rounded-2xl focus:ring-4 focus:ring-amber-500/10 outline-none font-bold text-amber-950 transition-all"
-                    />
-                  </div>
-                </div>
+                <Input 
+                   label="Blend Designation"
+                   icon={Box}
+                   value={updateData.name}
+                   onChange={(e) => setUpdateData({ ...updateData, name: e.target.value })}
+                />
+                
+                <Input 
+                   label="Market Valuation (USD)"
+                   icon={Tag}
+                   type="number"
+                   value={updateData.price}
+                   onChange={(e) => setUpdateData({ ...updateData, price: e.target.value })}
+                />
 
-                <div className="group">
-                  <label className="block text-[10px] font-black uppercase tracking-widest text-amber-900/60 mb-2 ml-1">Price (USD)</label>
-                  <div className="relative">
-                    <Tag className="absolute left-4 top-1/2 -translate-y-1/2 text-amber-900/20" size={18} />
-                    <input
-                      type="number"
-                      value={updateData.price}
-                      onChange={(e) => setUpdateData({ ...updateData, price: e.target.value })}
-                      className="w-full pl-12 pr-4 py-4 bg-amber-50/50 border border-amber-900/10 rounded-2xl focus:ring-4 focus:ring-amber-500/10 outline-none font-bold text-amber-950 transition-all"
-                    />
-                  </div>
-                </div>
-
-                <div className="group">
-                  <label className="block text-[10px] font-black uppercase tracking-widest text-amber-900/60 mb-2 ml-1">Artisan Image URL</label>
-                  <div className="relative">
-                    <ImageIcon className="absolute left-4 top-1/2 -translate-y-1/2 text-amber-900/20" size={18} />
-                    <input
-                      type="text"
-                      value={updateData.image}
-                      onChange={(e) => setUpdateData({ ...updateData, image: e.target.value })}
-                      className="w-full pl-12 pr-4 py-4 bg-amber-50/50 border border-amber-900/10 rounded-2xl focus:ring-4 focus:ring-amber-500/10 outline-none font-bold text-amber-950 transition-all"
-                    />
-                  </div>
-                </div>
+                <Input 
+                   label="Artifact Visual (URL)"
+                   icon={ImageIcon}
+                   value={updateData.image}
+                   onChange={(e) => setUpdateData({ ...updateData, image: e.target.value })}
+                />
               </div>
 
               <div className="space-y-6">
-                <div className="group">
-                  <label className="block text-[10px] font-black uppercase tracking-widest text-amber-900/60 mb-2 ml-1">Artisan Name</label>
-                  <div className="relative">
-                    <User className="absolute left-4 top-1/2 -translate-y-1/2 text-amber-900/20" size={18} />
-                    <input
-                      type="text"
-                      value={updateData.sellerName}
-                      onChange={(e) => setUpdateData({ ...updateData, sellerName: e.target.value })}
-                      className="w-full pl-12 pr-4 py-4 bg-amber-50/50 border border-amber-900/10 rounded-2xl focus:ring-4 focus:ring-amber-500/10 outline-none font-bold text-amber-950 transition-all"
-                    />
-                  </div>
-                </div>
+                <Input 
+                   label="Artisan Source"
+                   icon={User}
+                   value={updateData.sellerName}
+                   onChange={(e) => setUpdateData({ ...updateData, sellerName: e.target.value })}
+                />
 
-                <div className="group">
-                  <label className="block text-[10px] font-black uppercase tracking-widest text-amber-900/60 mb-2 ml-1">Roasting Location</label>
-                  <div className="relative">
-                    <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 text-amber-900/20" size={18} />
-                    <input
-                      type="text"
-                      value={updateData.sellerLocation}
-                      onChange={(e) => setUpdateData({ ...updateData, sellerLocation: e.target.value })}
-                      className="w-full pl-12 pr-4 py-4 bg-amber-50/50 border border-amber-900/10 rounded-2xl focus:ring-4 focus:ring-amber-500/10 outline-none font-bold text-amber-950 transition-all"
-                    />
-                  </div>
-                </div>
+                <Input 
+                   label="Roasting Province"
+                   icon={MapPin}
+                   value={updateData.sellerLocation}
+                   onChange={(e) => setUpdateData({ ...updateData, sellerLocation: e.target.value })}
+                />
 
-                <div className="pt-6">
-                  <button
+                <div className="pt-8">
+                  <Button
+                    variant="primary"
                     onClick={submitUpdate}
-                    className="w-full py-5 bg-amber-950 text-white rounded-2xl font-black uppercase tracking-[0.2em] shadow-2xl shadow-amber-950/40 hover:bg-black transition-all active:scale-95"
+                    className="w-full py-5 text-sm"
                   >
-                    Save Refinements
-                  </button>
+                    Commit Refinement
+                  </Button>
                 </div>
               </div>
             </div>
-          </div>
+          </Card>
         </div>
       )}
     </div>

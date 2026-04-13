@@ -1,89 +1,66 @@
-import React, { useEffect, useState, useCallback } from "react";
-import { Search, Edit2, Trash2, UserCheck, ShieldAlert, Mail, Calendar, Shield } from "lucide-react";
+import React, { useEffect, useState } from "react";
+import { Search, Edit2, Trash2, Mail, Shield, User as UserIcon } from "lucide-react";
 import Pagination from "../../components/dashboard/Pagination";
 import StartChatButton from "../../components/chat/StartChatButton";
 import Swal from "sweetalert2";
 import { API_URL } from "../../utils/utils";
+import { useUsers } from "../../hooks/useUsers";
+import Button from "../../components/ui/Button";
+import Card from "../../components/ui/Card";
 
 const ManageUsers = () => {
   useEffect(() => {
     document.title = "Manage Users | Espresso Admin";
   }, []);
 
-  const [users, setUsers] = useState([]);
   const [search, setSearch] = useState("");
-  const [loading, setLoading] = useState(true);
-  
-  
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
-  const [totalItems, setTotalItems] = useState(0);
 
-  const fetchUsers = useCallback(async () => {
-    setLoading(true);
-    try {
-      
-      
-      const url = search
-        ? `${API_URL}/users?search=${encodeURIComponent(search)}`
-        : `${API_URL}/users`;
-      
-      const res = await fetch(url);
-      const data = await res.json();
-      
-      setTotalItems(data.length);
-      
-      
-      const start = (currentPage - 1) * itemsPerPage;
-      const end = start + itemsPerPage;
-      setUsers(data.slice(start, end));
-    } catch (error) {
-      console.error("Failed to fetch users:", error);
-    } finally {
-      setLoading(false);
-    }
-  }, [search, currentPage, itemsPerPage]);
-
-  useEffect(() => {
-    fetchUsers();
-  }, [fetchUsers]);
+  const { users, loading, totalItems, fetchUsers } = useUsers(search, currentPage, itemsPerPage);
 
   const handleDelete = async (id) => {
     const result = await Swal.fire({
-      title: 'Are you sure?',
-      text: "You won't be able to revert this!",
+      title: 'De-authorize User?',
+      text: "This artisan will be removed from the emporium registry permanently.",
       icon: 'warning',
       showCancelButton: true,
-      confirmButtonColor: '#331A15',
-      cancelButtonColor: '#d33',
-      confirmButtonText: 'Yes, delete it!'
+      confirmButtonColor: '#451a03',
+      cancelButtonColor: '#ef4444',
+      confirmButtonText: 'Yes, Delete',
+      customClass: { popup: 'rounded-[2.5rem]' }
     });
 
     if (result.isConfirmed) {
       try {
         await fetch(`${API_URL}/users/${id}`, { method: "DELETE" });
-        Swal.fire('Deleted!', 'User has been removed.', 'success');
+        Swal.fire({
+            icon: 'success',
+            title: 'Registry Updated',
+            text: 'Artisan has been removed.',
+            confirmButtonColor: '#451a03'
+        });
         fetchUsers();
       } catch (error) {
-        console.error("Failed to delete user:", error);
-        Swal.fire('Error', 'Failed to delete user', 'error');
+        Swal.fire('Error', 'Registry update failed.', 'error');
       }
     }
   };
 
   const handleRoleChange = async (id, currentRole) => {
     const { value: nextRole } = await Swal.fire({
-      title: 'Update User Role',
+      title: 'Modify Privilege',
       input: 'select',
       inputOptions: {
-        'admin': 'Admin',
-        'buyer': 'Buyer',
-        'seller': 'Seller'
+        'admin': 'Administrator',
+        'buyer': 'Standard Artisan',
+        'seller': 'Wholesale Merchant'
       },
       inputValue: currentRole?.toLowerCase() || 'buyer',
-      inputPlaceholder: 'Select a role',
+      inputPlaceholder: 'Select Authority Level',
       showCancelButton: true,
-      confirmButtonColor: '#331A15',
+      confirmButtonColor: '#451a03',
+      customClass: { popup: 'rounded-[2.5rem]' }
     });
 
     if (nextRole) {
@@ -93,32 +70,36 @@ const ManageUsers = () => {
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ role: nextRole }),
         });
-        Swal.fire('Updated!', `Role changed to ${nextRole}.`, 'success');
+        Swal.fire({
+            icon: 'success',
+            title: 'Status Modified',
+            text: `Authority updated to ${nextRole}.`,
+            confirmButtonColor: '#451a03'
+        });
         fetchUsers();
       } catch (error) {
-        console.error("Failed to update role:", error);
-        Swal.fire('Error', 'Failed to update role', 'error');
+        Swal.fire('Error', 'Update failed.', 'error');
       }
     }
   };
 
   return (
-    <div className="space-y-8 animate-in fade-in duration-700">
-      {}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+    <div className="space-y-10 animate-in fade-in slide-in-from-bottom-6 duration-700">
+      {/* Search & Header */}
+      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-8">
         <div>
-          <h1 className="text-4xl font-black text-amber-950 tracking-tight">User Management</h1>
-          <p className="text-amber-900/60 font-bold mt-1 uppercase tracking-widest text-xs">Total Registered: {totalItems}</p>
+          <h1 className="text-4xl font-black text-amber-950 tracking-tighter">Registry Management</h1>
+          <p className="text-amber-700/60 font-black mt-1 uppercase tracking-[0.2em] text-[10px]">Total Authenticated Artisans: {totalItems}</p>
         </div>
         
         <div className="relative group max-w-md w-full">
-          <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+          <div className="absolute inset-y-0 left-5 flex items-center pointer-events-none">
             <Search size={18} className="text-amber-900/30 group-focus-within:text-amber-700 transition-colors" />
           </div>
           <input
             type="text"
-            className="w-full pl-12 pr-4 py-4 bg-white border-2 border-amber-900/10 rounded-3xl shadow-sm focus:border-amber-700/20 focus:ring-4 focus:ring-amber-500/5 transition-all outline-none font-medium text-amber-950 placeholder:text-amber-900/20"
-            placeholder="Search by name or email..."
+            className="w-full pl-14 pr-6 py-5 bg-white border border-amber-950/10 rounded-[2rem] shadow-sm focus:border-amber-700/20 focus:ring-8 focus:ring-amber-500/5 transition-all outline-none font-bold text-amber-950 placeholder:text-amber-900/20"
+            placeholder="Identify artisan by name or email..."
             value={search}
             onChange={(e) => {
               setSearch(e.target.value);
@@ -128,78 +109,88 @@ const ManageUsers = () => {
         </div>
       </div>
 
-      {}
-      <div className="bg-white rounded-[3rem] shadow-xl shadow-amber-900/5 overflow-hidden border border-amber-900/10">
-        <div className="overflow-x-auto custom-scrollbar uppercase">
+      {/* Main Registry Table */}
+      <Card className="shadow-2xl shadow-amber-900/5 overflow-hidden border border-amber-950/5" padding="p-0">
+        <div className="overflow-x-auto custom-scrollbar">
           <table className="min-w-full">
             <thead>
-              <tr className="bg-amber-100/20 border-b border-amber-900/10">
-                <th className="px-8 py-6 text-left text-[10px] font-black text-amber-900/60 uppercase tracking-[0.2em]">Profile</th>
-                <th className="px-8 py-6 text-left text-[10px] font-black text-amber-900/60 uppercase tracking-[0.2em]">Account Info</th>
-                <th className="px-8 py-6 text-left text-[10px] font-black text-amber-900/60 uppercase tracking-[0.2em]">Role Status</th>
-                <th className="px-8 py-6 text-right text-[10px] font-black text-amber-900/60 uppercase tracking-[0.2em]">Actions</th>
+              <tr className="bg-amber-50/30 border-b border-amber-950/5">
+                <th className="px-8 py-7 text-left text-[9px] font-black text-amber-900/30 uppercase tracking-[0.3em]">Artisan Identity</th>
+                <th className="px-8 py-7 text-left text-[9px] font-black text-amber-900/30 uppercase tracking-[0.3em]">Artifact Info</th>
+                <th className="px-8 py-7 text-left text-[9px] font-black text-amber-900/30 uppercase tracking-[0.3em]">Authority Rank</th>
+                <th className="px-8 py-7 text-right text-[9px] font-black text-amber-900/30 uppercase tracking-[0.3em]">Control Hub</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-amber-900/10">
+            <tbody className="divide-y divide-amber-950/5">
               {loading ? (
                 Array.from({ length: itemsPerPage }).map((_, i) => (
                   <tr key={i} className="animate-pulse">
-                    <td className="px-8 py-6"><div className="h-12 w-12 bg-amber-50 rounded-2xl"></div></td>
-                    <td className="px-8 py-6"><div className="h-4 w-48 bg-amber-50 rounded-lg"></div></td>
-                    <td className="px-8 py-6"><div className="h-6 w-24 bg-amber-50 rounded-full"></div></td>
-                    <td className="px-8 py-6"><div className="h-8 w-32 bg-amber-50 rounded-xl ml-auto"></div></td>
+                    <td className="px-8 py-8"><div className="h-12 w-12 bg-amber-50 rounded-2xl"></div></td>
+                    <td className="px-8 py-8"><div className="h-4 w-48 bg-amber-50 rounded-full"></div></td>
+                    <td className="px-8 py-8"><div className="h-7 w-24 bg-amber-50 rounded-full"></div></td>
+                    <td className="px-8 py-8"><div className="h-10 w-32 bg-amber-50 rounded-xl ml-auto"></div></td>
                   </tr>
                 ))
               ) : users.length > 0 ? (
                 users.map((u) => (
-                  <tr key={u._id} className="hover:bg-amber-50/50 transition-colors group">
-                    <td className="px-8 py-6">
-                      <div className="flex items-center gap-4">
-                        <div className="w-12 h-12 rounded-2xl bg-amber-100/10 text-amber-600 flex items-center justify-center font-black text-xl shadow-inner group-hover:scale-110 transition-transform border border-amber-500/20">
-                          {u.name?.[0].toUpperCase() || "U"}
+                  <tr key={u._id} className="hover:bg-amber-50/30 transition-all group">
+                    <td className="px-8 py-8">
+                      <div className="flex items-center gap-5">
+                        <div className="w-14 h-14 rounded-2xl bg-white text-amber-950 flex items-center justify-center font-black text-xl shadow-lg border border-amber-950/5 group-hover:scale-110 transition-transform">
+                          {u.photoURL ? (
+                            <img src={u.photoURL} alt={u.name} className="w-full h-full object-cover rounded-2xl" />
+                          ) : (
+                             u.name?.[0].toUpperCase() || "A"
+                          )}
                         </div>
                         <div>
-                          <p className="font-black text-amber-950 text-lg leading-tight">{u.name}</p>
-                          <p className="text-[10px] text-amber-900/60 font-black tracking-widest mt-1 uppercase">ID: {u._id.slice(-6).toUpperCase()}</p>
+                          <p className="font-black text-amber-950 text-xl tracking-tight leading-tight">{u.name}</p>
+                          <p className="text-[10px] text-amber-900/40 font-black tracking-widest mt-1.5 uppercase">ID: {u._id.slice(-8).toUpperCase()}</p>
                         </div>
                       </div>
                     </td>
-                    <td className="px-8 py-6">
-                      <div className="flex items-center gap-2 text-amber-900/60 font-bold tracking-tight lowercase">
-                        <Mail size={14} />
+                    <td className="px-8 py-8">
+                      <div className="flex items-center gap-3 text-amber-900/60 font-bold tracking-tight text-sm">
+                        <div className="w-8 h-8 rounded-lg bg-amber-50 flex items-center justify-center">
+                            <Mail size={14} className="opacity-40" />
+                        </div>
                         {u.email}
                       </div>
                     </td>
-                    <td className="px-8 py-6">
-                      <div className={`inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-wider ${
+                    <td className="px-8 py-8">
+                      <div className={`inline-flex items-center gap-2.5 px-5 py-2 rounded-xl text-[9px] font-black uppercase tracking-widest ${
                         u.role?.toLowerCase() === 'admin' 
-                        ? 'bg-purple-100 text-purple-700' 
+                        ? 'bg-purple-50 text-purple-700 border border-purple-100' 
                         : u.role?.toLowerCase() === 'seller'
-                        ? 'bg-blue-100 text-blue-700'
-                        : 'bg-amber-100 text-amber-700'
+                        ? 'bg-emerald-50 text-emerald-700 border border-emerald-100'
+                        : 'bg-amber-50 text-amber-700 border border-amber-100'
                       }`}>
                         <Shield size={12} />
                         {u.role || "Buyer"}
                       </div>
                     </td>
-                    <td className="px-8 py-6 text-right">
-                      <div className="flex items-center justify-end gap-2">
-                        <button
+                    <td className="px-8 py-8 text-right">
+                      <div className="flex items-center justify-end gap-3">
+                        <Button
+                          variant="ghost"
+                          size="sm"
                           onClick={() => handleRoleChange(u._id, u.role)}
-                          className="flex items-center gap-2 px-4 py-2 rounded-xl bg-amber-950 text-white text-xs font-bold hover:bg-black transition-all active:scale-95 shadow-lg shadow-amber-950/20"
+                          icon={Edit2}
+                          className="!px-4 !py-3 !rounded-xl !bg-amber-950 !text-white hover:!bg-black active:!scale-95 shadow-xl"
                         >
-                          <Edit2 size={14} />
-                          Assign
-                        </button>
-                        <button
+                          Modify
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="sm"
                           onClick={() => handleDelete(u._id)}
-                          className="p-2.5 rounded-xl bg-rose-50 text-rose-500 hover:bg-rose-500 hover:text-white transition-all active:scale-90"
-                        >
-                          <Trash2 size={16} />
-                        </button>
+                          icon={Trash2}
+                          className="!p-3 !rounded-xl !text-rose-500 hover:!bg-rose-50 border border-rose-100/50"
+                        />
                         <StartChatButton 
                           targetUser={{ ...u, uid: u.uid || u._id }} 
-                          className="!p-2.5 !rounded-xl !bg-amber-100 !text-amber-800 hover:!bg-amber-800 hover:!text-white shadow-none"
+                          className="!p-3 !rounded-xl !bg-amber-50 !text-amber-800 hover:!bg-amber-950 hover:!text-white shadow-none border border-amber-100"
+                          buttonText=""
                         />
                       </div>
                     </td>
@@ -207,9 +198,12 @@ const ManageUsers = () => {
                 ))
               ) : (
                 <tr>
-                  <td colSpan={4} className="px-8 py-20 text-center">
-                    <UserIcon size={48} className="mx-auto text-amber-900/10 mb-4" />
-                    <p className="text-xl font-bold text-amber-900/40 uppercase tracking-widest">No Citizens Found</p>
+                  <td colSpan={4} className="px-8 py-32 text-center">
+                    <div className="relative inline-block">
+                        <UserIcon size={80} className="mx-auto text-amber-950/5 mb-6" />
+                        <div className="absolute inset-0 bg-amber-500/5 blur-3xl rounded-full -z-10"></div>
+                    </div>
+                    <p className="text-3xl font-black text-amber-950/20 tracking-tighter uppercase italic">No Artisans Found</p>
                   </td>
                 </tr>
               )}
@@ -217,8 +211,8 @@ const ManageUsers = () => {
           </table>
         </div>
 
-        {}
-        <div className="bg-amber-100/20 border-t border-amber-900/10 px-8 py-4">
+        {/* Dynamic Pagination Hub */}
+        <div className="bg-amber-50/30 border-t border-amber-950/5 px-10 py-6">
           <Pagination
             currentPage={currentPage}
             totalPages={Math.ceil(totalItems / itemsPerPage)}
@@ -231,7 +225,7 @@ const ManageUsers = () => {
             totalItems={totalItems}
           />
         </div>
-      </div>
+      </Card>
     </div>
   );
 };

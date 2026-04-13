@@ -2,11 +2,14 @@ import React, { useEffect, useState } from "react";
 import { useAuth } from "../../context/AuthProvider";
 import Swal from "sweetalert2";
 import { API_URL, uploadImageToImgBB, CATEGORIES } from "../../utils/utils";
-import { Coffee as CoffeeIcon, Plus, Package } from "lucide-react";
+import { Coffee as CoffeeIcon, Package, Target, Plus } from "lucide-react";
+import Button from "../../components/ui/Button";
+import Card from "../../components/ui/Card";
+import Input from "../../components/ui/Input";
 
 const SellerAddProduct = () => {
   useEffect(() => {
-    document.title = "Seller";
+    document.title = "Add To Collection | Espresso Merchant";
   }, []);
 
   const { user } = useAuth();
@@ -15,7 +18,7 @@ const SellerAddProduct = () => {
     image: "",
     price: "",
     category: "Coffee",
-    availability: "",
+    availability: "Available",
     description: "",
   });
   const [imageFile, setImageFile] = useState(null); 
@@ -28,7 +31,6 @@ const SellerAddProduct = () => {
   const handleFileChange = (e) => {
     const file = e.target.files[0];
     setImageFile(file);
-
     if (file) {
       const objectUrl = URL.createObjectURL(file);
       setPreview(objectUrl);
@@ -43,8 +45,6 @@ const SellerAddProduct = () => {
 
     try {
       let imageUrl = form.image;
-
-      
       if (imageFile) {
         imageUrl = await uploadImageToImgBB(imageFile);
       }
@@ -55,25 +55,25 @@ const SellerAddProduct = () => {
         price: Number(form.price),
         sellerEmail: user?.email,
         sellerId: user?.uid,
+        sellerName: user?.displayName || "Artisan Merchant",
+        sellerLocation: user?.location || "Artisanal Hub",
         createdAt: new Date().toISOString(),
       };
 
-      const res = await fetch(
-        `${API_URL}/products`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(payload),
-        }
-      );
+      const res = await fetch(`${API_URL}/products`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
 
       if (!res.ok) throw new Error("Failed to add product");
 
       Swal.fire({
         icon: "success",
-        title: "Product Added!",
-        text: "✅ Your product has been successfully added.",
-        confirmButtonColor: "#331A15",
+        title: "Masterpiece Added!",
+        text: "Your artisanal creation has been registered in the catalog.",
+        confirmButtonColor: "#451a03",
+        customClass: { popup: 'rounded-[2.5rem]' }
       });
 
       setForm({
@@ -81,7 +81,7 @@ const SellerAddProduct = () => {
         image: "",
         price: "",
         category: "Coffee",
-        availability: "",
+        availability: "Available",
         description: "",
       });
       setImageFile(null);
@@ -89,88 +89,85 @@ const SellerAddProduct = () => {
     } catch (error) {
       Swal.fire({
         icon: "error",
-        title: "Oops!",
-        text: "❌ Something went wrong. Please try again.",
-        confirmButtonColor: "#331A15",
+        title: "Registration Error",
+        text: "Could not synchronize the new listing with the emporium.",
+        confirmButtonColor: "#451a03"
       });
-      console.error(error);
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="max-w-2xl mx-auto bg-white p-10 md:p-14 rounded-[3rem] shadow-xl border border-amber-900/10 relative overflow-hidden animate-in fade-in duration-700">
-      <div className="absolute top-0 right-0 w-48 h-48 bg-amber-50/5 rounded-bl-full -z-10"></div>
+    <Card 
+       className="max-w-3xl mx-auto animate-in fade-in slide-in-from-bottom-10 duration-700 shadow-2xl relative overflow-hidden" 
+       padding="p-10 md:p-14"
+    >
+      <div className="absolute top-0 right-0 w-64 h-64 bg-amber-50 rounded-bl-full -z-10 opacity-60"></div>
       
-      <div className="mb-10">
-        <h2 className="text-4xl font-black text-amber-950 tracking-tight">Add New Listing</h2>
-        <p className="text-amber-900/60 font-bold mt-1 uppercase tracking-widest text-[10px]">Expand your artisanal collection</p>
+      <div className="mb-12">
+        <h2 className="text-4xl font-black text-amber-950 tracking-tighter">Register New Roast</h2>
+        <p className="text-amber-700/60 font-black mt-2 uppercase tracking-[0.2em] text-[10px]">Architecting the Catalog Growth</p>
       </div>
 
-      <form onSubmit={handleSubmit} className="space-y-8">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          <div className="space-y-6">
-            <div className="group">
-              <label className="block text-[10px] font-black uppercase tracking-widest text-amber-900/60 mb-2 ml-1">Product Name</label>
-              <input
-                name="name"
-                placeholder="e.g. Ethiopian Yirgacheffe or Burr Grinder"
-                value={form.name}
+      <form onSubmit={handleSubmit} className="space-y-10">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+          <div className="space-y-8">
+            <Input 
+                label="Product Designation" 
+                name="name" 
+                placeholder="e.g. Ethiopian Yirgacheffe" 
+                value={form.name} 
+                onChange={handleChange} 
+                icon={CoffeeIcon} 
+                required 
+            />
+
+            <Input 
+                label="Market Valuation (USD)" 
+                name="price" 
+                type="number" 
+                placeholder="0.00" 
+                value={form.price} 
+                onChange={handleChange} 
+                icon={Target} 
+                required 
+            />
+
+            <div className="space-y-4">
+              <label className="text-[9px] text-amber-900/40 font-black uppercase tracking-[0.2em] ml-1">Classification Hub</label>
+              <select
+                name="category"
+                value={form.category}
                 onChange={handleChange}
-                className="w-full px-6 py-4 bg-amber-50/50 border border-amber-900/10 rounded-2xl focus:ring-4 focus:ring-amber-500/10 outline-none font-bold text-amber-950 transition-all"
+                className="w-full px-6 py-4 bg-amber-50/50 border border-amber-900/10 rounded-2xl focus:ring-8 focus:ring-amber-500/5 outline-none font-black text-amber-950 transition-all appearance-none"
                 required
-              />
+              >
+                {CATEGORIES.map(cat => (
+                  <option key={cat} value={cat}>{cat}</option>
+                ))}
+              </select>
             </div>
 
-            <div className="group">
-              <label className="block text-[10px] font-black uppercase tracking-widest text-amber-900/60 mb-2 ml-1">Price (USD)</label>
-              <input
-                name="price"
-                type="number"
-                placeholder="0.00"
-                value={form.price}
+            <div className="space-y-4">
+              <label className="text-[9px] text-amber-900/40 font-black uppercase tracking-[0.2em] ml-1">Initial Readiness</label>
+              <select
+                name="availability"
+                value={form.availability}
                 onChange={handleChange}
-                className="w-full px-6 py-4 bg-amber-50/50 border border-amber-900/10 rounded-2xl focus:ring-4 focus:ring-amber-500/10 outline-none font-bold text-amber-950 transition-all"
+                className="w-full px-6 py-4 bg-amber-50/50 border border-amber-900/10 rounded-2xl focus:ring-8 focus:ring-amber-500/5 outline-none font-black text-amber-950 transition-all appearance-none"
                 required
-              />
+              >
+                <option value="Available">In Vault (Available)</option>
+                <option value="Out of Stock">Depleted (Out of Stock)</option>
+              </select>
             </div>
-
-              <div className="group">
-                <label className="block text-[10px] font-black uppercase tracking-widest text-amber-900/60 mb-2 ml-1">Category</label>
-                <select
-                  name="category"
-                  value={form.category}
-                  onChange={handleChange}
-                  className="w-full px-6 py-4 bg-amber-50/50 border border-amber-900/10 rounded-2xl focus:ring-4 focus:ring-amber-500/10 outline-none font-bold text-amber-950 transition-all"
-                  required
-                >
-                  {CATEGORIES.map(cat => (
-                    <option key={cat} value={cat} className="bg-white">{cat}</option>
-                  ))}
-                </select>
-              </div>
-
-              <div className="group">
-                <label className="block text-[10px] font-black uppercase tracking-widest text-amber-900/60 mb-2 ml-1">Availability</label>
-                <select
-                  name="availability"
-                  value={form.availability}
-                  onChange={handleChange}
-                  className="w-full px-6 py-4 bg-amber-50/50 border border-amber-900/10 rounded-2xl focus:ring-4 focus:ring-amber-500/10 outline-none font-bold text-amber-950 transition-all"
-                  required
-                >
-                  <option value="" disabled className="bg-white">Select Status</option>
-                  <option value="Available" className="bg-white">Available</option>
-                  <option value="Out of Stock" className="bg-white">Out of Stock</option>
-                </select>
-              </div>
           </div>
 
-          <div className="space-y-6">
-            <div className="group">
-              <label className="block text-[10px] font-black uppercase tracking-widest text-amber-900/60 mb-2 ml-1">Artisan Image</label>
-              <div className="relative">
+          <div className="space-y-8">
+            <div className="space-y-4">
+              <label className="text-[9px] text-amber-900/40 font-black uppercase tracking-[0.2em] ml-1">Visual Identity Artifact</label>
+              <div className="relative group/upload">
                 <input
                   type="file"
                   accept="image/*"
@@ -180,57 +177,51 @@ const SellerAddProduct = () => {
                 />
                 <label 
                   htmlFor="image-upload"
-                  className="flex flex-col items-center justify-center w-full h-32 bg-amber-50/50 border-2 border-dashed border-amber-900/10 rounded-2xl cursor-pointer hover:border-amber-500/50 transition-all group"
+                  className="flex flex-col items-center justify-center w-full h-48 bg-amber-50/30 border-2 border-dashed border-amber-950/10 rounded-[2rem] cursor-pointer hover:border-amber-700/50 transition-all relative overflow-hidden group"
                 >
+                  <div className="absolute inset-0 bg-white/40 opacity-0 group-hover:opacity-100 transition-opacity"></div>
                   {preview ? (
                     <img
                       src={preview}
                       alt="Preview"
-                      className="w-full h-full object-cover rounded-2xl"
+                      className="w-full h-full object-cover rounded-[2rem] shadow-xl"
                     />
                   ) : (
-                    <div className="flex flex-col items-center gap-2">
-                      <div className="p-2 bg-white rounded-xl text-amber-600">
-                        <Plus size={20} />
+                    <div className="flex flex-col items-center gap-4 relative z-10 transition-transform group-hover:scale-110">
+                      <div className="w-16 h-16 bg-amber-950 text-white rounded-2xl flex items-center justify-center shadow-2xl">
+                        <Plus size={32} />
                       </div>
-                      <span className="text-[10px] font-black text-amber-900/60 uppercase tracking-wider">Upload Splash</span>
+                      <span className="text-[9px] font-black text-amber-950 uppercase tracking-[0.3em]">Capture & Upload</span>
                     </div>
                   )}
                 </label>
               </div>
             </div>
 
-            <div className="group">
-              <label className="block text-[10px] font-black uppercase tracking-widest text-amber-900/60 mb-2 ml-1">The Product Story</label>
+            <div className="space-y-4">
+              <label className="text-[9px] text-amber-900/40 font-black uppercase tracking-[0.2em] ml-1">The Artisanal Narrative</label>
               <textarea
                 name="description"
-                placeholder="Describe the notes, origin, or technical specs..."
+                placeholder="Describe the aromatic profiles, notes, and journey of this blend..."
                 value={form.description}
                 onChange={handleChange}
-                rows="4"
-                className="w-full px-6 py-4 bg-amber-50/50 border border-amber-900/10 rounded-2xl focus:ring-4 focus:ring-amber-500/10 outline-none font-bold text-amber-950 transition-all resize-none"
+                className="w-full px-8 py-6 bg-amber-50/50 border border-amber-900/10 rounded-[2rem] focus:ring-8 focus:ring-amber-500/5 outline-none font-bold text-sm leading-relaxed resize-none text-amber-950 placeholder:text-amber-950/10 min-h-[160px] transition-all"
                 required
               />
             </div>
           </div>
         </div>
 
-        <button
+        <Button
           type="submit"
-          className="w-full py-5 bg-amber-950 text-white rounded-3xl font-black uppercase tracking-[0.2em] shadow-2xl shadow-amber-950/40 hover:bg-black transition-all active:scale-95 disabled:opacity-50 flex items-center justify-center gap-3"
           disabled={loading}
+          icon={Package}
+          className="w-full py-6 text-sm uppercase tracking-[0.3em] font-black bg-amber-950 text-white hover:bg-black shadow-2xl shadow-amber-950/20"
         >
-          {loading ? (
-            <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
-          ) : (
-            <>
-              <Package size={20} />
-              Publish Listing
-            </>
-          )}
-        </button>
+          {loading ? "Synchronizing with Emporium..." : "Commit Artisanal Listing"}
+        </Button>
       </form>
-    </div>
+    </Card>
   );
 };
 

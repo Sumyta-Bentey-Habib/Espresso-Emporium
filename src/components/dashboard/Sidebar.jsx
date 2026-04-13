@@ -1,64 +1,25 @@
 import React from "react";
 import { NavLink } from "react-router-dom";
 import { 
-  Users, 
-  User,
-  Box, 
   Home, 
   ChevronLeft, 
   ChevronRight, 
-  LayoutDashboard, 
-  ShoppingBag, 
-  PlusCircle,
-  History,
   LogOut,
-  Coffee,
-  ArrowLeft
+  Coffee
 } from "lucide-react";
 import { useAuth } from "../../context/AuthProvider";
 import { useNavigate } from "react-router-dom";
+import { useSidebar } from "../../hooks/useSidebar";
 
 const Sidebar = ({ isCollapsed, onToggle, role }) => {
   const { logOut, user } = useAuth();
   const navigate = useNavigate();
+  const { menuItems } = useSidebar(role);
 
   const handleLogout = async () => {
     await logOut();
     navigate("/");
   };
-
-  const getMenuItems = () => {
-    const common = [
-      { to: "/dashboard/profile", icon: <User size={20} />, label: "Profile" },
-    ];
-
-    switch (role) {
-      case "admin":
-        return [
-          { to: "/dashboard", icon: <LayoutDashboard size={20} />, label: "Overview" },
-          { to: "/dashboard/users", icon: <Users size={20} />, label: "Manage Users" },
-          { to: "/dashboard/products", icon: <Box size={20} />, label: "Manage Products" },
-          ...common
-        ];
-      case "seller":
-        return [
-          { to: "/dashboard", icon: <LayoutDashboard size={20} />, label: "Sales Review" },
-          { to: "/dashboard/my-products", icon: <Box size={20} />, label: "Inventory" },
-          { to: "/dashboard/add-product", icon: <PlusCircle size={20} />, label: "Add Item" },
-          ...common
-        ];
-      case "buyer":
-        return [
-          { to: "/dashboard", icon: <History size={20} />, label: "Activity" },
-          { to: "/dashboard/wishlist", icon: <ShoppingBag size={20} />, label: "Wishlist" },
-          ...common
-        ];
-      default:
-        return common;
-    }
-  };
-
-  const menuItems = getMenuItems();
 
   return (
     <aside
@@ -68,7 +29,7 @@ const Sidebar = ({ isCollapsed, onToggle, role }) => {
           : "translate-x-0 w-72"
       }`}
     >
-      {}
+      {/* Brand Header */}
       <div className="p-6 border-b border-white/10 flex items-center justify-between h-24 overflow-hidden shrink-0">
         <div className="flex items-center gap-4">
           <div className="w-10 h-10 rounded-xl bg-amber-700 flex items-center justify-center shrink-0">
@@ -83,7 +44,7 @@ const Sidebar = ({ isCollapsed, onToggle, role }) => {
         </div>
       </div>
 
-      {}
+      {/* Navigation Menu */}
       <nav className="flex-1 p-4 space-y-2 mt-4 overflow-y-auto custom-scrollbar overflow-x-hidden">
         {menuItems.map((item) => (
           <NavLink
@@ -98,14 +59,14 @@ const Sidebar = ({ isCollapsed, onToggle, role }) => {
               } ${isCollapsed ? "justify-center px-0" : ""}`
             }
           >
-            <div className="shrink-0">{item.icon}</div>
+            <div className="shrink-0"><item.icon size={20} /></div>
             {!isCollapsed && (
               <span className="font-bold whitespace-nowrap animate-in fade-in duration-500">
                 {item.label}
               </span>
             )}
             
-            {}
+            {/* Tooltip for collapsed state */}
             {isCollapsed && (
               <div className="absolute left-[calc(100%+1rem)] top-1/2 -translate-y-1/2 px-3 py-1.5 bg-amber-900 text-white text-xs font-bold rounded-lg opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity z-[60] shadow-xl whitespace-nowrap">
                 {item.label}
@@ -115,7 +76,7 @@ const Sidebar = ({ isCollapsed, onToggle, role }) => {
         ))}
       </nav>
 
-      {}
+      {/* Bottom Actions */}
       <div className="p-4 border-t border-white/10 space-y-2 shrink-0">
         <NavLink
           to="/"
@@ -143,26 +104,27 @@ const Sidebar = ({ isCollapsed, onToggle, role }) => {
             )}
         </button>
 
+        {/* User Mini Profile */}
         {!isCollapsed ? (
           <div className="mt-4 p-4 rounded-3xl bg-white/5 flex items-center gap-3 animate-in fade-in duration-700">
             <div className="w-10 h-10 rounded-xl bg-amber-500/20 text-amber-500 flex items-center justify-center font-black text-xs uppercase shrink-0">
-              {user?.name?.[0] || role?.[0]}
+              {user?.name?.[0] || user?.displayName?.[0] || role?.[0]}
             </div>
             <div className="flex flex-col min-w-0">
-              <span className="font-bold text-sm truncate">{user?.name || "User"}</span>
+              <span className="font-bold text-sm truncate">{user?.displayName || user?.name || "User"}</span>
               <span className="text-[10px] text-amber-500 font-black uppercase tracking-widest">{role}</span>
             </div>
           </div>
         ) : (
           <div className="mt-4 flex justify-center">
             <div className="w-10 h-10 rounded-xl bg-amber-500/20 text-amber-500 flex items-center justify-center font-black text-xs uppercase">
-              {user?.name?.[0] || role?.[0]}
+              {user?.name?.[0] || user?.displayName?.[0] || role?.[0]}
             </div>
           </div>
         )}
       </div>
 
-      {}
+      {/* Collapse Toggle Button */}
       <button
         onClick={onToggle}
         className="absolute -right-4 top-24 w-8 h-8 rounded-full bg-amber-700 text-white flex items-center justify-center shadow-xl border-4 border-amber-50 hover:scale-110 active:scale-90 transition-all z-[70]"

@@ -1,10 +1,16 @@
 import React from "react";
-import { MessageSquare, Heart, MapPin, BadgeDollarSign } from "lucide-react";
+import { MessageSquare, Heart, MapPin } from "lucide-react";
 import StartChatButton from "./chat/StartChatButton";
+import Card from "./ui/Card";
+import Button from "./ui/Button";
 
 const CoffeeCard = ({ coffee, onViewReviews, onAddToWishlist, onAddReview, user, isInWishlist }) => {
   return (
-    <div className="group bg-white rounded-3xl overflow-hidden shadow-sm hover:shadow-2xl transition-all duration-500 border border-amber-900/10 flex flex-col h-full">
+    <Card 
+      className="group overflow-hidden hover:shadow-2xl transition-all duration-500 flex flex-col h-full"
+      padding="p-0"
+      rounded="rounded-3xl"
+    >
       <div className="relative h-64 overflow-hidden">
         <img
           src={coffee.image || "/more/coffee-splash.jpg"}
@@ -39,41 +45,41 @@ const CoffeeCard = ({ coffee, onViewReviews, onAddToWishlist, onAddReview, user,
               </div>
             )}
           </div>
-          <div className="bg-amber-100/10 text-amber-600 px-3 py-1.5 rounded-2xl font-black text-sm shadow-inner border border-amber-500/10 shrink-0 ml-4">
+          <div className="bg-amber-100 text-amber-900 px-3 py-1.5 rounded-2xl font-black text-sm shadow-inner border border-amber-900/10 shrink-0 ml-4">
             ${coffee.price}
           </div>
         </div>
 
         <div className="text-[10px] text-amber-900/40 mb-6 flex-1 font-bold uppercase tracking-widest">
-          Sourced by <span className="text-amber-950">{coffee.sellerName || "Unknown Seller"}</span>
+          Sourced by <span className="text-amber-950 font-black">{coffee.sellerName || "Unknown Seller"}</span>
         </div>
 
-        {}
+        {/* Action Grid */}
         <div className="grid grid-cols-2 gap-3 pt-4 border-t border-amber-900/10">
-          <button
+          <Button
+            variant="secondary"
             onClick={() => onViewReviews(coffee)}
-            className="flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-amber-50/50 text-amber-950 font-bold hover:bg-amber-950 hover:text-white transition-all active:scale-95 group/btn"
+            icon={MessageSquare}
+            size="sm"
+            className="w-full"
           >
-            <MessageSquare size={18} className="group-hover/btn:rotate-12 transition-transform" />
             Reviews
-          </button>
+          </Button>
           
           {user ? (
-            <button
+            <Button
+              variant={isInWishlist ? "success" : "primary"}
               onClick={() => onAddToWishlist(coffee)}
               disabled={isInWishlist}
-              className={`flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl font-bold transition-all shadow-lg active:scale-95 group/btn ${
-                isInWishlist 
-                ? "bg-green-600 text-white cursor-default shadow-green-900/20" 
-                : "bg-amber-900 text-white hover:bg-black shadow-amber-900/20"
-              }`}
+              icon={Heart}
+              size="sm"
+              className="w-full"
             >
-              <Heart size={18} className={`transition-transform ${isInWishlist ? "fill-white scale-110" : "group-hover/btn:scale-125"}`} />
               {isInWishlist ? "In Wishlist" : "Wishlist"}
-            </button>
+            </Button>
           ) : (
-            <div className="text-[10px] text-amber-900/60/40 flex items-center justify-center text-center px-2 uppercase font-black tracking-widest">
-              Login to wishlist
+            <div className="text-[9px] text-amber-900/40 flex items-center justify-center text-center px-1 uppercase font-black tracking-widest">
+              Login for Wishlist
             </div>
           )}
         </div>
@@ -88,18 +94,18 @@ const CoffeeCard = ({ coffee, onViewReviews, onAddToWishlist, onAddReview, user,
               }} 
               autoMessage={`Hi ${coffee.sellerName || "Seller"}! I'm interested in your ${coffee.name}.`}
               buttonText="Say Hi & Chat"
-              className="w-full !py-2 !text-xs"
+              className="w-full"
             />
             <button
               onClick={() => onAddReview(coffee)}
-              className="w-full text-xs font-bold text-amber-700 hover:text-amber-900 transition-colors uppercase tracking-widest py-1 underline-offset-4 hover:underline"
+              className="w-full text-xs font-black text-amber-700/60 hover:text-amber-950 transition-colors uppercase tracking-[0.2em] py-1 underline-offset-4 hover:underline"
             >
               Write a Review
             </button>
           </div>
         )}
       </div>
-    </div>
+    </Card>
   );
 };
 
