@@ -14,7 +14,7 @@
 ---
 
 ## 🌟 Project Vision
-**Espresso-Emporium** is designed to bridge the gap between boutique roasters and coffee lovers. By leveraging modern real-time technologies, we provide a seamless, interactive platform where quality meets community.
+**Espresso-Emporium** is designed to bridge the gap between boutique roasters and coffee lovers. Following a massive architectural refactor, the platform now boasts a state-of-the-art **Atomic Design System** and a clean, **Hook-first** logic architecture, providing a seamless and premium interactive experience.
 
 ---
 
@@ -23,14 +23,30 @@
 ### 🛒 Marketplace & Community
 - **✨ Curated Selection:** Discover premium coffee blends, beans, and equipment across four distinct categories.
 - **💬 Real-time Chat:** Direct, instant messaging between buyers and sellers for a personalized experience.
-- **⭐ Interactive Reviews:** Dynamic rating and feedback system to build community trust.
-- **🖤 User Wishlist:** Save your favorite products to your personal collection with a single click.
-- **🔍 Smart Search:** Lightning-fast filtering by category and keyword to find your perfect brew.
+- **⭐ Community Resonance:** Dynamic rating and feedback system with a glassmorphic modal design.
+- **🖤 Artisan Wishlist:** Save your favorite products to your personal collection with a single click.
+- **🔍 Smart Filtering:** Lightning-fast search architecture powered by custom data-fetching hooks.
+
+### 🌓 Personalization
+- **🌓 Dynamic Theming:** Integrated Dark/Light mode support with smooth transitions and persistent state.
+- **👤 Profile Management:** Full control over your artisan identity, including real-time profile updates.
 
 ### 🔐 Professional User Dashboards
+- **📈 Global Analytics:** Interactive dashboards featuring Recharts visualization for orders, sales, and activity tracking.
 - **👤 Buyer Portal:** Manage your wishlist, track reviews, and engage in community discussions.
-- **🤝 Seller suite:** Full lifecycle management of products with real-time performance tracking.
-- **🛡️ Admin HQ:** Centralized control for user management and content moderation.
+- **🤝 Merchant Suite:** Sophisticated lifecycle management of products with real-time performance tracking.
+- **🛡️ Administrative HQ:** Centralized command center for user management and content moderation.
+
+---
+
+## 🏗️ Architectural Excellence
+
+The project follows a modular, scalable architecture developed during a comprehensive codebase overhaul:
+
+- **Atomic UI library**: Located in `src/components/ui/`, providing standardized `Button`, `Card`, and `Input` components.
+- **Logic Separation**: 10+ custom hooks (e.g., `useProducts`, `useDashboard`, `useSidebar`) encapsulate all side effects and state management.
+- **Design Tokens**: A centralized token system in `src/styles/tokens.css` manages the brand's amber-themed color palette and typography.
+- **Real-time Engine**: Powered by Socket.io for instant messaging and presence tracking.
 
 ---
 
@@ -40,22 +56,17 @@
 Espresso-Emporium/
 ├── 📁 public/            # Static assets and documentation images
 ├── 📁 src/
-│   ├── 📁 assets/        # Global styles and media files
 │   ├── 📁 components/    # Reusable UI components
+│   │   ├── 📁 ui/        # Atomic UI library (Button, Card, Input)
 │   │   ├── 📁 chat/      # Real-time messaging components
 │   │   └── 📁 dashboard/ # Role-specific dashboard widgets
-│   ├── 📁 context/       # Auth and Socket.io state management
-│   ├── 📁 firebase/      # Authentication configuration
-│   ├── 📁 hooks/         # Custom React hooks (useChat, usePresence)
-│   ├── 📁 layouts/       # Page layout templates (Home, Dashboard)
-│   ├── 📁 pages/         # High-level page components
-│   │   ├── 📁 admin/     # Admin-only management pages
-│   │   ├── 📁 buyer/     # Buyer-specific features
-│   │   └── 📁 seller/    # Seller product and dashboard pages
-│   ├── 📁 router/        # Application routing logic
-│   ├── 📁 shared/        # Common components like NavBars and Footers
-│   └── 📁 utils/         # Helper functions and API configuration
-├── 📄 package.json       # Project dependencies and scripts
+│   ├── 📁 context/       # Auth, Theme, and Socket.io state management
+│   ├── 📁 hooks/         # Custom React hooks (useDashboard, useProducts, etc.)
+│   ├── 📁 pages/         # Page components (Admin, Seller, Buyer portals)
+│   ├── 📁 styles/        # Global tokens and tailwind configuration
+│   ├── 📁 utils/         # Helper functions, mock data, and theme definitions
+│   └── 📄 main.jsx       # Application entry point
+├── 📄 package.json       # Dependencies and scripts
 └── 📄 README.md          # Project documentation
 ```
 
@@ -69,7 +80,7 @@ Espresso-Emporium/
 | **Backend** | Node.js, Express, Socket.io |
 | **Database** | MongoDB |
 | **Auth** | Firebase Authentication |
-| **Visuals** | Recharts, SweetAlert2, Lottie |
+| **Visuals** | Recharts, SweetAlert2, Framer-Motion style animations |
 
 ---
 
@@ -82,8 +93,7 @@ Espresso-Emporium/
 | **Admin** | `espresso@admin.com` | `12345678#$%ADiMn` |
 | **The Daily Grind** | `thedailygrind@gmail.com` | `TDG!2025#Coffee` |
 | **Brew Theory** | `brewtheory@gmail.com` | `BrewTh3ory@21` |
-| **Velvet Bean** | `velvetbean@gmail.com` | `V3lv3tB3an$` |
-| **Morning Dew Café** | `morningdew.cafe@gmail.com` | `MDew@2025!` |
+| **Merchant Suite** | `morningdew.cafe@gmail.com` | `MDew@2025!` |
 
 ### Installation
 1. **Clone & Enter**:
