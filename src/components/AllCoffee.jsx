@@ -180,8 +180,8 @@ const AllCoffee = ({ limit, search, category }) => {
             <CoffeeIcon size={16} />
             Pure Bliss in a Cup
           </div>
-          <h1 className="text-5xl md:text-6xl font-black text-amber-950 tracking-tight">
-            The Coffee <span className="text-amber-700 italic">Selection</span>
+          <h1 className="font-black text-amber-950 tracking-tight">
+            The Coffee <span className="text-amber-700 font-gorditas italic">Selection</span>
           </h1>
           <p className="max-w-xl mx-auto text-amber-900/60 text-lg">
             Explore our hand-picked collection of premium blends, curated from the world's most passionate roasters.

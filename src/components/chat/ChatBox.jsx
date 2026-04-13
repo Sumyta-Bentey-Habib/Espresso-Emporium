@@ -137,7 +137,7 @@ const ChatBox = ({ currentUser, otherUser, onClose, autoMessage, clearAutoMessag
             )}
           </div>
           <div className="flex flex-col ml-1 md:ml-1.5 min-w-0">
-            <h3 className="font-outfit font-black text-xs md:text-sm tracking-tight leading-none mb-1 truncate">{otherUser.name}</h3>
+            <p className="font-semibold text-[13px] md:text-[15px] tracking-tight leading-none mb-1 truncate">{otherUser.name}</p>
             <div className="flex items-center gap-1.5 md:gap-2">
               <span className="text-[8px] md:text-[10px] font-inter font-bold text-amber-200/90 uppercase tracking-[0.1em] md:tracking-[0.15em] px-1 md:px-1.5 py-0.5 bg-white/5 rounded-md border border-white/10">{otherUser.role}</span>
               {otherUser.lastActive && (
