@@ -27,8 +27,7 @@
 - **🖤 Artisan Wishlist:** Save your favorite products to your personal collection with a single click.
 - **🔍 Smart Filtering:** Lightning-fast search architecture powered by custom data-fetching hooks.
 
-### 🌓 Personalization
-- **🌓 Dynamic Theming:** Integrated Dark/Light mode support with smooth transitions and persistent state.
+### 👤 Identity Management
 - **👤 Profile Management:** Full control over your artisan identity, including real-time profile updates.
 
 ### 🔐 Professional User Dashboards
@@ -60,11 +59,11 @@ Espresso-Emporium/
 │   │   ├── 📁 ui/        # Atomic UI library (Button, Card, Input)
 │   │   ├── 📁 chat/      # Real-time messaging components
 │   │   └── 📁 dashboard/ # Role-specific dashboard widgets
-│   ├── 📁 context/       # Auth, Theme, and Socket.io state management
+│   ├── 📁 context/       # Auth and Socket.io state management
 │   ├── 📁 hooks/         # Custom React hooks (useDashboard, useProducts, etc.)
 │   ├── 📁 pages/         # Page components (Admin, Seller, Buyer portals)
 │   ├── 📁 styles/        # Global tokens and tailwind configuration
-│   ├── 📁 utils/         # Helper functions, mock data, and theme definitions
+│   ├── 📁 utils/         # Helper functions and API configuration
 │   └── 📄 main.jsx       # Application entry point
 ├── 📄 package.json       # Dependencies and scripts
 └── 📄 README.md          # Project documentation
