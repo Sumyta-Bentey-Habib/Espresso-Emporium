@@ -5,7 +5,8 @@ const Card = ({
   variant = "white", 
   padding = "p-8", 
   className = "",
-  rounded = "rounded-[2.5rem]"
+  rounded = "rounded-[2.5rem]",
+  ...rest
 }) => {
   const variants = {
     white: "bg-white border border-amber-900/10 shadow-xl shadow-amber-900/5",
@@ -14,7 +15,7 @@ const Card = ({
   };
 
   return (
-    <div className={`${variants[variant]} ${padding} ${rounded} ${className}`}>
+    <div className={`${variants[variant]} ${padding} ${rounded} ${className}`} {...rest}>
       {children}
     </div>
   );
