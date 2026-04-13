@@ -17,7 +17,7 @@ const Banner = () => {
         <div className="max-w-md">
           <h1 className="mb-5 text-5xl font-bold">Would you like a Cup of Delicious Coffee?</h1>
 
-          <p className="mb-5 raleway">
+          <p className="mb-5 font-inter">
             It's coffee time - Sip & Savor - Relaxation in every sip! Get the nostalgia back!! Your
             companion of every moment!!! Enjoy the beautiful moments and make them memorable.
           </p>

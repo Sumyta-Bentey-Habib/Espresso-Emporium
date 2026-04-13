@@ -108,7 +108,7 @@ const NavBar = () => {
         {}
         <div className="flex items-center gap-2">
           <img src="/more/logo1.png" alt="Logo" className="h-10 w-auto" />
-          <a className="normal-case text-2xl font-black text-white raleway">Espresso<span className="text-amber-400">Emporium</span></a>
+          <a className="normal-case text-xl font-black text-white font-georama tracking-tight">Espresso<span className="text-amber-400">Emporium</span></a>
         </div>
       </div>
 
