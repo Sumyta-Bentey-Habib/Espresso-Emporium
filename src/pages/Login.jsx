@@ -96,7 +96,7 @@ const Login = () => {
     <>
       <SharedNav />
       <div
-        className="flex items-center justify-center min-h-screen px-4 py-8 md:py-12 bg-stone-50 font-georama"
+        className="relative flex items-center justify-center min-h-screen px-4 py-8 md:py-12 bg-stone-50 font-georama"
         style={{
           backgroundImage: "url('/more/1.png')",
           backgroundSize: "cover",
@@ -104,9 +104,9 @@ const Login = () => {
           backgroundAttachment: "fixed"
         }}
       >
-        <div className="absolute inset-0 bg-black/60 backdrop-blur-[4px]"></div>
+        <div className="absolute inset-0 bg-black/60 backdrop-blur-[4px] z-0"></div>
 
-        <div className="relative flex flex-col w-full max-w-5xl overflow-hidden md:flex-row bg-white/90 backdrop-blur-2xl rounded-[3rem] shadow-2xl animate-in fade-in zoom-in duration-700">
+        <div className="relative z-10 flex flex-col w-full max-w-5xl overflow-hidden md:flex-row bg-white/90 backdrop-blur-2xl rounded-[3rem] shadow-2xl animate-in fade-in zoom-in duration-700">
           {/* Left Panel: Hero */}
           <div className="flex flex-col items-center justify-center w-full p-8 md:p-12 md:w-5/12 bg-gradient-to-br from-amber-950 to-stone-900 text-white relative">
             <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none opacity-10">

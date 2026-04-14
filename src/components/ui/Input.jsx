@@ -4,6 +4,7 @@ const Input = ({
   label, 
   icon: Icon, 
   type = "text", 
+  name, 
   value, 
   onChange, 
   placeholder, 
@@ -24,6 +25,7 @@ const Input = ({
       <div className="relative">
         <input 
           type={type} 
+          name={name}
           value={value}
           onChange={onChange}
           disabled={disabled || isLocked}
