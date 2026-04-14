@@ -129,7 +129,7 @@ const Register = () => {
       setFormData({ name: "", email: "", password: "", photoURL: "", location: "" });
       setRole("");
       setProfileFile(null);
-      navigate("/");
+      navigate("/dashboard");
     } catch (error) {
       Swal.fire({
         icon: "error",
@@ -171,7 +171,7 @@ const Register = () => {
         customClass: { popup: 'rounded-[1.5rem]' }
       });
 
-      navigate("/");
+      navigate("/dashboard");
     } catch (error) {
       Swal.fire({ icon: "error", title: "Google Sync Failed", text: error.message, confirmButtonColor: "#451a03" });
     }
@@ -181,7 +181,7 @@ const Register = () => {
     <>
       <SharedNav />
       <div
-        className="flex flex-col items-center justify-center min-h-screen px-4 py-12 bg-stone-50 font-georama"
+        className="relative flex flex-col items-center justify-center min-h-screen px-4 py-12 bg-stone-50 font-georama"
         style={{
           backgroundImage: "url('/more/1.png')",
           backgroundSize: "cover",
@@ -189,10 +189,10 @@ const Register = () => {
           backgroundAttachment: "fixed"
         }}
       >
-        <div className="absolute inset-0 bg-black/60 backdrop-blur-[4px]"></div>
+        <div className="absolute inset-0 bg-black/60 backdrop-blur-[4px] z-0"></div>
 
         <Card
-          className="relative flex flex-col md:flex-row w-full max-w-6xl overflow-hidden bg-white/90 backdrop-blur-2xl animate-in fade-in zoom-in duration-700"
+          className="relative z-10 flex flex-col md:flex-row w-full max-w-6xl overflow-hidden bg-white/90 backdrop-blur-2xl animate-in fade-in zoom-in duration-700"
           padding="p-0"
           rounded="rounded-[3rem]"
         >
