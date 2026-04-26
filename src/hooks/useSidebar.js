@@ -34,6 +34,7 @@ export const useSidebar = (role) => {
         return [
           { to: "/dashboard", icon: History, label: "Activity" },
           { to: "/dashboard/wishlist", icon: ShoppingBag, label: "Wishlist" },
+          { to: "/dashboard/my-orders", icon: Box, label: "My Orders" },
           ...common
         ];
       default:

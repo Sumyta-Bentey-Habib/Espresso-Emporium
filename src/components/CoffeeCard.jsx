@@ -1,10 +1,14 @@
 import React from "react";
-import { MessageSquare, Heart, MapPin } from "lucide-react";
+import { MessageSquare, Heart, MapPin, CreditCard } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import StartChatButton from "./chat/StartChatButton";
 import Card from "./ui/Card";
 import Button from "./ui/Button";
+import PaymentModal from "./PaymentModal";
 
 const CoffeeCard = ({ coffee, onViewReviews, onAddToWishlist, onAddReview, user, isInWishlist }) => {
+  const navigate = useNavigate();
+  const [isPaymentModalOpen, setIsPaymentModalOpen] = React.useState(false);
   return (
     <Card 
       className="group overflow-hidden hover:shadow-2xl transition-all duration-500 flex flex-col h-full"
@@ -86,6 +90,23 @@ const CoffeeCard = ({ coffee, onViewReviews, onAddToWishlist, onAddReview, user,
         
         {user && (
           <div className="flex flex-col gap-2 mt-3">
+            {["Beans", "Equipment", "Accessories"].includes(coffee.category) && (
+              <Button
+                variant="primary"
+                onClick={() => setIsPaymentModalOpen(true)}
+                icon={CreditCard}
+                className="w-full !bg-amber-950 !text-white hover:!bg-amber-900 shadow-lg"
+              >
+                Buy Now
+              </Button>
+            )}
+            
+            <PaymentModal 
+              isOpen={isPaymentModalOpen} 
+              onClose={() => setIsPaymentModalOpen(false)} 
+              items={[coffee]} 
+              totalPrice={coffee.price} 
+            />
             <StartChatButton 
               targetUser={{ 
                 uid: coffee.sellerEmail || coffee.sellerId || coffee.sellerUid, 

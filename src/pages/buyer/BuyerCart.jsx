@@ -1,16 +1,20 @@
 import React, { useEffect, useState } from "react";
 import { NavLink } from "react-router-dom";
 import { useAuth } from "../../context/AuthProvider";
-import { Trash2, ShoppingBag, MapPin, User, Coffee as CoffeeIcon, ChevronRight, Heart } from "lucide-react";
+import { Trash2, ShoppingBag, MapPin, User, Coffee as CoffeeIcon, ChevronRight, Heart, CreditCard } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 import { API_URL } from "../../utils/utils";
 import Button from "../../components/ui/Button";
 import Card from "../../components/ui/Card";
+import PaymentModal from "../../components/PaymentModal";
 
 const BuyerCart = () => {
   const { user } = useAuth();
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
+  const navigate = useNavigate();
 
   const fetchCart = React.useCallback(async () => {
     if (!user?._id) return;
@@ -68,12 +72,51 @@ const BuyerCart = () => {
           <p className="text-amber-700/60 font-black mt-1 uppercase tracking-[0.2em] text-[10px]">Managing {items.length} Cherished Selections</p>
         </div>
         
-        <NavLink to="/coffee-store">
+        <NavLink to="/marketplace">
           <Button variant="primary" icon={ShoppingBag} className="shadow-2xl shadow-amber-950/20 px-10">
-             Discover More Blends
+             Explore Marketplace
           </Button>
         </NavLink>
       </div>
+
+      {/* Payment Section for Marketplace Items */}
+      {items.some(it => ["Beans", "Equipment", "Accessories"].includes(it.category)) && (
+          <div className="bg-amber-950 text-white p-8 rounded-[3rem] shadow-2xl flex flex-col md:flex-row items-center justify-between gap-8 animate-in zoom-in-95 duration-700">
+              <div className="flex items-center gap-6">
+                  <div className="w-16 h-16 bg-white/10 rounded-2xl flex items-center justify-center backdrop-blur-md border border-white/20">
+                      <CreditCard className="text-amber-400" size={32} />
+                  </div>
+                  <div>
+                      <h2 className="text-2xl font-black tracking-tight">Marketplace Artifacts</h2>
+                      <p className="text-amber-200/40 font-black uppercase tracking-[0.2em] text-[10px] mt-1">Ready for acquisition via Stripe Dummy</p>
+                  </div>
+              </div>
+              <div className="flex flex-col md:flex-row items-center gap-6">
+                  <div className="text-right">
+                      <p className="text-amber-200/40 font-black uppercase tracking-[0.2em] text-[10px]">Total Valuation</p>
+                      <p className="text-3xl font-black tracking-tighter">$ {
+                          items
+                              .filter(it => ["Beans", "Equipment", "Accessories"].includes(it.category))
+                              .reduce((acc, it) => acc + Number(it.price || 0), 0)
+                      }</p>
+                  </div>
+                  <Button 
+                    variant="primary" 
+                    className="!bg-white !text-amber-950 hover:!bg-amber-100 px-12 py-5 shadow-2xl"
+                    onClick={() => setIsPaymentModalOpen(true)}
+                  >
+                      Proceed to Payment
+                  </Button>
+              </div>
+          </div>
+      )}
+
+      <PaymentModal 
+        isOpen={isPaymentModalOpen} 
+        onClose={() => setIsPaymentModalOpen(false)} 
+        items={items.filter(it => ["Beans", "Equipment", "Accessories"].includes(it.category))} 
+        totalPrice={items.filter(it => ["Beans", "Equipment", "Accessories"].includes(it.category)).reduce((acc, it) => acc + Number(it.price || 0), 0)} 
+      />
 
       {/* Wishlist Registry Table */}
       <Card className="shadow-2xl shadow-amber-900/5 overflow-hidden border border-amber-950/5" padding="p-0">

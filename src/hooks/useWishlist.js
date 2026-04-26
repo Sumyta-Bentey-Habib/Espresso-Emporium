@@ -39,6 +39,7 @@ export const useWishlist = (user) => {
       name: coffee.name,
       price: coffee.price,
       image: coffee.image,
+      category: coffee.category,
       sellerName: coffee.sellerName,
       sellerLocation: coffee.sellerLocation,
     };

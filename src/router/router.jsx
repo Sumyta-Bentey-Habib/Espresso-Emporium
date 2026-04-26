@@ -16,6 +16,8 @@ import ManageProducts from "../pages/admin/ManageProducts";
 
 
 import BuyerCart from "../pages/buyer/BuyerCart";
+import Payment from "../pages/buyer/Payment";
+import MyOrders from "../pages/buyer/MyOrders";
 
 
 import SellerProducts from "../pages/seller/SellerProducts";
@@ -48,6 +50,8 @@ const router = createBrowserRouter([
       
       
       { path: "wishlist", element: <BuyerCart /> },
+      { path: "payment", element: <Payment /> },
+      { path: "my-orders", element: <MyOrders /> },
 
       
       { path: "my-products", element: <SellerProducts /> },
