@@ -1,4 +1,4 @@
-const DEPLOY_URL = import.meta.env.VITE_API_URL || "https://coffestore.onrender.com";
+const DEPLOY_URL = import.meta.env.VITE_API_URL || "https://espresso-emporium-server-g59u.onrender.com";
 const LOCAL_URL = "http://localhost:3000";
 
 export const API_URL = (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1")
