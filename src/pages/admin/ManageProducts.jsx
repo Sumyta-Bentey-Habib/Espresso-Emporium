@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from "react";
-import { Search, Edit2, Trash2, Box, MapPin, Tag, Plus, X, Image as ImageIcon, User } from "lucide-react";
+import { Search, Edit2, Trash2, Box, MapPin, Tag, Plus, X, Image as ImageIcon, User, MessageCircle, Star, ChevronRight, Calendar } from "lucide-react";
 import Pagination from "../../components/dashboard/Pagination";
 import { API_URL } from "../../utils/utils";
 import { useAdminProducts } from "../../hooks/useAdminProducts";
+import { useAuth } from "../../context/AuthProvider";
 import Swal from "sweetalert2";
 import Button from "../../components/ui/Button";
 import Card from "../../components/ui/Card";
@@ -13,10 +14,12 @@ const ManageProducts = () => {
     document.title = "Manage Products | Espresso Admin";
   }, []);
 
+  const { user } = useAuth();
   const [search, setSearch] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
   const [selectedProduct, setSelectedProduct] = useState(null);
+  const [viewingReviewsFor, setViewingReviewsFor] = useState(null);
   const [updateData, setUpdateData] = useState({
     name: "",
     price: "",
@@ -52,6 +55,42 @@ const ManageProducts = () => {
       } catch (error) {
         Swal.fire("Error", "Removal failed.", "error");
       }
+    }
+  };
+
+  const handleDeleteReview = async (reviewId) => {
+    const confirm = await Swal.fire({
+      title: "Erase Feedback?",
+      text: "This public record will be removed from the emporium archives library.",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#451a03",
+      cancelButtonColor: "#ef4444",
+      confirmButtonText: "Erase It",
+      customClass: { popup: 'rounded-[2.5rem]' }
+    });
+    if (!confirm.isConfirmed) return;
+
+    try {
+      const res = await fetch(`${API_URL}/reviews/${reviewId}?requesterId=${user?._id}`, { method: "DELETE" });
+      if (res.ok) {
+        Swal.fire({
+          icon: "success",
+          title: "Feedback Erased",
+          confirmButtonColor: "#451a03"
+        });
+        fetchProducts();
+        if (viewingReviewsFor) {
+          setViewingReviewsFor(prev => ({
+            ...prev,
+            reviews: prev.reviews.filter(r => (r._id?.$oid || r._id) !== reviewId)
+          }));
+        }
+      } else {
+        Swal.fire("Error", "Unauthorized or failed removal.", "error");
+      }
+    } catch (error) {
+      Swal.fire("Error", "Could not remove feedback.", "error");
     }
   };
 
@@ -127,6 +166,7 @@ const ManageProducts = () => {
                 <th className="px-8 py-7 text-left">The Master Blend</th>
                 <th className="px-8 py-7 text-left">Market Valuation</th>
                 <th className="px-8 py-7 text-left">Source Origin</th>
+                <th className="px-8 py-7 text-left">Community Resonance</th>
                 <th className="px-8 py-7 text-right">Inventory Logic</th>
               </tr>
             </thead>
@@ -137,6 +177,7 @@ const ManageProducts = () => {
                     <td className="px-8 py-8"><div className="h-20 w-20 bg-amber-50 rounded-2xl"></div></td>
                     <td className="px-8 py-8"><div className="h-6 w-24 bg-amber-50 rounded-full"></div></td>
                     <td className="px-8 py-8"><div className="h-4 w-48 bg-amber-50 rounded-full"></div></td>
+                    <td className="px-8 py-8"><div className="h-4 w-24 bg-amber-50 rounded-full"></div></td>
                     <td className="px-8 py-8"><div className="h-10 w-32 bg-amber-50 rounded-xl ml-auto"></div></td>
                   </tr>
                 ))
@@ -181,6 +222,27 @@ const ManageProducts = () => {
                         </div>
                       </div>
                     </td>
+                    <td className="px-8 py-8">
+                      <button 
+                        onClick={() => setViewingReviewsFor(p)}
+                        className="flex items-center gap-4 group/btn"
+                      >
+                        <div className="flex -space-x-3">
+                          {[1,2,3].map(i => (
+                            <div key={i} className="w-8 h-8 rounded-full border-2 border-white bg-amber-950 text-white flex items-center justify-center text-[8px] font-black shadow-lg">
+                                {String.fromCharCode(64+i)}
+                            </div>
+                          ))}
+                        </div>
+                        <div className="flex flex-col items-start">
+                            <span className="text-amber-950 font-black text-sm group-hover/btn:text-amber-700 transition-colors">
+                                {p.reviews?.length || 0} Voices
+                            </span>
+                            <span className="text-[9px] text-amber-900/40 font-black uppercase tracking-tighter">Read Resonance</span>
+                        </div>
+                        <ChevronRight size={14} className="text-amber-900/20 group-hover/btn:translate-x-1 transition-transform" />
+                      </button>
+                    </td>
                     <td className="px-8 py-8 text-right">
                       <div className="flex items-center justify-end gap-3">
                         <Button
@@ -205,7 +267,7 @@ const ManageProducts = () => {
                 ))
               ) : (
                 <tr>
-                  <td colSpan={4} className="px-8 py-40 text-center">
+                  <td colSpan={5} className="px-8 py-40 text-center">
                     <div className="relative inline-block">
                         <Box size={80} className="mx-auto text-amber-950/5 mb-6" />
                         <div className="absolute inset-0 bg-amber-500/5 blur-3xl rounded-full -z-10"></div>
@@ -306,6 +368,68 @@ const ManageProducts = () => {
                   </Button>
                 </div>
               </div>
+            </div>
+          </Card>
+        </div>
+      )}
+
+      {/* Community Resonance Modal (Reviews) */}
+      {viewingReviewsFor && (
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-md flex justify-center items-center z-[110] p-4 animate-in fade-in duration-500" onClick={() => setViewingReviewsFor(null)}>
+          <Card className="w-full max-w-3xl max-h-[85vh] overflow-hidden flex flex-col p-0 shadow-2xl animate-in zoom-in-95 duration-500" onClick={e => e.stopPropagation()}>
+            <div className="p-10 border-b border-amber-950/5 flex justify-between items-center bg-amber-50/30">
+              <div>
+                <h2 className="text-3xl font-black text-amber-950 tracking-tighter">Community Resonance</h2>
+                <p className="text-amber-700 font-black uppercase tracking-[0.2em] text-[10px] mt-1.5">Captured voices for: {viewingReviewsFor.name}</p>
+              </div>
+              <button onClick={() => setViewingReviewsFor(null)} className="p-4 hover:bg-amber-950/10 rounded-2xl transition-all text-amber-950/20 hover:text-amber-950">
+                <X size={26} />
+              </button>
+            </div>
+            
+            <div className="flex-1 overflow-y-auto p-10 space-y-8 custom-scrollbar bg-white/50 backdrop-blur-3xl">
+              {viewingReviewsFor.reviews?.length > 0 ? (
+                viewingReviewsFor.reviews.map((r) => (
+                  <div key={r._id} className="p-8 bg-white rounded-[2.5rem] border border-amber-950/5 flex flex-col sm:flex-row justify-between gap-8 group shadow-xl shadow-amber-900/5 hover:-translate-y-1 transition-all">
+                    <div className="flex-1 space-y-4">
+                      <div className="flex items-center gap-4">
+                        <div className="w-12 h-12 rounded-2xl bg-amber-950 text-white flex items-center justify-center font-black text-sm uppercase shadow-lg">
+                          {r.buyerName?.[0] || 'A'}
+                        </div>
+                        <div>
+                          <p className="font-black text-amber-950 text-lg leading-none">{r.buyerName || "Anonymous Artisan"}</p>
+                          <div className="flex items-center gap-3 mt-2">
+                            <div className="flex text-amber-400 gap-1">
+                              {[...Array(5)].map((_, i) => (
+                                <Star key={i} size={11} className={i < r.rating ? "fill-current" : "opacity-10"} />
+                              ))}
+                            </div>
+                            <span className="text-[9px] text-amber-900/30 font-black uppercase tracking-widest flex items-center gap-1.5 border-l border-amber-900/10 pl-3">
+                              <Calendar size={10} />
+                              {new Date(r.createdAt).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                      <p className="text-amber-950/70 italic font-medium leading-relaxed bg-amber-50/50 p-4 rounded-2xl border border-amber-950/5">"{r.feedback}"</p>
+                    </div>
+                    <div className="flex sm:flex-col justify-end">
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => handleDeleteReview(r._id?.$oid || r._id)}
+                        icon={Trash2}
+                        className="!p-4 !rounded-2xl !text-rose-500 hover:!bg-rose-50 border border-rose-100"
+                      />
+                    </div>
+                  </div>
+                ))
+              ) : (
+                <div className="text-center py-32 opacity-10 grayscale">
+                  <MessageCircle size={100} strokeWidth={1} className="mx-auto mb-6" />
+                  <p className="text-2xl font-black uppercase tracking-[0.3em]">No resonance captured yet</p>
+                </div>
+              )}
             </div>
           </Card>
         </div>

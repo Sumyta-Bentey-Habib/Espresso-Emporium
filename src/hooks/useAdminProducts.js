@@ -27,7 +27,28 @@ export const useAdminProducts = (search, currentPage, itemsPerPage) => {
 
       const start = (currentPage - 1) * itemsPerPage;
       const end = start + itemsPerPage;
-      setProducts(normalized.slice(start, end));
+      const pagedProducts = normalized.slice(start, end);
+
+      const productsWithReviews = await Promise.all(
+        pagedProducts.map(async (p) => {
+          try {
+            const revRes = await fetch(`${API_URL}/reviews/${p._id}`);
+            const reviews = await revRes.json();
+            return { 
+                ...p, 
+                reviews: reviews.map(r => ({
+                    ...r,
+                    rating: r.rating?.$numberInt ? Number(r.rating.$numberInt) : r.rating,
+                    createdAt: r.createdAt?.$date?.$numberLong ? new Date(Number(r.createdAt.$date.$numberLong)) : r.createdAt
+                })) 
+            };
+          } catch (e) {
+            return { ...p, reviews: [] };
+          }
+        })
+      );
+
+      setProducts(productsWithReviews);
     } catch (error) {
       console.error("Error fetching products:", error);
     } finally {
