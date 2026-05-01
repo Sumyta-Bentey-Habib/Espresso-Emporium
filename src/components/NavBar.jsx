@@ -2,6 +2,7 @@ import React from "react";
 import { NavLink } from "react-router-dom";
 import { useAuth } from "../context/AuthProvider";
 import Button from "./ui/Button";
+import ThemeToggle from "./ThemeToggle";
 
 const NavBar = () => {
   const { user, logOut } = useAuth();
@@ -65,6 +66,9 @@ const NavBar = () => {
             className="menu menu-sm dropdown-content bg-[#331A15] text-white rounded-[1.5rem] z-10 mt-3 w-52 p-4 shadow-2xl border border-white/10"
           >
             {navItems}
+            <div className="lg:hidden mt-2 border-t border-white/10 pt-2 flex justify-center">
+              <ThemeToggle />
+            </div>
 
             {user ? (
               <div className="mt-4 border-t border-white/10 pt-4 flex flex-col gap-3">
@@ -117,6 +121,7 @@ const NavBar = () => {
 
       {/* Navbar End */}
       <div className="navbar-end gap-4 hidden sm:flex">
+        <ThemeToggle />
         {user ? (
           <>
             <div className="flex items-center gap-3 bg-white/10 px-4 py-2 rounded-2xl border border-white/10">

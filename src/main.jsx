@@ -5,15 +5,18 @@ import { RouterProvider } from 'react-router'
 import router from './router/router'
 import { AuthProvider } from './context/AuthProvider'
 import { SocketProvider } from './context/SocketProvider'
+import { ThemeProvider } from './context/ThemeProvider'
 import ChatFloatingButton from './components/chat/ChatFloatingButton'
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
-    <AuthProvider>
-      <SocketProvider>
-        <RouterProvider router={router}></RouterProvider>
-        <ChatFloatingButton />
-      </SocketProvider>
-    </AuthProvider>
+    <ThemeProvider>
+      <AuthProvider>
+        <SocketProvider>
+          <RouterProvider router={router}></RouterProvider>
+          <ChatFloatingButton />
+        </SocketProvider>
+      </AuthProvider>
+    </ThemeProvider>
   </StrictMode>,
 )

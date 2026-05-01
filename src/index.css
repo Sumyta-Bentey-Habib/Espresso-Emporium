@@ -1,11 +1,45 @@
 @import "tailwindcss";
 @import "./styles/tokens.css";
-@plugin "daisyui";
+@plugin "daisyui" {
+  themes: light, dark;
+}
+
+@theme {
+  --color-white: var(--surface-white);
+  --color-black: var(--color-primary-950); /* Invert black to primary dark/light */
+  
+  /* Primary Amber Mapping */
+  --color-amber-50: var(--color-primary-50);
+  --color-amber-100: var(--color-primary-100);
+  --color-amber-200: var(--color-primary-200);
+  --color-amber-300: var(--color-primary-300);
+  --color-amber-400: var(--color-primary-400);
+  --color-amber-500: var(--color-primary-500);
+  --color-amber-600: var(--color-primary-600);
+  --color-amber-700: var(--color-primary-700);
+  --color-amber-800: var(--color-primary-800);
+  --color-amber-900: var(--color-primary-900);
+  --color-amber-950: var(--color-primary-950);
+
+  /* Secondary mappings for common utility colors */
+  --color-stone-50: var(--color-primary-50);
+  --color-stone-100: var(--color-primary-100);
+  --color-stone-200: var(--color-primary-200);
+  --color-stone-900: var(--color-primary-900);
+  --color-stone-950: var(--color-primary-950);
+  
+  --color-zinc-50: var(--color-primary-50);
+  --color-zinc-900: var(--color-primary-900);
+  --color-zinc-950: var(--color-primary-950);
+}
 
 body {
   margin: 0;
   min-width: 320px;
   min-height: 100vh;
+  background-color: var(--surface-white);
+  color: var(--color-primary-950);
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 * {
@@ -59,6 +93,33 @@ h3 {
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
     border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Global Dark Mode Refinements */
+[data-theme='dark'] .swal2-popup {
+    background-color: var(--surface-white) !important;
+    color: var(--color-primary-950) !important;
+    border: 1px solid var(--border-light);
+}
+
+[data-theme='dark'] .swal2-title,
+[data-theme='dark'] .swal2-html-container {
+    color: var(--color-primary-950) !important;
+}
+
+[data-theme='dark'] .swal2-confirm {
+    background-color: var(--color-primary-600) !important;
+}
+
+[data-theme='dark'] input::placeholder {
+    color: var(--color-primary-950);
+    opacity: 0.3;
+}
+
+[data-theme='dark'] .bg-white\/90,
+[data-theme='dark'] .bg-white\/80,
+[data-theme='dark'] .bg-white\/50 {
+    background-color: rgba(26, 10, 1, 0.8) !important; /* Force dark background for white-opacity utilities */
 }
 
 .custom-scrollbar::-webkit-scrollbar {

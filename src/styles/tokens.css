@@ -33,3 +33,23 @@
   --font-main: "Georama", sans-serif;
   --font-display: "Gorditas", serif;
 }
+
+[data-theme='dark'] {
+  --surface-white: #1a0a01; /* Very dark coffee brown */
+  --surface-glass: rgba(69, 26, 3, 0.7);
+  --border-light: rgba(255, 253, 235, 0.1);
+  --border-subtle: rgba(255, 255, 255, 0.05);
+  
+  /* Reverse Primary scale for dark mode */
+  --color-primary-50: #451a03;
+  --color-primary-100: #5c2405;
+  --color-primary-200: #78350f;
+  --color-primary-300: #92400e;
+  --color-primary-400: #b45309;
+  --color-primary-500: #d97706; /* Keep middle the same */
+  --color-primary-600: #f59e0b;
+  --color-primary-700: #fbbf24;
+  --color-primary-800: #fcd34d;
+  --color-primary-900: #fde68a;
+  --color-primary-950: #fffbeb;
+}
